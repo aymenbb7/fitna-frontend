@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "home": "Home",
+    "programs": "Programs",
+    "about": "About Us",
+    "contact": "Contact Us",
+    "login": "Login"
+  },
+  "hero": {
+    "title": "Fitna Academy",
+    "subtitle": "Preparing them for life, not exams",
+    "discover": "Discover Programs"
+  },
+  "modules": {
+    "title": "Our Programs",
+    "register": "Register Now",
+    "free_trial": "Free Trial",
+    "free": "Free"
+  },
+  "how_it_works": {
+    "title": "How it works?",
+    "step1": "Choose Program",
+    "step2": "Register Details",
+    "step3": "Wait Confirmation",
+    "step4": "Start Journey"
+  },
+  "contact": {
+    "title": "Contact Us"
+  },
+  "footer": {
+    "copyright": "All rights reserved © Fitna Academy"
+  }
+}
