@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Menu, Globe, MessageCircle } from 'lucide-react';
 import { SettingsContext } from '../context/SettingsContext';
@@ -8,10 +8,46 @@ const Layout = () => {
   const { t, i18n } = useTranslation();
   const { settings } = React.useContext(SettingsContext);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const toggleLanguage = () => {
+  useEffect(() => {
+    if (location.pathname === '/' && location.hash) {
+      const id = location.hash.replace('#', '');
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location]);
+
+  const handleLanguageToggle = () => {
     i18n.changeLanguage(i18n.language === 'ar' ? 'en' : 'ar');
-    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    setMobileMenuOpen(false);
+  };
+
+  const handleNavClick = (id) => {
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate(`/#${id}`);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const handleHomeClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/');
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   return (
@@ -21,19 +57,19 @@ const Layout = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-2xl font-black text-primary">فطنة</Link>
+              <a href="/" onClick={handleHomeClick} className="text-2xl font-black text-primary">فطنة</a>
             </div>
             
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center space-x-8 space-x-reverse">
-              <Link to="/" className="text-gray-700 hover:text-primary font-medium">{t('nav.home')}</Link>
-              <a href="#programs" className="text-gray-700 hover:text-primary font-medium">{t('nav.programs')}</a>
-              <a href="#about" className="text-gray-700 hover:text-primary font-medium">{t('nav.about')}</a>
-              <a href="#contact" className="text-gray-700 hover:text-primary font-medium">{t('nav.contact')}</a>
+              <a href="/" onClick={handleHomeClick} className="text-gray-700 hover:text-primary font-medium cursor-pointer">{t('nav.home')}</a>
+              <button onClick={() => handleNavClick('programs')} className="text-gray-700 hover:text-primary font-medium cursor-pointer">{t('nav.programs')}</button>
+              <button onClick={() => handleNavClick('about')} className="text-gray-700 hover:text-primary font-medium cursor-pointer">{t('nav.about')}</button>
+              <button onClick={() => handleNavClick('contact')} className="text-gray-700 hover:text-primary font-medium cursor-pointer">{t('nav.contact')}</button>
             </div>
 
             <div className="hidden md:flex items-center space-x-4 space-x-reverse">
-              <button onClick={toggleLanguage} className="p-2 text-gray-500 hover:text-primary rounded-full">
+              <button onClick={handleLanguageToggle} className="p-2 text-gray-500 hover:text-primary rounded-full">
                 <Globe size={20} />
               </button>
               <Link to="/login" className="px-6 py-2 bg-primary text-white font-medium rounded-lg shadow-sm hover:bg-primary-dark transition-colors">
@@ -54,11 +90,11 @@ const Layout = () => {
         {mobileMenuOpen && (
           <div className="md:hidden bg-white border-t">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <Link to="/" className="block px-3 py-2 text-gray-700 font-medium">{t('nav.home')}</Link>
-              <a href="#programs" className="block px-3 py-2 text-gray-700 font-medium">{t('nav.programs')}</a>
-              <a href="#about" className="block px-3 py-2 text-gray-700 font-medium">{t('nav.about')}</a>
-              <Link to="/login" className="block px-3 py-2 text-primary font-medium">{t('nav.login')}</Link>
-              <button onClick={toggleLanguage} className="block px-3 py-2 text-gray-500 w-full text-start">
+              <a href="/" onClick={handleHomeClick} className="block px-3 py-2 text-gray-700 font-medium cursor-pointer">{t('nav.home')}</a>
+              <button onClick={() => handleNavClick('programs')} className="block px-3 py-2 text-gray-700 font-medium w-full text-start cursor-pointer">{t('nav.programs')}</button>
+              <button onClick={() => handleNavClick('about')} className="block px-3 py-2 text-gray-700 font-medium w-full text-start cursor-pointer">{t('nav.about')}</button>
+              <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-primary font-medium">{t('nav.login')}</Link>
+              <button onClick={handleLanguageToggle} className="block px-3 py-2 text-gray-500 w-full text-start">
                 {i18n.language === 'ar' ? 'English' : 'عربي'}
               </button>
             </div>

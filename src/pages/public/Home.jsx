@@ -29,27 +29,41 @@ const Home = () => {
     <div className="w-full">
       {/* 1. Hero Section */}
       <section className="relative h-[90vh] bg-gradient-to-br from-primary to-primary-dark overflow-hidden flex items-center justify-center text-white">
-        {/* Floating background symbols */}
-        <motion.div 
-          animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }} 
-          transition={{ duration: 5, repeat: Infinity }}
-          className="absolute top-20 right-20 text-6xl opacity-10"
-        >
-          ∞
-        </motion.div>
-        <motion.div 
-          animate={{ y: [0, 30, 0], rotate: [0, -10, 0] }} 
-          transition={{ duration: 7, repeat: Infinity }}
-          className="absolute bottom-40 left-20 text-8xl opacity-10"
-        >
-          ∑
-        </motion.div>
+        {/* Fast-moving, energetic floating symbols */}
+        {[
+          { text: '∞', top: '10%', left: '10%', duration: 15, size: 'text-6xl', rotate: 360 },
+          { text: '∑', top: '70%', left: '80%', duration: 18, size: 'text-8xl', rotate: -360 },
+          { text: 'π', top: '30%', left: '85%', duration: 12, size: 'text-7xl', rotate: 180 },
+          { text: '√', top: '80%', left: '20%', duration: 20, size: 'text-9xl', rotate: -180 },
+          { text: '⚛', top: '20%', left: '50%', duration: 25, size: 'text-7xl', rotate: 360 },
+          { text: 'ع', top: '60%', left: '40%', duration: 16, size: 'text-8xl', rotate: -90 },
+          { text: '★', top: '40%', left: '30%', duration: 14, size: 'text-5xl', rotate: 360 },
+        ].map((sym, i) => (
+          <motion.div 
+            key={i}
+            animate={{ 
+              y: [0, -60, 0], 
+              x: [0, 40, 0],
+              rotate: [0, sym.rotate, 0] 
+            }} 
+            transition={{ duration: sym.duration, repeat: Infinity, ease: 'linear' }}
+            className={`absolute ${sym.size} opacity-20 font-black will-change-transform pointer-events-none`}
+            style={{ top: sym.top, left: sym.left }}
+          >
+            {sym.text}
+          </motion.div>
+        ))}
 
         <div className="z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-8xl font-black mb-6"
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              textShadow: ["0px 0px 10px rgba(255,255,255,0.4)", "0px 0px 40px rgba(255,255,255,0.8)", "0px 0px 10px rgba(255,255,255,0.4)"]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="text-6xl md:text-8xl font-black mb-6 relative z-10"
           >
             {t('hero.title')}
           </motion.h1>
@@ -128,19 +142,42 @@ const Home = () => {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black text-gray-900">{t('modules.title')}</h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {modules.map((mod) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-[2000px]">
+            {modules.map((mod, index) => (
               <motion.div 
-                whileHover={{ y: -5 }}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5, z: 50 }}
                 key={mod.slug} 
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative group"
+                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden relative group transform-gpu will-change-transform"
+                style={{ transformStyle: "preserve-3d" }}
               >
+                {/* Glowing Border effect */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{ boxShadow: `inset 0 0 30px ${mod.color_primary}40` }}
+                />
+                
+                {/* Subtle animated gradient background */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
+                  style={{ background: `radial-gradient(circle at center, ${mod.color_primary} 0%, transparent 70%)` }}
+                />
+
                 <div 
                   className="h-2 absolute top-0 w-full" 
                   style={{ backgroundColor: mod.color_primary }}
                 />
-                <div className="p-8">
-                  <div className="text-5xl mb-6">{mod.icon}</div>
+                <div className="p-8 relative z-10">
+                  <motion.div 
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                    className="text-5xl mb-6 inline-block transform-gpu"
+                  >
+                    {mod.icon}
+                  </motion.div>
                   <h3 className="text-2xl font-bold mb-3" style={{ color: mod.color_primary }}>{mod.name}</h3>
                   <p className="text-gray-600 mb-8 min-h-[3rem]">{mod.description}</p>
                   
@@ -155,9 +192,13 @@ const Home = () => {
                   </div>
                 </div>
                 {/* Subtle background symbol */}
-                <div className="absolute -bottom-4 -left-4 text-8xl opacity-[0.03] rotate-12 pointer-events-none transition-transform group-hover:scale-110">
+                <motion.div 
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                  className="absolute -bottom-4 -left-4 text-8xl opacity-[0.03] pointer-events-none transition-transform group-hover:scale-125 transform-gpu"
+                >
                   {mod.icon}
-                </div>
+                </motion.div>
               </motion.div>
             ))}
           </div>
