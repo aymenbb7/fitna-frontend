@@ -4,7 +4,28 @@ import { motion } from 'framer-motion';
 import { SettingsContext } from '../../context/SettingsContext';
 import { Link } from 'react-router-dom';
 import api from '../../api/axios';
-import { BookOpen, Users, Star, ArrowLeft } from 'lucide-react';
+import { BookOpen, Users, Star, ArrowLeft, Trophy, CheckCircle2, ChevronLeft } from 'lucide-react';
+
+const MODULE_COLORS = {
+  'quran': '#10B981', // green
+  'memory': '#8B5CF6', // purple
+  'soroban': '#F59E0B', // amber
+  'problem-solving': '#3B82F6', // blue
+  'health': '#EF4444', // red
+  'history': '#D97706', // orange
+  'languages': '#EC4899', // pink
+  'talents': '#06B6D4', // cyan
+  'psychology': '#6366F1', // indigo
+};
+
+const SYMBOLS = [
+  { text: '🚀', top: '15%', left: '10%', duration: 12, size: 'text-6xl', rotate: 20 },
+  { text: '⭐', top: '70%', left: '85%', duration: 15, size: 'text-5xl', rotate: 180 },
+  { text: '⚡', top: '30%', left: '85%', duration: 10, size: 'text-7xl', rotate: -15 },
+  { text: '🏆', top: '80%', left: '15%', duration: 18, size: 'text-6xl', rotate: 0 },
+  { text: '📚', top: '25%', left: '50%', duration: 22, size: 'text-7xl', rotate: -10 },
+  { text: '🎮', top: '65%', left: '35%', duration: 14, size: 'text-6xl', rotate: 15 },
+];
 
 const Home = () => {
   const { t } = useTranslation();
@@ -12,224 +33,206 @@ const Home = () => {
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    // Fetch modules from API (or mock if backend unavailable for some reason)
     api.get('/modules/')
       .then(res => setModules(res.data))
       .catch(err => {
-        console.error(err);
-        // Fallback mock
         setModules([
-          { slug: 'quran', name: 'قسم التعليم القرآني', description: 'حفظ وتجويد', icon: '🕌', color_primary: '#1B5E20' },
-          { slug: 'memory', name: 'الذاكرة الخارقة', description: 'تطوير الحفظ', icon: '🧠', color_primary: '#1565C0' },
+          { slug: 'quran', name: 'قسم التعليم القرآني', description: 'حفظ وتجويد بطرق تفاعلية.', icon: '🕌' },
+          { slug: 'memory', name: 'الذاكرة الخارقة', description: 'تطوير مهارات الحفظ السريع.', icon: '🧠' },
+          { slug: 'soroban', name: 'الحساب الذهني', description: 'تطوير السرعة في الحساب.', icon: '🧮' },
         ]);
       });
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-bgDark overflow-hidden text-white font-sans">
+      
       {/* 1. Hero Section */}
-      <section className="relative h-[90vh] bg-gradient-to-br from-primary to-primary-dark overflow-hidden flex items-center justify-center text-white">
-        {/* Fast-moving, energetic floating symbols */}
-        {[
-          { text: '∞', top: '10%', left: '10%', duration: 15, size: 'text-6xl', rotate: 360 },
-          { text: '∑', top: '70%', left: '80%', duration: 18, size: 'text-8xl', rotate: -360 },
-          { text: 'π', top: '30%', left: '85%', duration: 12, size: 'text-7xl', rotate: 180 },
-          { text: '√', top: '80%', left: '20%', duration: 20, size: 'text-9xl', rotate: -180 },
-          { text: '⚛', top: '20%', left: '50%', duration: 25, size: 'text-7xl', rotate: 360 },
-          { text: 'ع', top: '60%', left: '40%', duration: 16, size: 'text-8xl', rotate: -90 },
-          { text: '★', top: '40%', left: '30%', duration: 14, size: 'text-5xl', rotate: 360 },
-        ].map((sym, i) => (
+      <section className="relative min-h-[90vh] bg-gradient-to-br from-bgDark to-bgDarker flex items-center justify-center pt-20 pb-32">
+        {/* Confetti / Particle Background */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+
+        {/* Floating background symbols */}
+        {SYMBOLS.map((sym, i) => (
           <motion.div 
             key={i}
             animate={{ 
-              y: [0, -60, 0], 
-              x: [0, 40, 0],
-              rotate: [0, sym.rotate, 0] 
+              y: [0, -40, 0], 
+              rotate: [sym.rotate, sym.rotate + 15, sym.rotate] 
             }} 
-            transition={{ duration: sym.duration, repeat: Infinity, ease: 'linear' }}
-            className={`absolute ${sym.size} opacity-20 font-black will-change-transform pointer-events-none`}
+            transition={{ duration: sym.duration, repeat: Infinity, ease: 'easeInOut' }}
+            className={`absolute ${sym.size} opacity-80 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]`}
             style={{ top: sym.top, left: sym.left }}
           >
             {sym.text}
           </motion.div>
         ))}
 
-        <div className="z-10 text-center px-4 max-w-4xl mx-auto">
+        <div className="z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center">
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ 
-              opacity: 1, 
-              y: 0,
-              textShadow: ["0px 0px 10px rgba(255,255,255,0.4)", "0px 0px 40px rgba(255,255,255,0.8)", "0px 0px 10px rgba(255,255,255,0.4)"]
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-6xl md:text-8xl font-black mb-6 relative z-10"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] py-2"
           >
-            {t('hero.title')}
+            فطنة أكاديمي
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-2xl md:text-3xl font-light mb-10 text-blue-100"
+            transition={{ delay: 0.2 }}
+            className="text-2xl md:text-3xl font-bold mb-10 text-white max-w-3xl"
           >
-            {t('hero.subtitle')}
+            نُعدّهم للحياة، لا للامتحانات!
           </motion.p>
+          
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto"
           >
-            <a href="#programs" className="px-8 py-4 bg-accent text-white font-bold rounded-xl text-xl hover:bg-orange-600 transition shadow-lg">
-              {t('hero.discover')}
+            <a href="#programs" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:scale-105 duration-200">
+              ابدأ رحلتك الآن 🚀
             </a>
-            <Link to="/login" className="px-8 py-4 bg-white/10 backdrop-blur border border-white/20 text-white font-bold rounded-xl text-xl hover:bg-white/20 transition">
-              {t('nav.login')}
+            <Link to="/login" className="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition transform hover:scale-105 duration-200">
+              تسجيل الدخول
             </Link>
           </motion.div>
-        </div>
 
-        {/* Stats bar */}
-        <div className="absolute bottom-0 w-full bg-black/20 backdrop-blur-md py-6 border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-4 flex justify-around text-center">
-            <div>
-              <div className="text-3xl font-bold">{settings.stats.students}+</div>
-              <div className="text-sm text-blue-200">طالب مسجل</div>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="mt-12 flex items-center gap-4 bg-bgPurple/50 backdrop-blur border border-white/10 py-3 px-6 rounded-full"
+          >
+            <div className="flex -space-x-4 space-x-reverse">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-bgDark bg-gradient-to-br from-primary to-accentPurple" />
+              ))}
             </div>
-            <div>
-              <div className="text-3xl font-bold">{settings.stats.modules}</div>
-              <div className="text-sm text-blue-200">برامج متخصصة</div>
+            <div className="font-bold text-lg">
+              <span className="text-accentGold">+5000</span> طالب يثقون بنا
             </div>
-            <div>
-              <div className="text-3xl font-bold">{settings.stats.satisfaction}%</div>
-              <div className="text-sm text-blue-200">نسبة الرضا</div>
-            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="relative z-20 -mt-16 px-4 max-w-6xl mx-auto">
+        <div className="bg-bgPurple rounded-3xl border border-white/10 shadow-2xl p-8 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-x-reverse divide-white/10">
+          <div className="text-center">
+            <div className="text-4xl mb-2 drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">🙂</div>
+            <div className="text-3xl font-black text-white">{settings.stats.students}+</div>
+            <div className="text-gray-400 font-bold">طالب مسجل</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl mb-2 drop-shadow-[0_0_10px_rgba(245,197,24,0.8)]">🏆</div>
+            <div className="text-3xl font-black text-white">{settings.stats.modules}+</div>
+            <div className="text-gray-400 font-bold">برنامج متخصص</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl mb-2 drop-shadow-[0_0_10px_rgba(236,72,153,0.8)]">🎓</div>
+            <div className="text-3xl font-black text-white">15+</div>
+            <div className="text-gray-400 font-bold">مدرب خبير</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl mb-2 drop-shadow-[0_0_10px_rgba(16,185,129,0.8)]">⭐</div>
+            <div className="text-3xl font-black text-white">{settings.stats.satisfaction}%</div>
+            <div className="text-gray-400 font-bold">نسبة الرضا</div>
           </div>
         </div>
       </section>
 
-      {/* 2. About Section */}
-      <section id="about" className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-black mb-8 text-gray-900">{t('nav.about')}</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-16">
-            {settings.about}
-          </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 bg-blue-50 rounded-2xl">
-              <Users className="w-12 h-12 text-primary mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">بيئة تفاعلية</h3>
-              <p className="text-gray-600">نركز على التفاعل والمشاركة لبناء مهارات حقيقية.</p>
-            </div>
-            <div className="p-8 bg-orange-50 rounded-2xl">
-              <Star className="w-12 h-12 text-accent mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">محتوى متميز</h3>
-              <p className="text-gray-600">مناهج مصممة بعناية لتناسب الفئة العمرية 14-18 سنة.</p>
-            </div>
-            <div className="p-8 bg-green-50 rounded-2xl">
-              <BookOpen className="w-12 h-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-xl font-bold mb-2">متابعة مستمرة</h3>
-              <p className="text-gray-600">تقييمات دورية واختبارات لقياس مستوى التقدم.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Modules Section */}
-      <section id="programs" className="py-24 bg-gray-50 border-t">
+      {/* Modules Section */}
+      <section id="programs" className="py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black text-gray-900">{t('modules.title')}</h2>
+          <div className="text-center mb-16 relative">
+            <h2 className="text-5xl font-black text-white inline-block drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              برامجنا الممتعة ✨
+            </h2>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-[2000px]">
-            {modules.map((mod, index) => (
-              <motion.div 
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5, z: 50 }}
-                key={mod.slug} 
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden relative group transform-gpu will-change-transform"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                {/* Glowing Border effect */}
-                <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{ boxShadow: `inset 0 0 30px ${mod.color_primary}40` }}
-                />
-                
-                {/* Subtle animated gradient background */}
-                <div 
-                  className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
-                  style={{ background: `radial-gradient(circle at center, ${mod.color_primary} 0%, transparent 70%)` }}
-                />
 
-                <div 
-                  className="h-2 absolute top-0 w-full" 
-                  style={{ backgroundColor: mod.color_primary }}
-                />
-                <div className="p-8 relative z-10">
-                  <motion.div 
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    className="text-5xl mb-6 inline-block transform-gpu"
-                  >
-                    {mod.icon}
-                  </motion.div>
-                  <h3 className="text-2xl font-bold mb-3" style={{ color: mod.color_primary }}>{mod.name}</h3>
-                  <p className="text-gray-600 mb-8 min-h-[3rem]">{mod.description}</p>
-                  
-                  <div className="flex gap-4">
-                    <Link 
-                      to={`/modules/${mod.slug}`} 
-                      className="flex-1 py-3 text-center text-white font-bold rounded-lg transition"
-                      style={{ backgroundColor: mod.color_primary }}
-                    >
-                      التفاصيل
-                    </Link>
-                  </div>
-                </div>
-                {/* Subtle background symbol */}
+          <div className="flex overflow-x-auto snap-x md:grid md:grid-cols-2 lg:grid-cols-3 gap-8 pb-8 md:pb-0 hide-scrollbar perspective-[2000px]">
+            {modules.map((mod, index) => {
+              const bgColor = MODULE_COLORS[mod.slug] || '#1565C0';
+              return (
                 <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                  className="absolute -bottom-4 -left-4 text-8xl opacity-[0.03] pointer-events-none transition-transform group-hover:scale-125 transform-gpu"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5 }}
+                  key={mod.slug} 
+                  className="min-w-[85vw] sm:min-w-[300px] snap-center rounded-3xl overflow-hidden relative group transform-gpu will-change-transform cursor-pointer shadow-2xl flex flex-col"
+                  style={{ backgroundColor: bgColor, transformStyle: "preserve-3d" }}
                 >
-                  {mod.icon}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay bg-white/20" />
+                  <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(255,255,255,0.2)] pointer-events-none" />
+
+                  <div className="p-8 relative z-10 flex flex-col h-full">
+                    <motion.div 
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="text-8xl mb-8 text-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
+                    >
+                      {mod.icon}
+                    </motion.div>
+                    
+                    <h3 className="text-3xl font-black mb-3 text-white drop-shadow-md">{mod.name}</h3>
+                    <p className="text-white/90 font-medium mb-12 flex-grow text-lg leading-relaxed">{mod.description}</p>
+                    
+                    <div className="flex items-center justify-between mt-auto">
+                      <span className="bg-black/20 px-4 py-2 rounded-xl font-bold text-sm">
+                        +12 جلسة
+                      </span>
+                      <Link 
+                        to={`/modules/${mod.slug}`} 
+                        className="w-14 h-14 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg"
+                      >
+                        <ChevronLeft size={28} />
+                      </Link>
+                    </div>
+                  </div>
                 </motion.div>
-              </motion.div>
-            ))}
+              );
+            })}
+          </div>
+
+          <div className="mt-16 text-center">
+            <button className="px-8 py-4 bg-bgPurple border border-white/20 text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition shadow-lg inline-flex items-center gap-2">
+              ⭐ عرض جميع البرامج ⭐
+            </button>
           </div>
         </div>
       </section>
 
-      {/* 4. How It Works */}
-      <section className="py-24 bg-white">
+      {/* How It Works */}
+      <section className="py-24 bg-bgPurple border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16">{t('how_it_works.title')}</h2>
-          <div className="flex flex-col md:flex-row justify-between items-center relative">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-gray-100 -z-10" />
+          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{t('how_it_works.title')}</h2>
+          <div className="grid md:grid-cols-4 gap-8">
             {[
-              { num: 1, text: t('how_it_works.step1') },
-              { num: 2, text: t('how_it_works.step2') },
-              { num: 3, text: t('how_it_works.step3') },
-              { num: 4, text: t('how_it_works.step4') }
+              { num: 1, text: t('how_it_works.step1'), color: '#3B82F6' },
+              { num: 2, text: t('how_it_works.step2'), color: '#F5C518' },
+              { num: 3, text: t('how_it_works.step3'), color: '#10B981' },
+              { num: 4, text: t('how_it_works.step4'), color: '#EF4444' }
             ].map((step, i) => (
-              <div key={i} className="flex flex-col items-center bg-white p-4 mb-8 md:mb-0 w-full md:w-1/4">
-                <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mb-4 shadow-lg border-4 border-white">
+              <div key={i} className="flex flex-col items-center bg-bgDark p-8 rounded-3xl border border-white/5 shadow-xl hover:-translate-y-2 transition-transform">
+                <div 
+                  className="w-20 h-20 rounded-2xl text-white flex items-center justify-center text-3xl font-black mb-6 shadow-lg rotate-3"
+                  style={{ backgroundColor: step.color, boxShadow: `0 0 20px ${step.color}60` }}
+                >
                   {step.num}
                 </div>
-                <div className="font-bold text-lg text-gray-800 text-center">{step.text}</div>
+                <div className="font-bold text-xl text-center text-gray-200">{step.text}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 5. Testimonials */}
-      <section className="py-24 bg-gray-50 border-t">
+      {/* Testimonials */}
+      <section className="py-24 bg-bgDark">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-4xl font-black text-center mb-16">ماذا يقولون عنا؟</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -238,18 +241,22 @@ const Home = () => {
               { name: "ياسين", role: "طالب (16 سنة)", text: "البرامج هنا مختلفة تماماً عن المدرسة، نتعلم أشياء تفيدنا في حياتنا." },
               { name: "أ. محمد", role: "أستاذ رياضيات", text: "طريقة تقديم المعلومات في فطنة مبتكرة وتجعل التعلم ممتعاً." }
             ].map((test, i) => (
-              <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-                <div className="flex gap-1 mb-4 text-yellow-400">
+              <div key={i} className="bg-bgPurple p-8 rounded-3xl border border-white/10 shadow-lg relative">
+                <div className="absolute -top-4 -right-4 text-5xl opacity-20">💬</div>
+                <div className="flex gap-1 mb-6 text-accentGold drop-shadow-[0_0_5px_rgba(245,197,24,0.5)]">
                   <Star fill="currentColor" />
                   <Star fill="currentColor" />
                   <Star fill="currentColor" />
                   <Star fill="currentColor" />
                   <Star fill="currentColor" />
                 </div>
-                <p className="text-gray-600 mb-6 italic">"{test.text}"</p>
-                <div>
-                  <div className="font-bold">{test.name}</div>
-                  <div className="text-sm text-gray-500">{test.role}</div>
+                <p className="text-gray-300 mb-8 italic text-lg leading-relaxed">"{test.text}"</p>
+                <div className="flex items-center gap-4 border-t border-white/10 pt-6">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accentPurple" />
+                  <div>
+                    <div className="font-bold text-white">{test.name}</div>
+                    <div className="text-sm text-gray-400">{test.role}</div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -257,8 +264,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 6. FAQ */}
-      <section className="py-24 bg-white">
+      {/* FAQ */}
+      <section className="py-24 bg-bgPurple border-t border-white/5">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-4xl font-black text-center mb-16">الأسئلة الشائعة</h2>
           <div className="space-y-4">
@@ -267,14 +274,14 @@ const Home = () => {
               { q: "ما هي طرق الدفع المتاحة؟", a: "نوفر طرق دفع متعددة لتسهيل العملية على أولياء الأمور، ويمكنك معرفة المزيد من لوحة التحكم الخاصة بك." },
               { q: "هل الدروس مباشرة أم مسجلة؟", a: "نعتمد نظاماً يجمع بين الجلسات المباشرة التفاعلية والدروس المسجلة للمراجعة." }
             ].map((faq, i) => (
-              <details key={i} className="group bg-gray-50 rounded-xl border border-gray-100 [&_summary::-webkit-details-marker]:hidden">
-                <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-lg">
+              <details key={i} className="group bg-bgDark rounded-2xl border border-white/10 [&_summary::-webkit-details-marker]:hidden">
+                <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-xl text-white">
                   {faq.q}
-                  <span className="transition group-open:rotate-180">
-                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                  <span className="transition-transform group-open:rotate-180 text-accentGold">
+                    <svg fill="none" height="24" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
                   </span>
                 </summary>
-                <div className="p-6 pt-0 text-gray-600">
+                <div className="p-6 pt-0 text-gray-400 text-lg">
                   {faq.a}
                 </div>
               </details>
@@ -283,16 +290,19 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 7. Contact Section */}
-      <section id="contact" className="py-24 bg-gray-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-4xl font-black mb-8">{t('contact.title')}</h2>
-          <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.</p>
+      {/* Contact Section */}
+      <section id="contact" className="py-32 bg-gradient-to-t from-[#0A0720] to-bgDark relative overflow-hidden">
+        {/* Glow behind */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accentPurple/20 rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10 bg-bgPurple/50 backdrop-blur-xl p-12 rounded-[3rem] border border-white/10 shadow-2xl">
+          <h2 className="text-5xl font-black mb-8 text-white">{t('contact.title')}</h2>
+          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.</p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="px-8 py-4 bg-green-500 font-bold rounded-xl text-xl hover:bg-green-600 transition flex items-center justify-center gap-3">
+            <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="px-10 py-5 bg-[#25D366] text-white font-black rounded-2xl text-xl hover:bg-[#1DA851] transition flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:shadow-[0_0_30px_rgba(37,211,102,0.6)] hover:-translate-y-1">
               تواصل عبر واتساب
             </a>
-            <a href={`mailto:${settings.contact.email}`} className="px-8 py-4 bg-white/10 font-bold rounded-xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3">
+            <a href={`mailto:${settings.contact.email}`} className="px-10 py-5 bg-white/10 font-bold rounded-2xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3 border border-white/10">
               راسلنا عبر الإيميل
             </a>
           </div>

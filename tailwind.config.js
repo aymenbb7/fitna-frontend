@@ -7,6 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        bgDark: '#0D0B2B',
+        bgDarker: '#1A0A4B',
+        bgPurple: '#120838',
+        accentGold: '#F5C518',
+        accentPurple: '#7C3AED',
         primary: {
           DEFAULT: '#1565C0',
           dark: '#0A47A0',
