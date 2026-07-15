@@ -283,8 +283,70 @@ const Home = () => {
         </div>
       </section>
 
+      {/* من نحن Section */}
+      <section id="about" className="py-32 bg-bgDarker relative z-10 border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+        
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_15px_rgba(245,197,24,0.4)] mb-6">من نحن؟</h2>
+          </div>
+          
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* Left side: Decorative Elements */}
+            <div className="flex-1 w-full flex justify-center relative">
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 to-accentPurple/30 blur-3xl rounded-full" />
+              <div className="relative bg-bgPurple p-8 rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden text-center w-full max-w-md">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-accentGold to-yellow-400" />
+                <div className="text-8xl mb-6">💡</div>
+                <h3 className="text-4xl font-black text-white drop-shadow-md mb-2">منصة فطنة</h3>
+                <p className="text-accentGold font-bold text-xl">نُعدّهم للحياة، لا للامتحانات</p>
+              </div>
+            </div>
+
+            {/* Right side: Story */}
+            <div className="flex-1 w-full space-y-6 text-right">
+              <h3 className="text-4xl font-black text-white mb-6 leading-snug">أطفالنا يستحقون <span className="text-accentGold">أفضل من هذا</span></h3>
+              
+              <div className="space-y-4 text-gray-300 font-bold text-lg leading-relaxed">
+                <p>
+                  نرى اليوم واقعاً مؤلماً؛ أطفال صغار تائهون بين شاشات الهواتف، يضيع وقتهم ويهدر ذكاؤهم في محتويات تافهة لا تسمن ولا تغني من جوع. المشكلة تتفاقم يوماً بعد يوم، وبتنا نسمع عن حوادث وجرائم يقع ضحيتها أطفالنا بسبب هذا الواقع المفتوح والخطير.
+                </p>
+                <p>
+                  من هذا الألم، وُلدت فكرة <span className="text-white">«منصة فطنة»</span>. لم نرد أن نكتفي بالشكوى، بل صممنا حلاً عملياً يمثل بديلاً آمناً، ذكياً، وجذاباً.
+                </p>
+                <p>
+                  فطنة ليست مجرد منصة تعليمية، بل هي بيئة متكاملة تهدف إلى احتضان شغف الأطفال وإشغالهم بما ينفعهم، لبناء مهاراتهم وتأسيس مستقبل مشرق لهم، بعيداً عن مخاطر الفراغ الرقمي.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-3 gap-4 pt-8 border-t border-white/10">
+                <div className="bg-bgDark p-6 rounded-2xl border border-white/5 text-center shadow-lg hover:-translate-y-1 transition">
+                  <div className="text-4xl mb-3 drop-shadow-md">🛡️</div>
+                  <div className="text-white font-bold text-lg">بيئة آمنة</div>
+                </div>
+                <div className="bg-bgDark p-6 rounded-2xl border border-white/5 text-center shadow-lg hover:-translate-y-1 transition">
+                  <div className="text-4xl mb-3 drop-shadow-md">🧠</div>
+                  <div className="text-white font-bold text-lg">محتوى هادف</div>
+                </div>
+                <div className="bg-bgDark p-6 rounded-2xl border border-white/5 text-center shadow-lg hover:-translate-y-1 transition">
+                  <div className="text-4xl mb-3 drop-shadow-md">🚀</div>
+                  <div className="text-white font-bold text-lg">مستقبل مشرق</div>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <a href="#programs" className="inline-block px-10 py-4 bg-accentGold text-bgDark font-black rounded-xl text-xl hover:scale-105 transition shadow-[0_0_15px_rgba(245,197,24,0.3)]">
+                  انضم إلينا اليوم
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* NEW SECTION 1: التعلم أصبح أكثر متعة (App Preview) */}
-      <section id="about" className="py-32 bg-[#1A0A4B] relative z-10 border-b border-white/5 overflow-hidden">
+      <section className="py-32 bg-[#1A0A4B] relative z-10 border-b border-white/5 overflow-hidden">
         {/* Subtle Background Pattern */}
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         

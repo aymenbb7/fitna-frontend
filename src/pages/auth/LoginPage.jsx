@@ -74,7 +74,7 @@ const LoginPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6" autoComplete="off">
           <div>
             <label className="block text-gray-300 font-bold mb-2">اسم المستخدم أو البريد الإلكتروني</label>
             <div className="relative">
@@ -87,6 +87,7 @@ const LoginPage = () => {
                 onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition" 
                 placeholder="username / email"
+                autoComplete="off"
               />
             </div>
           </div>
@@ -103,6 +104,7 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition" 
                 placeholder="••••••••"
+                autoComplete="new-password"
               />
             </div>
             <div className="mt-2 text-left">

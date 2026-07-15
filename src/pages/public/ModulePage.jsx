@@ -123,15 +123,32 @@ const ModulePage = () => {
 const EnrollmentModal = ({ mod, onClose }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const maxDate = new Date();
+  maxDate.setFullYear(maxDate.getFullYear() - 9);
+  const maxDateString = maxDate.toISOString().split('T')[0];
+
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 18);
+  const minDateString = minDate.toISOString().split('T')[0];
 
   const onSubmit = async (data) => {
     setStatus('loading');
+    setErrorMessage('');
     try {
-      // Calculate age simply
       const dob = new Date(data.dob);
-      const diffMs = Date.now() - dob.getTime();
-      const ageDate = new Date(diffMs); 
-      const age = Math.abs(ageDate.getUTCFullYear() - 1970);
+      let age = new Date().getFullYear() - dob.getFullYear();
+      const m = new Date().getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && new Date().getDate() < dob.getDate())) {
+        age--;
+      }
+
+      if (age < 9 || age > 18) {
+        setErrorMessage('عذراً، يجب أن يكون العمر بين 9 و 18 سنة للتسجيل.');
+        setStatus('error');
+        return;
+      }
 
       await api.post('/auth/register/', {
         first_name: data.first_name,
@@ -145,6 +162,7 @@ const EnrollmentModal = ({ mod, onClose }) => {
       setStatus('success');
     } catch (err) {
       console.error(err);
+      setErrorMessage('حدث خطأ أثناء التسجيل. تأكد من صحة البيانات وأن الإيميل غير مسجل مسبقاً.');
       setStatus('error');
     }
   };
@@ -184,8 +202,14 @@ const EnrollmentModal = ({ mod, onClose }) => {
               
               <div>
                 <label className="block text-sm font-bold mb-1 text-gray-300">تاريخ الميلاد</label>
-                <input type="date" {...register('dob', { required: true })} className="w-full border border-white/10 rounded-xl p-3 bg-bgDark focus:border-accentGold outline-none transition" />
-                <p className="text-xs text-accentGold mt-1">يجب أن يكون العمر بين 14 و 18 سنة.</p>
+                <input 
+                  type="date" 
+                  min={minDateString}
+                  max={maxDateString}
+                  {...register('dob', { required: true })} 
+                  className="w-full border border-white/10 rounded-xl p-3 bg-bgDark focus:border-accentGold outline-none transition" 
+                />
+                <p className="text-xs text-accentGold mt-1">يجب أن يكون العمر بين 9 و 18 سنة.</p>
               </div>
 
               <div>
@@ -193,7 +217,7 @@ const EnrollmentModal = ({ mod, onClose }) => {
                 <input type="tel" {...register('parent_phone', { required: true })} className="w-full border border-white/10 rounded-xl p-3 bg-bgDark focus:border-accentGold outline-none transition text-left" dir="ltr" />
               </div>
 
-              {status === 'error' && <div className="text-red-400 text-sm font-bold bg-red-400/10 p-3 rounded-lg border border-red-400/20">حدث خطأ أثناء التسجيل. تأكد من صحة البيانات وأن الإيميل غير مسجل مسبقاً.</div>}
+              {status === 'error' && <div className="text-red-400 text-sm font-bold bg-red-400/10 p-3 rounded-lg border border-red-400/20">{errorMessage}</div>}
 
               <button type="submit" disabled={status === 'loading'} className="w-full py-4 text-white font-black rounded-xl mt-6 transition disabled:opacity-50 hover:brightness-110 shadow-lg text-xl" style={{ backgroundColor: mod.color_primary }}>
                 {status === 'loading' ? 'جاري الإرسال...' : 'تأكيد التسجيل'}

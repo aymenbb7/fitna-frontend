@@ -12,6 +12,7 @@ import TrialPage from './pages/public/TrialPage';
 // Auth
 import LoginPage from './pages/auth/LoginPage';
 import SetPasswordPage from './pages/auth/SetPasswordPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 
 // Student Dashboard
 import StudentLayout from './components/dashboard/StudentLayout';
@@ -36,6 +37,7 @@ function App() {
           {/* Auth Routes (No layout) */}
           <Route path="login" element={<LoginPage />} />
           <Route path="set-password" element={<SetPasswordPage />} />
+          <Route path="forgot-password" element={<ForgotPasswordPage />} />
 
           {/* Student Dashboard Routes */}
           <Route 
