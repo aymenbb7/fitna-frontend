@@ -221,12 +221,14 @@ const Home = () => {
                     <div className="flex flex-col gap-3 mt-auto">
                       <Link 
                         to={`/modules/${mod.slug}`} 
+                        onClick={() => window.scrollTo(0, 0)}
                         className="w-full py-4 bg-accentGold text-bgDark text-center font-black rounded-xl hover:scale-105 transition-all shadow-[0_0_15px_rgba(245,197,24,0.4)] hover:shadow-[0_0_25px_rgba(245,197,24,0.6)]"
                       >
                         سجّل الآن
                       </Link>
                       <Link 
                         to={`/modules/${mod.slug}/trial`} 
+                        onClick={() => window.scrollTo(0, 0)}
                         className="w-full py-3 bg-white/20 border border-white/30 text-white text-center font-bold rounded-xl hover:bg-white/30 transition-all backdrop-blur"
                       >
                         تجربة مجانية

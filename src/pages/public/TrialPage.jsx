@@ -9,6 +9,7 @@ const TrialPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     api.get(`/modules/${slug}/`)
       .then(res => setMod(res.data))
       .catch(err => {
