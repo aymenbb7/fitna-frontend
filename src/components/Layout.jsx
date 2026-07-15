@@ -51,7 +51,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans">
+    <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: settings.fontFamily || 'Tajawal, sans-serif' }}>
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-bgDark/90 backdrop-blur-md border-b border-white/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

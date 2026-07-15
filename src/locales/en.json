@@ -7,7 +7,7 @@
     "login": "Login"
   },
   "hero": {
-    "title": "Fitna Academy",
+    "title": "منصة فطنة",
     "subtitle": "Preparing them for life, not exams",
     "discover": "Discover Programs"
   },
@@ -28,6 +28,6 @@
     "title": "Contact Us"
   },
   "footer": {
-    "copyright": "All rights reserved © Fitna Academy"
+    "copyright": "All rights reserved © منصة فطنة"
   }
 }

@@ -90,13 +90,43 @@ const Home = () => {
           </motion.div>
         ))}
 
-        <div className="z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center">
+        {/* New Right Character: 3D Boy */}
+        <motion.div 
+          animate={{ y: [0, -20, 0], rotate: [-2, 2, -2] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute right-4 md:right-20 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center pointer-events-none z-0"
+        >
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-yellow-400/20 blur-[100px] w-64 h-64 rounded-full" />
+          <div className="text-[10rem] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] relative z-10 transform scale-x-[-1]">
+            🧑
+          </div>
+          <div className="text-[6rem] absolute -bottom-4 -left-2 drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)] z-20">
+            🎒
+          </div>
+          <div className="text-[4rem] absolute top-10 -right-8 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] z-20 transform -rotate-12">
+            📖
+          </div>
+        </motion.div>
+
+        {/* New Left Character: Friendly Robot */}
+        <motion.div 
+          animate={{ y: [0, 15, 0], rotate: [2, -2, 2] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute left-4 md:left-20 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center justify-center pointer-events-none z-0"
+        >
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-blue-400/20 blur-[100px] w-56 h-56 rounded-full" />
+          <div className="text-[9rem] drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)] relative z-10">
+            🤖
+          </div>
+        </motion.div>
+
+        <div className="z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center relative">
           <motion.h1 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] py-2"
           >
-            فطنة أكاديمي
+            منصة فطنة
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
