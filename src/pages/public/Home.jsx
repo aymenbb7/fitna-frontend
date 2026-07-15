@@ -282,7 +282,7 @@ const Home = () => {
       </section>
 
       {/* NEW SECTION 1: التعلم أصبح أكثر متعة (App Preview) */}
-      <section className="py-32 bg-[#1A0A4B] relative z-10 border-b border-white/5 overflow-hidden">
+      <section id="about" className="py-32 bg-[#1A0A4B] relative z-10 border-b border-white/5 overflow-hidden">
         {/* Subtle Background Pattern */}
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         
