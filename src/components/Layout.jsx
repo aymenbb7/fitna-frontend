@@ -51,7 +51,7 @@ const Layout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: settings.fontFamily || 'Tajawal, sans-serif' }}>
+    <div className="min-h-screen flex flex-col font-sans" style={{ fontFamily: settings.fontFamily || 'Cairo, sans-serif' }}>
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-bgDark/90 backdrop-blur-md border-b border-white/10 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -118,21 +118,73 @@ const Layout = () => {
       </a>
 
       {/* Footer */}
-      <footer className="bg-bgDarker text-white py-12 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-3xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)]">فطنة</h3>
-            <p className="text-gray-400">{t('hero.subtitle')}</p>
+      <footer className="bg-bgDarker text-white pt-16 pb-8 border-t border-white/5 mt-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            
+            {/* Column 1: Brand */}
+            <div>
+              <h3 className="text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)]">منصة فطنة</h3>
+              <p className="text-gray-400 font-bold mb-6">نُعدّهم للحياة، لا للامتحانات</p>
+              <div className="flex gap-4">
+                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl hover:bg-white/20 transition-colors">📸</a>
+                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl hover:bg-white/20 transition-colors">📘</a>
+                <a href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl hover:bg-white/20 transition-colors">🎵</a>
+                <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xl hover:bg-[#25D366] transition-colors">💬</a>
+              </div>
+            </div>
+
+            {/* Column 2: Quick Links */}
+            <div>
+              <h4 className="text-xl font-black mb-6 text-white border-b border-white/10 pb-2 inline-block">روابط سريعة</h4>
+              <ul className="space-y-3 font-bold text-gray-400">
+                <li><a href="/" onClick={handleHomeClick} className="hover:text-accentGold transition-colors cursor-pointer">الرئيسية</a></li>
+                <li><button onClick={() => handleNavClick('programs')} className="hover:text-accentGold transition-colors cursor-pointer">البرامج</button></li>
+                <li><button onClick={() => handleNavClick('about')} className="hover:text-accentGold transition-colors cursor-pointer">من نحن</button></li>
+                <li><button onClick={() => handleNavClick('contact')} className="hover:text-accentGold transition-colors cursor-pointer">تواصل معنا</button></li>
+              </ul>
+            </div>
+
+            {/* Column 3: Programs */}
+            <div>
+              <h4 className="text-xl font-black mb-6 text-white border-b border-white/10 pb-2 inline-block">البرامج</h4>
+              <ul className="space-y-3 font-bold text-gray-400">
+                <li><Link to="/modules/quran" className="hover:text-accentGold transition-colors">التعليم القرآني</Link></li>
+                <li><Link to="/modules/memory" className="hover:text-accentGold transition-colors">الذاكرة الخارقة</Link></li>
+                <li><Link to="/modules/soroban" className="hover:text-accentGold transition-colors">الحساب الذهني</Link></li>
+                <li><Link to="/modules/problem-solving" className="hover:text-accentGold transition-colors">البرمجة والذكاء الاصطناعي</Link></li>
+                <li><Link to="/modules/languages" className="hover:text-accentGold transition-colors">اللغة الإنجليزية</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Contact */}
+            <div>
+              <h4 className="text-xl font-black mb-6 text-white border-b border-white/10 pb-2 inline-block">تواصل معنا</h4>
+              <ul className="space-y-4 font-bold text-gray-400">
+                <li className="flex items-center gap-3">
+                  <span className="text-xl">📧</span>
+                  <a href={`mailto:${settings.contact.email}`} className="hover:text-white transition-colors" dir="ltr">{settings.contact.email}</a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="text-xl">📞</span>
+                  <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="hover:text-white transition-colors" dir="ltr">{settings.contact.whatsapp}</a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <span className="text-xl">📍</span>
+                  <span>{settings.contact.address}</span>
+                </li>
+              </ul>
+              <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="mt-6 inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1DA851] transition-colors shadow-lg">
+                <MessageCircle size={20} />
+                راسلنا على واتساب
+              </a>
+            </div>
+
           </div>
-          <div>
-            <h4 className="text-xl font-bold mb-4 text-gray-100">{t('nav.contact')}</h4>
-            <p className="text-gray-400 mb-2">{settings.contact.email}</p>
-            <p className="text-gray-400 mb-2" dir="ltr">{settings.contact.whatsapp}</p>
-            <p className="text-gray-400">{settings.contact.address}</p>
+          
+          <div className="pt-8 border-t border-white/10 text-center text-gray-500 font-bold bg-bgDarker">
+            جميع الحقوق محفوظة © 2026 منصة فطنة
           </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 pt-8 border-t border-white/10 text-center text-gray-500 font-bold">
-          {t('footer.copyright')}
         </div>
       </footer>
     </div>

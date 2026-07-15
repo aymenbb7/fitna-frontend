@@ -9,7 +9,7 @@ export const SettingsProvider = ({ children }) => {
       stats: { students: 1200, modules: 9, satisfaction: 98 },
       about: "فطنة هي أكاديمية رائدة تهدف إلى إعداد الجيل القادم وتزويدهم بالمهارات الحياتية الضرورية.",
       contact: { whatsapp: "+213795375422", email: "info@fitna.dz", address: "الجزائر العاصمة" },
-      fontFamily: "Tajawal"
+      fontFamily: "Cairo"
     };
   });
 

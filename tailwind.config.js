@@ -21,7 +21,7 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Tajawal', 'sans-serif'], // Popular Arabic font
+        sans: ['Cairo', 'sans-serif'], // Popular Arabic font
       }
     },
   },

@@ -205,6 +205,17 @@ const Home = () => {
                     </motion.div>
                     
                     <h3 className="text-3xl font-black mb-3 text-white drop-shadow-md">{mod.name}</h3>
+                    {/* Price display placeholder */}
+                    {mod.price === 0 && (
+                      <div className="mb-4">
+                        <span className="bg-green-500 px-4 py-1.5 rounded-full text-sm font-bold shadow-lg">مجاني</span>
+                      </div>
+                    )}
+                    {mod.price > 0 && (
+                      <div className="mb-4">
+                        <span className="bg-accentGold px-4 py-1.5 rounded-full text-sm font-bold text-bgDark shadow-lg">{mod.price} دج</span>
+                      </div>
+                    )}
                     <p className="text-white/90 font-medium mb-8 flex-grow text-lg leading-relaxed">{mod.description}</p>
                     
                     <div className="flex flex-col gap-3 mt-auto">
@@ -478,22 +489,48 @@ const Home = () => {
           <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} className="absolute top-10 left-10 text-4xl opacity-50">⭐</motion.div>
           <motion.div animate={{ rotate: -360 }} transition={{ duration: 25, repeat: Infinity, ease: 'linear' }} className="absolute bottom-10 right-10 text-5xl opacity-50">⚡</motion.div>
           
-          {/* 3D Character Left */}
+          {/* 3D Full Body Character Left (Boy Jumping) */}
           <motion.div 
-            animate={{ y: [-10, 10, -10] }} 
+            animate={{ y: [-15, 15, -15] }} 
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -left-10 top-1/2 -translate-y-1/2 text-9xl hidden md:block drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)]"
+            className="absolute -left-10 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center pointer-events-none z-20"
           >
-            🧑‍💻
+            {/* Head */}
+            <div className="text-[7rem] drop-shadow-xl z-20 relative">🧒</div>
+            {/* Body (Shirt) */}
+            <div className="w-24 h-28 bg-blue-500 rounded-3xl -mt-6 z-10 shadow-lg relative">
+              {/* Arms */}
+              <div className="absolute -left-6 top-2 w-8 h-20 bg-blue-500 rounded-full origin-top rotate-[-45deg]" />
+              <div className="absolute -right-6 top-2 w-8 h-20 bg-blue-500 rounded-full origin-top rotate-[45deg]" />
+              {/* Backpack */}
+              <div className="absolute top-4 -right-10 text-6xl drop-shadow-lg -z-10 transform scale-x-[-1]">🎒</div>
+            </div>
+            {/* Legs */}
+            <div className="flex gap-4 -mt-4 z-0">
+              <div className="w-8 h-20 bg-gray-700 rounded-full origin-top rotate-[-20deg]" />
+              <div className="w-8 h-20 bg-gray-700 rounded-full origin-top rotate-[40deg]" />
+            </div>
           </motion.div>
 
-          {/* 3D Character Right */}
+          {/* 3D Full Body Character Right (Girl Pointing) */}
           <motion.div 
-            animate={{ y: [10, -10, 10] }} 
+            animate={{ y: [15, -15, 15] }} 
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-            className="absolute -right-10 top-1/2 -translate-y-1/2 text-9xl hidden md:block drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)] transform scale-x-[-1]"
+            className="absolute -right-10 top-1/2 -translate-y-1/2 hidden md:flex flex-col items-center pointer-events-none z-20"
           >
-            🧑‍🎓
+            {/* Head */}
+            <div className="text-[7rem] drop-shadow-xl z-20 relative transform scale-x-[-1]">👧</div>
+            {/* Body (Shirt) */}
+            <div className="w-24 h-28 bg-pink-500 rounded-3xl -mt-6 z-10 shadow-lg relative">
+              {/* Arms */}
+              <div className="absolute -left-6 top-2 w-8 h-20 bg-pink-500 rounded-full origin-top rotate-[-150deg]" />
+              <div className="absolute -right-6 top-2 w-8 h-20 bg-pink-500 rounded-full origin-top rotate-[20deg]" />
+            </div>
+            {/* Legs */}
+            <div className="flex gap-4 -mt-4 z-0">
+              <div className="w-8 h-24 bg-gray-700 rounded-full origin-top rotate-[-10deg]" />
+              <div className="w-8 h-24 bg-gray-700 rounded-full origin-top rotate-[10deg]" />
+            </div>
           </motion.div>
 
           <div className="relative z-10 max-w-2xl mx-auto">
@@ -505,7 +542,7 @@ const Home = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/login" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:-translate-y-1">
-                ابدأ الآن مجاناً 🚀
+                ابدأ الآن
               </Link>
               <a href="#programs" className="px-10 py-5 bg-white/10 border border-white/20 text-white font-bold rounded-2xl text-xl hover:bg-white/20 transition transform hover:-translate-y-1">
                 اعرف المزيد ←
