@@ -14,41 +14,44 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-
-    // If identifier has @, it's an email, else it's a username. We send both, or whatever backend expects.
-    // Let's send username or email. We can just pass the identifier as `username` or `email`.
-    const isEmail = identifier.includes('@');
-    const credentials = isEmail 
-      ? { email: identifier, password } 
-      : { username: identifier, password };
+    // Send the identifier as 'username'. The backend's UnifiedAuthBackend will handle checking if it's an email or username.
+    const credentials = { username: identifier, password };
+    console.log("[LoginPage] Starting login process with credentials:", { username: identifier, password: '***HIDDEN***' });
 
     try {
+      console.log("[LoginPage] Calling POST /auth/login/");
       const res = await api.post('/auth/login/', credentials);
-      // login context method handles token storage and user fetching
-      // but if the AuthContext login method is expecting to take raw data, let's just pass credentials
-      // Wait, AuthContext handles the api call if we pass credentials? No, in our AuthContext we just use:
-      // login(res.data.user, res.data.access, res.data.refresh);
-      // Let's modify based on our AuthContext. Let's see what AuthContext actually does.
-      // Wait, the AuthContext `login` function takes (userData, accessToken, refreshToken).
-      // So we must do the api call here, then call login(userData, access, refresh).
-      // BUT WAIT, the AuthContext login function signature in my previous thought vs reality:
-      // In the real file `src/context/AuthContext.jsx`:
-      // const login = (userData, accessToken, refreshToken) => { ... }
+      console.log("[LoginPage] LOGIN RESPONSE STATUS:", res.status);
+      console.log("[LoginPage] LOGIN RESPONSE DATA:", res.data);
       
       const { access, refresh, user } = res.data;
+      
+      console.log("[LoginPage] Calling AuthContext.login()...");
       login(user, access, refresh);
+      console.log("[LoginPage] Tokens should now be in localStorage.");
+      console.log("[LoginPage] localStorage.accessToken:", localStorage.getItem('accessToken'));
+      console.log("[LoginPage] localStorage.refreshToken:", localStorage.getItem('refreshToken'));
+      console.log("[LoginPage] sessionStorage (all):", Object.keys(sessionStorage));
+      console.log("[LoginPage] cookies:", document.cookie);
 
-      // Role based redirect
-      if (user?.role === 'student') {
+      console.log(`[LoginPage] Evaluating role redirect. Backend role: '${user?.role}'`);
+      
+      // Role based redirect (matching uppercase backend choices)
+      if (user?.role === 'STUDENT' || user?.role === 'student') {
+        console.log(`[LoginPage] Frontend comparison: '${user?.role}' === 'STUDENT'. Match!`);
+        console.log(`[LoginPage] Triggering: navigate('/dashboard/student') at LoginPage.jsx:45`);
         navigate('/dashboard/student');
-      } else if (user?.role === 'admin' || user?.role === 'superadmin') {
+      } else if (user?.role === 'MODULE_ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'superadmin') {
+        console.log(`[LoginPage] Frontend comparison: '${user?.role}' matches ADMIN condition.`);
+        console.log(`[LoginPage] Triggering: navigate('/dashboard/admin') at LoginPage.jsx:49`);
         navigate('/dashboard/admin');
       } else {
+        console.log(`[LoginPage] Frontend comparison: '${user?.role}' did not match any roles! Redirecting to /`);
+        console.log(`[LoginPage] Triggering: navigate('/') at LoginPage.jsx:53`);
         navigate('/');
       }
     } catch (err) {
+      console.log("[LoginPage] EXCEPTION during login:", err.message);
       console.error(err);
       setError('بيانات الدخول غير صحيحة. يرجى المحاولة مرة أخرى.');
     } finally {
