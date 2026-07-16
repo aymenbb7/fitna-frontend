@@ -24,7 +24,7 @@ const LoginPage = () => {
       console.log("[LoginPage] LOGIN RESPONSE STATUS:", res.status);
       console.log("[LoginPage] LOGIN RESPONSE DATA:", res.data);
       
-      const { access, refresh, user } = res.data;
+      const { access, refresh, ...user } = res.data;
       
       console.log("[LoginPage] Calling AuthContext.login()...");
       login(user, access, refresh);
