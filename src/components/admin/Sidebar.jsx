@@ -9,7 +9,8 @@ import {
   Bell, 
   LineChart, 
   Settings, 
-  LogOut 
+  LogOut,
+  DollarSign
 } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -22,6 +23,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
     { icon: ShieldCheck, label: 'مشرفي الوحدات', path: '/dashboard/admin/module-admins' },
     { icon: BookOpen, label: 'الوحدات الدراسية', path: '/dashboard/admin/modules' },
     { icon: Layers, label: 'التصنيفات', path: '/dashboard/admin/categories' },
+    { icon: DollarSign, label: 'الإيرادات', path: '/dashboard/admin/revenue' },
     { icon: Bell, label: 'الإشعارات', path: '/dashboard/admin/notifications' },
     { icon: LineChart, label: 'الإحصائيات', path: '/dashboard/admin/analytics' },
     { icon: Settings, label: 'الإعدادات', path: '/dashboard/admin/settings' },

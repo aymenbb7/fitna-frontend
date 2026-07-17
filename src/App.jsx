@@ -21,17 +21,16 @@ import ModuleContent from './pages/dashboard/student/ModuleContent';
 import QuizPage from './pages/dashboard/student/QuizPage';
 import Notifications from './pages/dashboard/student/Notifications';
 import Profile from './pages/dashboard/student/Profile';
-// Admin Dashboard
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
-import { 
-  Students, 
-  Modules, 
-  Categories, 
-  Analytics, 
-  Notifications as AdminNotifications, 
-  AdminSettings 
-} from './pages/admin/Placeholders';
+import Revenue from './pages/admin/Revenue';
+import Students from './pages/admin/Students';
+import ModuleAdmins from './pages/admin/ModuleAdmins';
+import AdminNotifications from './pages/admin/AdminNotifications';
+import Modules from './pages/admin/Modules';
+import Categories from './pages/admin/Categories';
+import Analytics from './pages/admin/Analytics';
+import AdminSettings from './pages/admin/AdminSettings';
 
 function App() {
   return (
@@ -61,9 +60,10 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="students" element={<Students />} />
-            <Route path="module-admins" element={<Students />} /> {/* Reuse Students for now */}
+            <Route path="module-admins" element={<ModuleAdmins />} />
             <Route path="modules" element={<Modules />} />
             <Route path="categories" element={<Categories />} />
+            <Route path="revenue" element={<Revenue />} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<AdminSettings />} />
