@@ -21,6 +21,8 @@ import ModuleContent from './pages/dashboard/student/ModuleContent';
 import QuizPage from './pages/dashboard/student/QuizPage';
 import Notifications from './pages/dashboard/student/Notifications';
 import Profile from './pages/dashboard/student/Profile';
+// Admin Dashboard
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function App() {
   return (
@@ -38,6 +40,16 @@ function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="set-password" element={<SetPasswordPage />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
+
+          {/* Admin Dashboard Routes */}
+          <Route 
+            path="/dashboard/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MODULE_ADMIN']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Student Dashboard Routes */}
           <Route 
