@@ -22,7 +22,16 @@ import QuizPage from './pages/dashboard/student/QuizPage';
 import Notifications from './pages/dashboard/student/Notifications';
 import Profile from './pages/dashboard/student/Profile';
 // Admin Dashboard
-import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLayout from './layouts/AdminLayout';
+import Dashboard from './pages/admin/Dashboard';
+import { 
+  Students, 
+  Modules, 
+  Categories, 
+  Analytics, 
+  Notifications as AdminNotifications, 
+  AdminSettings 
+} from './pages/admin/Placeholders';
 
 function App() {
   return (
@@ -46,10 +55,19 @@ function App() {
             path="/dashboard/admin" 
             element={
               <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'MODULE_ADMIN']}>
-                <AdminDashboard />
+                <AdminLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="students" element={<Students />} />
+            <Route path="module-admins" element={<Students />} /> {/* Reuse Students for now */}
+            <Route path="modules" element={<Modules />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="settings" element={<AdminSettings />} />
+          </Route>
 
           {/* Student Dashboard Routes */}
           <Route 
