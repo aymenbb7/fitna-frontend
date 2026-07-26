@@ -17,58 +17,28 @@ const SYMBOLS = {
   'psychology': ['〰️', '⭕', '∞', '✨']
 };
 
-const ModulePage = () => {
-  const { slug } = useParams();
-  const [mod, setMod] = useState(null);
-  const [loading, setLoading] = useState(true);
+const SorobanLanding = () => {
+  const slug = 'soroban';
   const [isModalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    api.get(`/modules/${slug}/`)
-      .then(res => setMod(res.data))
-      .catch(err => {
-        console.error(err);
-        // Fallback for demo
-        setMod({
-          slug,
-          name: slug === 'quran' ? 'قسم التعليم القرآني' : slug,
-          description: 'الوصف الكامل للبرنامج سيظهر هنا. هذا نص تجريبي لتوضيح كيف سيبدو المحتوى.',
-          icon: slug === 'quran' ? '🕌' : '⭐',
-          color_primary: slug === 'quran' ? '#1B5E20' : '#1565C0',
-          price: 0
-        });
-      })
-      .finally(() => setLoading(false));
-  }, [slug]);
-
-  if (loading) return <div className="p-24 text-center">جاري التحميل...</div>;
-  if (!mod) return <div className="p-24 text-center">البرنامج غير موجود</div>;
+  const mod = {
+    slug: 'soroban',
+    name: 'الحساب الذهني (السوروبان)',
+    description: 'برنامج متكامل يهدف إلى تنمية قدرات التركيز، الذاكرة، وسرعة الحساب لدى الأطفال باستخدام المعداد الياباني.',
+    icon: '🧮',
+    color_primary: '#F59E0B',
+    price: 0
+  };
 
   const symbols = SYMBOLS[slug] || ['✨', '⭐', '🌟', '💫'];
-
-  const getArray = (val) => {
-    if (!val) return [];
-    try { return typeof val === 'string' ? JSON.parse(val) : val; } 
-    catch { return []; }
-  };
-  
-  const outcomes = getArray(mod.learning_outcomes);
-  const benefits = getArray(mod.benefits);
-  const heroImage = mod.hero_image ? api.defaults.baseURL.replace('/api/v1', '') + mod.hero_image : null;
 
   return (
     <div className="w-full">
       {/* Hero */}
       <section 
         className="relative pt-32 pb-24 overflow-hidden text-white"
-        style={{ 
-          background: heroImage 
-            ? `linear-gradient(135deg, rgba(13,11,43,0.8) 0%, rgba(13,11,43,0.95) 100%), url(${heroImage}) center/cover` 
-            : `linear-gradient(135deg, ${mod.color_primary || '#1B5E20'} 0%, #0D0B2B 150%)` 
-        }}
+        style={{ background: `linear-gradient(135deg, ${mod.color_primary} 0%, #0D0B2B 150%)` }}
       >
-        {!heroImage && symbols.map((sym, i) => (
+        {symbols.map((sym, i) => (
           <motion.div 
             key={i}
             animate={{ y: [0, -30, 0], opacity: [0.1, 0.4, 0.1] }} 
@@ -111,41 +81,20 @@ const ModulePage = () => {
 
       {/* Info Section */}
       <section className="py-24 bg-bgDark">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
-            {outcomes.length > 0 && (
-              <div className="bg-bgPurple rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl">
-                <h2 className="text-3xl font-black mb-8 flex items-center gap-3 text-white">
-                  <span className="w-2 h-8 rounded-full" style={{ backgroundColor: mod.color_primary }} />
-                  ماذا سيتعلم الطالب؟
-                </h2>
-                <ul className="space-y-4">
-                  {outcomes.map((outcome, i) => (
-                    <li key={i} className="flex items-start gap-3 text-lg text-gray-300">
-                      <CheckCircle2 className="mt-1 shrink-0 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" style={{ color: mod.color_primary }} />
-                      <span>{outcome}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            
-            {benefits.length > 0 && (
-              <div className="bg-bgPurple rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl">
-                <h2 className="text-3xl font-black mb-8 flex items-center gap-3 text-white">
-                  <span className="w-2 h-8 rounded-full" style={{ backgroundColor: mod.color_primary }} />
-                  الفوائد والمميزات
-                </h2>
-                <ul className="space-y-4">
-                  {benefits.map((benefit, i) => (
-                    <li key={i} className="flex items-start gap-3 text-lg text-gray-300">
-                      <CheckCircle2 className="mt-1 shrink-0 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" style={{ color: mod.color_primary }} />
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-bgPurple rounded-[3rem] p-8 md:p-12 border border-white/10 shadow-2xl">
+            <h2 className="text-3xl font-black mb-8 flex items-center gap-3 text-white">
+              <span className="w-2 h-8 rounded-full" style={{ backgroundColor: mod.color_primary }} />
+              ماذا سيتعلم الطالب؟
+            </h2>
+            <ul className="space-y-4">
+              {[1,2,3,4].map(i => (
+                <li key={i} className="flex items-start gap-3 text-lg text-gray-300">
+                  <CheckCircle2 className="mt-1 shrink-0 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]" style={{ color: mod.color_primary }} />
+                  <span>تطوير مهارات أساسية ومتقدمة في هذا المجال بطريقة عملية وتفاعلية تناسب جيل اليوم.</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -197,28 +146,7 @@ const EnrollmentModal = ({ mod, onClose }) => {
       setStatus('success');
     } catch (err) {
       console.error(err);
-      // Extract specific backend error messages if available
-      const data = err.response?.data;
-      let msg = 'حدث خطأ أثناء التسجيل. تأكد من صحة البيانات وأن الإيميل غير مسجل مسبقاً.';
-      if (data) {
-        if (typeof data === 'string') {
-          msg = data;
-        } else if (data.error) {
-          msg = data.error;
-        } else if (data.detail) {
-          msg = data.detail;
-        } else {
-          // Join field-level errors (e.g. {email: ["already registered"]})
-          const fieldErrors = Object.entries(data)
-            .map(([field, errors]) => {
-              const errorText = Array.isArray(errors) ? errors.join(' ') : errors;
-              return `${field}: ${errorText}`;
-            })
-            .join(' | ');
-          if (fieldErrors) msg = fieldErrors;
-        }
-      }
-      setErrorMessage(msg);
+      setErrorMessage('حدث خطأ أثناء التسجيل. تأكد من صحة البيانات وأن الإيميل غير مسجل مسبقاً.');
       setStatus('error');
     }
   };
@@ -286,4 +214,4 @@ const EnrollmentModal = ({ mod, onClose }) => {
   );
 };
 
-export default ModulePage;
+export default SorobanLanding;

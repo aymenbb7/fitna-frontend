@@ -8,6 +8,7 @@ import Layout from './components/Layout';
 import Home from './pages/public/Home';
 import ModulePage from './pages/public/ModulePage';
 import TrialPage from './pages/public/TrialPage';
+import SorobanLanding from './pages/public/SorobanLanding';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
@@ -21,6 +22,8 @@ import ModuleContent from './pages/dashboard/student/ModuleContent';
 import QuizPage from './pages/dashboard/student/QuizPage';
 import Notifications from './pages/dashboard/student/Notifications';
 import Profile from './pages/dashboard/student/Profile';
+
+// Admin Dashboard
 import AdminLayout from './layouts/AdminLayout';
 import Dashboard from './pages/admin/Dashboard';
 import Revenue from './pages/admin/Revenue';
@@ -28,9 +31,10 @@ import Students from './pages/admin/Students';
 import ModuleAdmins from './pages/admin/ModuleAdmins';
 import AdminNotifications from './pages/admin/AdminNotifications';
 import Modules from './pages/admin/Modules';
-import Categories from './pages/admin/Categories';
+import AdminModuleContent from './pages/admin/AdminModuleContent';
 import Analytics from './pages/admin/Analytics';
 import AdminSettings from './pages/admin/AdminSettings';
+import ModuleAdminModules from './pages/admin/ModuleAdminModules';
 
 function App() {
   return (
@@ -40,8 +44,11 @@ function App() {
           {/* Public Routes with standard layout */}
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="modules/soroban" element={<SorobanLanding />} />
+            <Route path="modules/سوروبان" element={<SorobanLanding />} />
             <Route path="modules/:slug" element={<ModulePage />} />
             <Route path="modules/:slug/trial" element={<TrialPage />} />
+            <Route path="modules/:slug/trial/quiz/:quizId" element={<QuizPage />} />
           </Route>
 
           {/* Auth Routes (No layout) */}
@@ -60,10 +67,11 @@ function App() {
           >
             <Route index element={<Dashboard />} />
             <Route path="students" element={<Students />} />
-            <Route path="module-admins" element={<ModuleAdmins />} />
-            <Route path="modules" element={<Modules />} />
-            <Route path="categories" element={<Categories />} />
-            <Route path="revenue" element={<Revenue />} />
+            <Route path="module-admins" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']}><ModuleAdmins /></ProtectedRoute>} />
+            <Route path="modules" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']}><Modules /></ProtectedRoute>} />
+            <Route path="my-modules" element={<ProtectedRoute allowedRoles={['MODULE_ADMIN']}><ModuleAdminModules /></ProtectedRoute>} />
+            <Route path="modules/:slug/content" element={<AdminModuleContent />} />
+            <Route path="revenue" element={<ProtectedRoute allowedRoles={['SUPER_ADMIN']}><Revenue /></ProtectedRoute>} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<AdminSettings />} />

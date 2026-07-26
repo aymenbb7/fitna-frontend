@@ -12,17 +12,12 @@ import {
   Calendar, 
   CreditCard,
   Download,
-  AlertCircle
+  AlertCircle,
+  BarChart,
+  PieChart,
+  Activity,
+  RefreshCw
 } from 'lucide-react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from 'recharts';
 import { Button } from '../../components/ui/Button';
 
 export const Revenue = () => {
@@ -38,7 +33,7 @@ export const Revenue = () => {
       setData(res.data);
     } catch (err) {
       console.error(err);
-      setError("حدث خطأ أثناء تحميل بيانات الإيرادات.");
+      setError("تعذر تحميل بيانات الأرباح.");
     } finally {
       setLoading(false);
     }
@@ -46,20 +41,36 @@ export const Revenue = () => {
 
   useEffect(() => {
     fetchRevenue();
+
+    // Auto-refresh when user returns to this tab (e.g. after approving a student)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchRevenue();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const handleExport = async (format) => {
     try {
-      // In a real application, you would trigger a download directly or fetch blob
-      window.open(`http://127.0.0.1:8000/api/v1/admin/revenue/export/?format=${format}`, '_blank');
+      const res = await api.get(`/admin/revenue/export/?format=${format}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `revenue.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     } catch (err) {
       console.error("Export failed", err);
+      alert("تعذر تصدير البيانات.");
     }
   };
 
   if (error) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-8 text-center bg-bgPurple rounded-3xl border border-white/5">
         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
         <h2 className="text-xl font-bold text-white mb-4">{error}</h2>
         <Button onClick={fetchRevenue} variant="primary">إعادة المحاولة</Button>
@@ -68,9 +79,9 @@ export const Revenue = () => {
   }
 
   const columns = [
-    { key: 'id', label: 'رقم الفاتورة' },
+    { key: 'id', label: 'رقم المعاملة' },
     { key: 'student', label: 'الطالب' },
-    { key: 'module', label: 'الوحدة الدراسية' },
+    { key: 'module', label: 'الوحدة' },
     { 
       key: 'amount', 
       label: 'المبلغ',
@@ -90,14 +101,33 @@ export const Revenue = () => {
   ];
 
   return (
-    <div className="space-y-8">
-      <PageHeader 
-        title="الإيرادات والمبيعات" 
-        description="تتبع المبيعات، الفواتير، وتحليل الأرباح"
-        actionLabel="تصدير كـ Excel"
-        actionIcon={Download}
-        onAction={() => handleExport('excel')}
-      />
+    <div className="space-y-8 pb-12">
+      <div className="flex justify-between items-end">
+        <PageHeader 
+          title="الأرباح والمبيعات" 
+          description="نظرة شاملة على الأرباح والمعاملات المالية"
+        />
+        <div className="flex gap-2 mb-8">
+          <Button 
+            onClick={fetchRevenue} 
+            variant="secondary" 
+            className="gap-2"
+            disabled={loading}
+          >
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            تحديث
+          </Button>
+          <Button onClick={() => handleExport('csv')} variant="secondary" className="gap-2">
+            <Download size={18} /> CSV
+          </Button>
+          <Button onClick={() => handleExport('excel')} className="gap-2 bg-green-600 hover:bg-green-700 text-white">
+            <Download size={18} /> Excel
+          </Button>
+          <Button onClick={() => handleExport('pdf')} className="gap-2 bg-red-600 hover:bg-red-700 text-white">
+            <Download size={18} /> PDF
+          </Button>
+        </div>
+      </div>
 
       {/* Main Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -110,103 +140,155 @@ export const Revenue = () => {
           </>
         ) : (
           <>
+            <div className="bg-gradient-to-br from-bgPurple to-bgDark p-6 rounded-3xl border border-accentGold/20 shadow-[0_0_30px_rgba(245,197,24,0.1)] relative overflow-hidden group">
+              <div className="absolute -right-4 -top-4 w-24 h-24 bg-accentGold/10 rounded-full blur-2xl group-hover:bg-accentGold/20 transition duration-500"></div>
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <p className="text-gray-400 font-bold mb-1">إجمالي الأرباح</p>
+                  <h3 className="text-3xl font-black text-white">{data?.total_revenue || 0} د.ج</h3>
+                </div>
+                <div className="p-3 bg-accentGold/10 text-accentGold rounded-2xl">
+                  <DollarSign size={24} />
+                </div>
+              </div>
+              <div className="flex items-center text-sm text-green-400 font-bold mt-4">
+                <TrendingUp size={16} className="mr-1" />
+                <span>شامل جميع المبيعات</span>
+              </div>
+            </div>
+
             <StatCard 
-              title="إجمالي الإيرادات" 
-              value={`${data.total_revenue} د.ج`} 
-              icon={DollarSign} 
-              colorClass="text-accentGold"
-            />
-            <StatCard 
-              title="إيرادات اليوم" 
-              value={`${data.revenue_today} د.ج`} 
-              icon={TrendingUp} 
+              title="أرباح اليوم" 
+              value={`${data?.revenue_today || 0} د.ج`} 
+              icon={Activity} 
               colorClass="text-green-400"
             />
             <StatCard 
-              title="هذا الشهر" 
-              value={`${data.revenue_this_month} د.ج`} 
+              title="أرباح هذا الشهر" 
+              value={`${data?.revenue_this_month || 0} د.ج`} 
               icon={Calendar} 
               colorClass="text-blue-400"
             />
             <StatCard 
-              title="متوسط قيمة الطلب" 
-              value={`${data.average_order_value.toFixed(2)} د.ج`} 
-              icon={CreditCard} 
+              title="أرباح هذه السنة" 
+              value={`${data?.revenue_this_year || 0} د.ج`} 
+              icon={BarChart} 
               colorClass="text-purple-400"
             />
           </>
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart */}
-        <div className="lg:col-span-2">
-          <Card className="h-[400px]">
-            <h3 className="text-lg font-bold text-white mb-6">الإيرادات (آخر 30 يوم)</h3>
-            {loading ? (
-              <div className="h-full flex items-center justify-center"><CardSkeleton className="w-full h-full" /></div>
-            ) : (
-              <ResponsiveContainer width="100%" height="85%">
-                <AreaChart data={data.daily_revenue}>
-                  <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#F5C518" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#F5C518" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                  <XAxis dataKey="date" stroke="#9CA3AF" fontSize={12} tickFormatter={(val) => val.split('-').slice(1).join('/')} />
-                  <YAxis stroke="#9CA3AF" fontSize={12} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: '#1E1B2E', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                    itemStyle={{ color: '#F5C518', fontWeight: 'bold' }}
-                  />
-                  <Area type="monotone" dataKey="revenue" stroke="#F5C518" fillOpacity={1} fill="url(#colorRevenue)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            )}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Module Revenue Table */}
+        <div className="lg:col-span-3">
+          <Card className="h-full" noPadding>
+            <div className="p-6 border-b border-white/5 flex justify-between items-center bg-bgPurple rounded-t-3xl">
+              <h3 className="text-xl font-black text-white flex items-center gap-2">
+                <PieChart className="text-accentGold" size={24} />
+                مبيعات الوحدات
+              </h3>
+            </div>
+            <div className="p-4 bg-bgDark rounded-b-3xl">
+              <DataTable 
+                columns={[
+                  { key: 'module__name', label: 'الوحدة التدريبية' },
+                  { 
+                    key: 'enrollment_count', 
+                    label: 'عدد المشتركين',
+                    render: (val) => <span className="font-bold text-blue-400">{val} مشترك</span>
+                  },
+                  { 
+                    key: 'total_revenue', 
+                    label: 'الإيرادات',
+                    render: (val) => <span className="font-black text-accentGold text-lg">{val} د.ج</span>
+                  }
+                ]}
+                data={data?.modules_revenue || []}
+                isLoading={loading}
+                searchPlaceholder="بحث في الوحدات..."
+                emptyStateTitle="لا توجد بيانات"
+                emptyStateDesc="لم يتم تسجيل مبيعات حتى الآن"
+              />
+            </div>
           </Card>
         </div>
 
-        {/* Top Modules */}
-        <div className="lg:col-span-1">
-          <Card className="h-[400px] overflow-hidden flex flex-col" noPadding>
-            <div className="p-6 border-b border-white/5">
-              <h3 className="text-lg font-bold text-white">الوحدات الأكثر مبيعاً</h3>
+        {/* Quick KPI Sidebar */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-bgPurple p-6 rounded-3xl border border-white/5 shadow-xl">
+            <h4 className="text-gray-400 font-bold mb-4 flex items-center gap-2">
+              <CreditCard size={18} />
+              متوسط قيمة الطلب
+            </h4>
+            <div className="text-3xl font-black text-white">
+              {Number(data?.average_order_value || 0).toFixed(0)} <span className="text-lg text-gray-500">د.ج</span>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {loading ? (
-                <TableSkeleton rows={4} />
-              ) : data.best_selling_modules.length === 0 ? (
-                <p className="text-gray-400 text-center mt-10">لا توجد مبيعات بعد</p>
-              ) : (
-                data.best_selling_modules.map((m, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/5 hover:border-white/10 transition-colors">
-                    <div>
-                      <p className="font-bold text-white">{m.module__name}</p>
-                      <p className="text-xs text-gray-400">{m.enrollment_count} عملية شراء</p>
-                    </div>
-                    <span className="font-bold text-accentGold">{m.total_revenue} د.ج</span>
-                  </div>
-                ))
-              )}
+          </div>
+          
+          <div className="bg-bgPurple p-6 rounded-3xl border border-white/5 shadow-xl">
+            <h4 className="text-gray-400 font-bold mb-4 flex items-center gap-2">
+              <TrendingUp size={18} />
+              أرباح هذا الأسبوع
+            </h4>
+            <div className="text-3xl font-black text-green-400">
+              {data?.revenue_this_week || 0} <span className="text-lg text-gray-500">د.ج</span>
             </div>
-          </Card>
+          </div>
+
+          <div className="bg-bgPurple p-6 rounded-3xl border border-white/5 shadow-xl">
+            <h4 className="text-gray-400 font-bold mb-4">حالة المدفوعات</h4>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-green-400 font-bold">مكتملة</span>
+                  <span className="text-white">{data?.successful_payments_count || 0}</span>
+                </div>
+                <div className="w-full bg-bgDark rounded-full h-2">
+                  <div className="bg-green-400 h-2 rounded-full" style={{ width: '80%' }}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-orange-400 font-bold">قيد الانتظار</span>
+                  <span className="text-white">{data?.pending_payments_count || 0}</span>
+                </div>
+                <div className="w-full bg-bgDark rounded-full h-2">
+                  <div className="bg-orange-400 h-2 rounded-full" style={{ width: '15%' }}></div>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-red-400 font-bold">مسترجعة</span>
+                  <span className="text-white">{data?.refunded_payments_count || 0}</span>
+                </div>
+                <div className="w-full bg-bgDark rounded-full h-2">
+                  <div className="bg-red-400 h-2 rounded-full" style={{ width: '5%' }}></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Transactions Table */}
-      <div>
-        <h3 className="text-xl font-bold text-white mb-6">أحدث العمليات</h3>
-        <DataTable 
-          columns={columns}
-          data={data?.latest_purchases || []}
-          isLoading={loading}
-          searchPlaceholder="ابحث برقم الفاتورة، الطالب..."
-          onExport={() => handleExport('csv')}
-          emptyStateTitle="لا توجد عمليات"
-          emptyStateDesc="لم يتم تسجيل أي عمليات شراء مؤخراً."
-        />
+      <div className="mt-12">
+        <h3 className="text-2xl font-black text-white mb-6 flex items-center gap-3">
+          <Activity className="text-accentGold" />
+          أحدث المعاملات
+        </h3>
+        <Card noPadding className="overflow-hidden">
+          <div className="p-2 bg-bgDark rounded-b-3xl">
+            <DataTable 
+              columns={columns}
+              data={data?.latest_purchases || []}
+              isLoading={loading}
+              searchPlaceholder="البحث في المعاملات..."
+              emptyStateTitle="لا توجد معاملات"
+              emptyStateDesc="لم يتم تسجيل أي معاملات مؤخراً"
+            />
+          </div>
+        </Card>
       </div>
 
     </div>

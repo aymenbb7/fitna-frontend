@@ -3,24 +3,40 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { DataTable } from '../../components/ui/DataTable';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { UserPlus, AlertCircle } from 'lucide-react';
+import { UserPlus, AlertCircle, Eye } from 'lucide-react';
 import api from '../../api/axios';
+
+import { AddStudentModal } from '../../components/admin/modals/AddStudentModal';
+import { ViewStudentModulesModal } from '../../components/admin/modals/ViewStudentModulesModal';
+import { ResetPasswordModal } from '../../components/admin/modals/ResetPasswordModal';
+import { EnrollStudentModal } from '../../components/admin/modals/EnrollStudentModal';
+import { UpdateStudentModal } from '../../components/admin/modals/UpdateStudentModal';
+
+import { useSearchParams } from 'react-router-dom';
 
 export const Students = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [selectedStudentForModules, setSelectedStudentForModules] = useState(null);
+  const [selectedStudentForPassword, setSelectedStudentForPassword] = useState(null);
+  const [selectedStudentForEnrollment, setSelectedStudentForEnrollment] = useState(null);
+  const [selectedStudentForUpdate, setSelectedStudentForUpdate] = useState(null);
 
   const fetchStudents = async () => {
     try {
       setLoading(true);
       setError(null);
-      // The API returns all users, we filter for students
-      const res = await api.get('/admin/users/');
+      const q = searchParams.get('search');
+      const url = q ? `/admin/users/?search=${encodeURIComponent(q)}` : '/admin/users/';
+      const res = await api.get(url);
       setStudents(res.data.filter(u => u.role === 'STUDENT'));
     } catch (err) {
       console.error(err);
-      setError("حدث خطأ أثناء تحميل بيانات الطلاب.");
+      setError("حدث خطأ أثناء تحميل البيانات.");
     } finally {
       setLoading(false);
     }
@@ -28,11 +44,26 @@ export const Students = () => {
 
   useEffect(() => {
     fetchStudents();
-  }, []);
+  }, [searchParams]);
 
   const handleStatusChange = async (student, newStatus) => {
-    // In a real app, this would hit an API endpoint to update the student's status
-    console.log(`Setting status of ${student.email} to ${newStatus}`);
+    if (!window.confirm(`هل أنت متأكد من ${newStatus ? 'تفعيل' : 'إيقاف'} حساب ${student.full_name}؟`)) return;
+    try {
+      await api.post(`/admin/users/${student.id}/status/`, { is_active: newStatus });
+      fetchStudents();
+    } catch (err) {
+      alert("حدث خطأ أثناء تغيير حالة الحساب.");
+    }
+  };
+
+  const handleDelete = async (student) => {
+    if (!window.confirm(`هل أنت متأكد من حذف حساب ${student.full_name} بشكل نهائي؟ هذا الإجراء لا يمكن التراجع عنه.`)) return;
+    try {
+      await api.delete(`/admin/users/${student.id}/`);
+      fetchStudents();
+    } catch (err) {
+      alert("حدث خطأ أثناء حذف الحساب.");
+    }
   };
 
   const columns = [
@@ -53,12 +84,18 @@ export const Students = () => {
     },
     { 
       key: 'enrolled_modules', 
-      label: 'الوحدات',
-      render: (val) => (
-        <div className="flex flex-wrap gap-1 max-w-[200px]">
-          {val && val.length > 0 ? val.map((m, i) => (
-            <Badge key={i} variant="primary">{m.name}</Badge>
-          )) : <span className="text-gray-500 text-xs">لا يوجد</span>}
+      label: 'عدد الوحدات',
+      render: (val, row) => (
+        <div className="flex items-center gap-2">
+          <Badge variant="primary">{val ? val.length : 0} وحدات</Badge>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setSelectedStudentForModules(row)}
+            title="الملف الشخصي والوحدات"
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
         </div>
       )
     },
@@ -84,15 +121,12 @@ export const Students = () => {
   ];
 
   const rowActions = [
-    { label: 'عرض الملف الشخصي', onClick: (row) => console.log('View', row) },
-    { label: 'تعديل البيانات', onClick: (row) => console.log('Edit', row) },
-    { label: 'إعادة تعيين كلمة المرور', onClick: (row) => console.log('Reset Password', row) },
-    { label: 'تفعيل/إيقاف الحساب', danger: true, onClick: (row) => handleStatusChange(row, !row.is_active) }
-  ];
-
-  const bulkActions = [
-    { label: 'تفعيل المحدد', onClick: (ids) => console.log('Activate', ids) },
-    { label: 'إيقاف المحدد', danger: true, onClick: (ids) => console.log('Suspend', ids) }
+    { label: 'الملف الشخصي', onClick: (row) => setSelectedStudentForModules(row) },
+    { label: 'تسجيل في وحدة جديدة', onClick: (row) => setSelectedStudentForEnrollment(row) },
+    { label: 'تعديل البيانات', onClick: (row) => setSelectedStudentForUpdate(row) },
+    { label: 'إعادة تعيين كلمة المرور', onClick: (row) => setSelectedStudentForPassword(row) },
+    { label: (row) => row.is_active ? 'إيقاف الحساب' : 'تفعيل الحساب', danger: (row) => row.is_active, onClick: (row) => handleStatusChange(row, !row.is_active) },
+    { label: 'حذف الحساب', danger: true, onClick: (row) => handleDelete(row) }
   ];
 
   if (error) {
@@ -105,6 +139,21 @@ export const Students = () => {
     );
   }
 
+  const handleExport = async (format) => {
+    try {
+      const res = await api.get(`/admin/users/export/?role=STUDENT&format=${format}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `students.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      alert("حدث خطأ أثناء التصدير.");
+    }
+  };
+
   return (
     <div className="space-y-8">
       <PageHeader 
@@ -112,7 +161,40 @@ export const Students = () => {
         description="عرض وإدارة حسابات الطلاب، وتتبع نشاطهم في المنصة"
         actionLabel="إضافة طالب"
         actionIcon={UserPlus}
-        onAction={() => console.log("Open Add Student Modal")}
+        onAction={() => setIsAddOpen(true)}
+      />
+
+      <AddStudentModal 
+        isOpen={isAddOpen} 
+        onClose={() => setIsAddOpen(false)}
+        onSuccess={() => { fetchStudents(); }}
+      />
+
+      <EnrollStudentModal
+        isOpen={!!selectedStudentForEnrollment}
+        onClose={() => setSelectedStudentForEnrollment(null)}
+        student={selectedStudentForEnrollment}
+        onSuccess={() => { fetchStudents(); }}
+      />
+
+      <UpdateStudentModal
+        isOpen={!!selectedStudentForUpdate}
+        onClose={() => setSelectedStudentForUpdate(null)}
+        student={selectedStudentForUpdate}
+        onSuccess={() => { fetchStudents(); setSelectedStudentForUpdate(null); }}
+      />
+
+      <ViewStudentModulesModal 
+        isOpen={!!selectedStudentForModules}
+        onClose={() => setSelectedStudentForModules(null)}
+        student={selectedStudentForModules}
+        onRemove={() => fetchStudents()}
+      />
+
+      <ResetPasswordModal 
+        isOpen={!!selectedStudentForPassword}
+        onClose={() => setSelectedStudentForPassword(null)}
+        user={selectedStudentForPassword}
       />
 
       <DataTable 
@@ -121,8 +203,7 @@ export const Students = () => {
         isLoading={loading}
         searchPlaceholder="ابحث بالاسم، البريد الإلكتروني..."
         rowActions={rowActions}
-        bulkActions={bulkActions}
-        onExport={() => console.log("Export Students CSV")}
+        onExport={handleExport}
         emptyStateTitle="لا يوجد طلاب"
         emptyStateDesc="لم يتم العثور على طلاب مسجلين في المنصة."
       />

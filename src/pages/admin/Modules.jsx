@@ -3,23 +3,39 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { DataTable } from '../../components/ui/DataTable';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { BookOpen, AlertCircle } from 'lucide-react';
+import { BookOpen, AlertCircle, Users } from 'lucide-react';
 import api from '../../api/axios';
+
+import { AddModuleModal } from '../../components/admin/modals/AddModuleModal';
+import { ViewModuleStudentsModal } from '../../components/admin/modals/ViewModuleStudentsModal';
+import { UpdateModuleModal } from '../../components/admin/modals/UpdateModuleModal';
+import { ViewModuleStatsModal } from '../../components/admin/modals/ViewModuleStatsModal';
+
+import { useSearchParams, useNavigate } from 'react-router-dom';
 
 export const Modules = () => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [selectedModuleForStudents, setSelectedModuleForStudents] = useState(null);
+  const [selectedModuleForUpdate, setSelectedModuleForUpdate] = useState(null);
+  const [selectedModuleForStats, setSelectedModuleForStats] = useState(null);
 
   const fetchModules = async () => {
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get('/admin/modules/');
+      const q = searchParams.get('search');
+      const url = q ? `/admin/modules/?search=${encodeURIComponent(q)}` : '/admin/modules/';
+      const res = await api.get(url);
       setModules(res.data);
     } catch (err) {
       console.error(err);
-      setError("حدث خطأ أثناء تحميل بيانات الوحدات الدراسية.");
+      setError("حدث خطأ أثناء تحميل البيانات.");
     } finally {
       setLoading(false);
     }
@@ -27,7 +43,17 @@ export const Modules = () => {
 
   useEffect(() => {
     fetchModules();
-  }, []);
+  }, [searchParams]);
+
+  const handleToggleActive = async (module) => {
+    if (!window.confirm(`هل أنت متأكد من ${module.is_active ? 'تعطيل' : 'تفعيل'} هذه الوحدة؟`)) return;
+    try {
+      await api.post(`/admin/modules/${module.slug}/update/`, { is_active: !module.is_active });
+      fetchModules();
+    } catch (err) {
+      alert("حدث خطأ أثناء تغيير حالة الوحدة.");
+    }
+  };
 
   const columns = [
     { 
@@ -48,7 +74,24 @@ export const Modules = () => {
     {
       key: 'student_count',
       label: 'عدد الطلاب',
-      render: (val) => <span className="font-bold text-accentGold">{val}</span>
+      render: (val, row) => (
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-accentGold">{val}</span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setSelectedModuleForStudents(row)}
+            title="عرض الطلاب"
+          >
+            <Users className="w-4 h-4" />
+          </Button>
+        </div>
+      )
+    },
+    {
+      key: 'price',
+      label: 'السعر',
+      render: (val) => <span className="font-bold text-white">{val || 0} د.ج</span>
     },
     {
       key: 'is_active',
@@ -59,10 +102,21 @@ export const Modules = () => {
     }
   ];
 
+  const handleDelete = async (module) => {
+    if (!window.confirm(`هل أنت متأكد من حذف الوحدة الدراسية "${module.name}" بشكل نهائي؟`)) return;
+    try {
+      await api.delete(`/admin/modules/${module.slug}/`);
+      fetchModules();
+    } catch (err) {
+      alert("حدث خطأ أثناء حذف الوحدة.");
+    }
+  };
+
   const rowActions = [
-    { label: 'إعدادات الوحدة', onClick: (row) => console.log('Settings', row) },
-    { label: 'تعيين مشرف', onClick: (row) => console.log('Assign Admin', row) },
-    { label: 'تفعيل/تعطيل الوحدة', danger: true, onClick: (row) => console.log('Toggle Active', row) }
+    { label: 'إحصائيات الوحدة', onClick: (row) => setSelectedModuleForStats(row) },
+    { label: 'حذف الوحدة', danger: true, onClick: (row) => handleDelete(row) },
+    { label: 'إعدادات الوحدة', onClick: (row) => setSelectedModuleForUpdate(row) },
+    { label: (row) => row.is_active ? 'تعطيل الوحدة' : 'تفعيل الوحدة', danger: (row) => row.is_active, onClick: (row) => handleToggleActive(row) }
   ];
 
   if (error) {
@@ -82,7 +136,32 @@ export const Modules = () => {
         description="إدارة جميع الوحدات الدراسية المتاحة على المنصة"
         actionLabel="إنشاء وحدة"
         actionIcon={BookOpen}
-        onAction={() => console.log("Open Create Module Modal")}
+        onAction={() => setIsAddOpen(true)}
+      />
+
+      <AddModuleModal 
+        isOpen={isAddOpen} 
+        onClose={() => setIsAddOpen(false)}
+        onSuccess={() => { fetchModules(); setIsAddOpen(false); }}
+      />
+
+      <ViewModuleStudentsModal 
+        isOpen={!!selectedModuleForStudents}
+        onClose={() => setSelectedModuleForStudents(null)}
+        module={selectedModuleForStudents}
+      />
+
+      <UpdateModuleModal 
+        isOpen={!!selectedModuleForUpdate}
+        onClose={() => setSelectedModuleForUpdate(null)}
+        module={selectedModuleForUpdate}
+        onSuccess={() => { fetchModules(); setSelectedModuleForUpdate(null); }}
+      />
+      
+      <ViewModuleStatsModal 
+        isOpen={!!selectedModuleForStats}
+        onClose={() => setSelectedModuleForStats(null)}
+        module={selectedModuleForStats}
       />
 
       <DataTable 

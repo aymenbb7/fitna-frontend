@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { BookOpen, Bell, User, LogOut, Menu, X, LayoutDashboard } from 'lucide-react';
+import { BookOpen, Bell, User, LogOut, Menu, X, LayoutDashboard, UserCircle } from 'lucide-react';
+import { NotificationDropdown } from '../ui/NotificationDropdown';
 
 const StudentLayout = () => {
   const { user, logout } = useContext(AuthContext);
@@ -18,9 +19,12 @@ const StudentLayout = () => {
       {/* Mobile Topbar */}
       <div className="md:hidden flex items-center justify-between bg-bgDark p-4 border-b border-white/5 relative z-30">
         <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">فطنة</h1>
-        <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-gray-300 hover:text-white transition">
-          {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+        <div className="flex items-center gap-4">
+          <NotificationDropdown />
+          <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-gray-300 hover:text-white transition">
+            {isSidebarOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar */}
@@ -84,14 +88,35 @@ const StudentLayout = () => {
           onClick={() => setSidebarOpen(false)}
         />
       )}
-
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-bgDarker relative">
-        {/* Subtle grid background to match dark gamified theme but minimal */}
-        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        
-        <div className="p-4 md:p-8 relative z-10 max-w-5xl mx-auto">
-          <Outlet />
+      <main className="flex-1 flex flex-col h-screen overflow-hidden bg-bgDarker relative">
+        {/* Desktop Topbar */}
+        <header className="hidden md:flex items-center justify-end px-8 py-4 bg-bgDarker/80 backdrop-blur-md border-b border-white/5 z-20">
+          <div className="flex items-center gap-4">
+            <NotificationDropdown />
+            <div className="h-8 w-px bg-white/10 mx-2"></div>
+            <div className="flex items-center gap-3">
+              <div className="text-left">
+                <p className="text-sm font-bold text-white leading-none mb-1 text-right">{user?.full_name || 'طالب فطنة'}</p>
+                <p className="text-xs text-gray-400 font-bold text-right">طالب</p>
+              </div>
+              <div className="w-10 h-10 rounded-full bg-accentGold/20 border border-accentGold/50 flex items-center justify-center text-accentGold">
+                {user?.profile_picture ? (
+                  <img src={user.profile_picture} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  <UserCircle className="w-6 h-6" />
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-y-auto relative p-4 md:p-8">
+          <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
+          <div className="relative z-10 max-w-5xl mx-auto">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
@@ -99,3 +124,4 @@ const StudentLayout = () => {
 };
 
 export default StudentLayout;
+

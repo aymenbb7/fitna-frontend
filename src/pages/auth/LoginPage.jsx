@@ -14,45 +14,25 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     // Send the identifier as 'username'. The backend's UnifiedAuthBackend will handle checking if it's an email or username.
     const credentials = { username: identifier, password };
-    console.log("[LoginPage] Starting login process with credentials:", { username: identifier, password: '***HIDDEN***' });
 
     try {
-      console.log("[LoginPage] Calling POST /auth/login/");
       const res = await api.post('/auth/login/', credentials);
-      console.log("[LoginPage] LOGIN RESPONSE STATUS:", res.status);
-      console.log("[LoginPage] LOGIN RESPONSE DATA:", res.data);
-      
       const { access, refresh, ...user } = res.data;
-      
-      console.log("[LoginPage] Calling AuthContext.login()...");
-      login(user, access, refresh);
-      console.log("[LoginPage] Tokens should now be in localStorage.");
-      console.log("[LoginPage] localStorage.accessToken:", localStorage.getItem('accessToken'));
-      console.log("[LoginPage] localStorage.refreshToken:", localStorage.getItem('refreshToken'));
-      console.log("[LoginPage] sessionStorage (all):", Object.keys(sessionStorage));
-      console.log("[LoginPage] cookies:", document.cookie);
 
-      console.log(`[LoginPage] Evaluating role redirect. Backend role: '${user?.role}'`);
-      
+      login(user, access, refresh);
+
       // Role based redirect (matching uppercase backend choices)
       if (user?.role === 'STUDENT' || user?.role === 'student') {
-        console.log(`[LoginPage] Frontend comparison: '${user?.role}' === 'STUDENT'. Match!`);
-        console.log(`[LoginPage] Triggering: navigate('/dashboard/student') at LoginPage.jsx:45`);
         navigate('/dashboard/student');
       } else if (user?.role === 'MODULE_ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'superadmin') {
-        console.log(`[LoginPage] Frontend comparison: '${user?.role}' matches ADMIN condition.`);
-        console.log(`[LoginPage] Triggering: navigate('/dashboard/admin') at LoginPage.jsx:49`);
         navigate('/dashboard/admin');
       } else {
-        console.log(`[LoginPage] Frontend comparison: '${user?.role}' did not match any roles! Redirecting to /`);
-        console.log(`[LoginPage] Triggering: navigate('/') at LoginPage.jsx:53`);
         navigate('/');
       }
     } catch (err) {
-      console.log("[LoginPage] EXCEPTION during login:", err.message);
-      console.error(err);
       setError('بيانات الدخول غير صحيحة. يرجى المحاولة مرة أخرى.');
     } finally {
       setLoading(false);
@@ -82,13 +62,13 @@ const LoginPage = () => {
             <label className="block text-gray-300 font-bold mb-2">اسم المستخدم أو البريد الإلكتروني</label>
             <div className="relative">
               <User className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 dir="ltr"
                 required
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition" 
+                className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition"
                 placeholder="username / email"
                 autoComplete="off"
               />
@@ -99,13 +79,13 @@ const LoginPage = () => {
             <label className="block text-gray-300 font-bold mb-2">كلمة المرور</label>
             <div className="relative">
               <Lock className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
-              <input 
-                type="password" 
+              <input
+                type="password"
                 dir="ltr"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition" 
+                className="w-full bg-bgDark border border-white/10 rounded-xl py-3 pl-4 pr-12 text-white text-left focus:border-accentGold focus:outline-none transition"
                 placeholder="••••••••"
                 autoComplete="new-password"
               />
@@ -115,8 +95,8 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
             className="w-full bg-accentGold text-bgDark font-black py-4 rounded-xl text-lg hover:scale-[1.02] transition shadow-[0_0_15px_rgba(245,197,24,0.3)] disabled:opacity-50 disabled:hover:scale-100"
           >

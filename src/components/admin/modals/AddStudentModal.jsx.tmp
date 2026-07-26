@@ -1,0 +1,285 @@
+﻿import React, { useState, useEffect } from 'react';
+import { Button } from '../../ui/Button';
+import { RefreshCw, Copy, CheckCircle } from 'lucide-react';
+import api from '../../../api/axios';
+
+export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
+  const [email, setEmail] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [password, setPassword] = useState('');
+  const [modules, setModules] = useState([]); // all available modules
+  const [selectedModules, setSelectedModules] = useState([]);
+  const [payments, setPayments] = useState({});
+  
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  const [createdStudent, setCreatedStudent] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchModules();
+      generatePassword();
+      setCreatedStudent(null);
+      setEmail('');
+      setFullName('');
+      setSelectedModules([]);
+      setPayments({});
+    }
+  }, [isOpen]);
+
+  const fetchModules = async () => {
+    try {
+      const res = await api.get('/admin/modules/');
+      setModules(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const generatePassword = () => {
+    const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let pass = "";
+    for (let i = 0; i < 12; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setPassword(pass);
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePaymentChange = (slug, field, value) => {
+    setPayments(prev => ({
+      ...prev,
+      [slug]: {
+        ...prev[slug],
+        [field]: value
+      }
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const paymentsData = selectedModules.map(slug => ({
+        module_slug: slug,
+        ...payments[slug]
+      }));
+
+      const res = await api.post('/admin/students/create/', {
+        email,
+        full_name: fullName,
+        password,
+        modules: selectedModules,
+        payments: paymentsData
+      });
+      setCreatedStudent(res.data.student);
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      setError(err.response?.data?.error || "حدث خطأ أثناء إنشاء الحساب.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4 py-8">
+      <div className="bg-bgDarker border border-white/10 rounded-2xl w-full max-w-2xl p-6 max-h-[85vh] overflow-y-auto flex flex-col">
+        
+        {createdStudent ? (
+          <div className="space-y-6 text-center">
+            <div className="w-16 h-16 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold text-white">تم إنشاء الحساب بنجاح!</h3>
+            
+            <div className="bg-bgDark p-4 rounded-xl text-left border border-white/10 mt-4 relative">
+              <p className="text-sm text-gray-400 mb-1">البريد الإلكتروني:</p>
+              <p className="text-white font-bold mb-4">{email}</p>
+              
+              <p className="text-sm text-gray-400 mb-1">كلمة المرور:</p>
+              <p className="text-white font-bold font-mono">{password}</p>
+            </div>
+            
+            <div className="flex gap-4 mt-6">
+              <Button 
+                variant="secondary" 
+                className="flex-1 justify-center" 
+                onClick={handleCopy}
+              >
+                {copied ? 'تم النسخ!' : 'نسخ معلومات الدخول'}
+                {!copied && <Copy className="w-4 h-4 mr-2" />}
+              </Button>
+              <Button 
+                variant="primary" 
+                className="flex-1 justify-center" 
+                onClick={onClose}
+              >
+                إغلاق
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">إضافة طالب جديد</h3>
+              <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
+            </div>
+            
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/50 text-red-500 p-3 rounded-xl mb-4 text-sm font-bold">
+                {error}
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit} className="space-y-4 overflow-y-auto flex-1 pr-2 custom-scrollbar">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-400 mb-1">الاسم الكامل</label>
+                  <input 
+                    type="text" 
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                    className="w-full bg-bgDark border border-white/10 rounded-xl py-2 px-4 text-white focus:outline-none focus:border-accentGold" 
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-bold text-gray-400 mb-1">البريد الإلكتروني</label>
+                  <input 
+                    type="email" 
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className="w-full bg-bgDark border border-white/10 rounded-xl py-2 px-4 text-white focus:outline-none focus:border-accentGold" 
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-bold text-gray-400 mb-1">كلمة المرور</label>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="flex-1 bg-bgDark border border-white/10 rounded-xl py-2 px-4 text-white focus:outline-none focus:border-accentGold font-mono" 
+                    required
+                  />
+                  <Button type="button" variant="secondary" onClick={generatePassword} title="توليد كلمة مرور جديدة">
+                    <RefreshCw className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-400 mb-1">تعيين وحدات دراسية (اختياري)</label>
+                <div className="bg-bgDark border border-white/10 rounded-xl p-4 max-h-48 overflow-y-auto space-y-2 custom-scrollbar">
+                  {modules.map(m => (
+                    <label key={m.slug} className="flex items-center space-x-3 space-x-reverse cursor-pointer p-2 hover:bg-white/5 rounded-lg transition-colors">
+                      <input 
+                        type="checkbox"
+                        checked={selectedModules.includes(m.slug)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          let newSelected = [...selectedModules];
+                          if (checked) {
+                            newSelected.push(m.slug);
+                            // Initialize payment info
+                            const newPayments = { ...payments };
+                            if (!newPayments[m.slug]) {
+                              newPayments[m.slug] = {
+                                method: 'CASH',
+                                receipt_number: '',
+                                notes: ''
+                              };
+                            }
+                            setPayments(newPayments);
+                          } else {
+                            newSelected = newSelected.filter(slug => slug !== m.slug);
+                          }
+                          setSelectedModules(newSelected);
+                        }}
+                        className="form-checkbox h-5 w-5 text-accentGold border-gray-600 rounded focus:ring-accentGold focus:ring-offset-bgDark bg-bgDarker"
+                      />
+                      <span className="text-white text-sm font-medium">{m.name} <span className="text-gray-400">({m.price} د.ج)</span></span>
+                    </label>
+                  ))}
+                  {modules.length === 0 && (
+                    <p className="text-sm text-gray-500 text-center">لا توجد وحدات متاحة</p>
+                  )}
+                </div>
+              </div>
+              
+              {selectedModules.length > 0 && (
+                <div className="bg-bgPurple/30 p-4 rounded-xl border border-white/10 space-y-4 max-h-60 overflow-y-auto">
+                  <h4 className="font-bold text-accentGold mb-2">تفاصيل الدفع (لكل وحدة)</h4>
+                  {selectedModules.map(slug => {
+                    const mod = modules.find(m => m.slug === slug);
+                    const p = payments[slug] || {};
+                    return (
+                      <div key={slug} className="border-b border-white/5 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                        <p className="font-bold text-white mb-2">{mod?.name}</p>
+                        <div className="grid grid-cols-2 gap-3 mb-2">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">طريقة الدفع</label>
+                            <select
+                              value={p.method || 'CASH'}
+                              onChange={e => handlePaymentChange(slug, 'method', e.target.value)}
+                              className="w-full bg-bgDark border border-white/10 rounded-lg py-1 px-2 text-white text-sm focus:border-accentGold"
+                            >
+                              <option value="CASH">نقداً</option>
+                              <option value="EDAHABIA">البطاقة الذهبية</option>
+                              <option value="BARIDIMOB">بريدي موب</option>
+                              <option value="BANK_TRANSFER">تحويل بنكي</option>
+                              <option value="OTHER">أخرى</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">رقم الإيصال (اختياري)</label>
+                            <input 
+                              type="text"
+                              value={p.receipt_number || ''}
+                              onChange={e => handlePaymentChange(slug, 'receipt_number', e.target.value)}
+                              className="w-full bg-bgDark border border-white/10 rounded-lg py-1 px-2 text-white text-sm focus:border-accentGold"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-400 mb-1">ملاحظات (اختياري)</label>
+                            <input 
+                              type="text"
+                              value={p.notes || ''}
+                              onChange={e => handlePaymentChange(slug, 'notes', e.target.value)}
+                              className="w-full bg-bgDark border border-white/10 rounded-lg py-1 px-2 text-white text-sm focus:border-accentGold"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              
+              <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+                {loading ? 'جاري الإنشاء...' : 'إنشاء حساب الطالب'}
+              </Button>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+

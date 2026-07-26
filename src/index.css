@@ -3,8 +3,95 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Luxury Purple (default) */
+    --color-bg-dark: 13 11 43;      /* #0D0B2B */
+    --color-bg-darker: 26 10 75;    /* #1A0A4B */
+    --color-bg-purple: 18 8 56;     /* #120838 */
+    --color-accent-gold: 245 197 24;/* #F5C518 */
+    --color-accent-purple: 124 58 237; /* #7C3AED */
+  }
+
+  [data-theme='kids'] {
+    /* Kids Theme */
+    --color-bg-dark: 236 253 245;      /* #ECFDF5 light mint */
+    --color-bg-darker: 253 230 138;    /* #FDE68A warm yellow */
+    --color-bg-purple: 254 243 199;    /* #FEF3C7 lighter yellow */
+    --color-accent-gold: 239 68 68;    /* #EF4444 bright red */
+    --color-accent-purple: 59 130 246; /* #3B82F6 bright blue */
+  }
+
+  [data-theme='professional'] {
+    /* Professional Blue */
+    --color-bg-dark: 15 23 42;         /* #0F172A slate 900 */
+    --color-bg-darker: 2 6 23;         /* #020617 slate 950 */
+    --color-bg-purple: 30 41 59;       /* #1E293B slate 800 */
+    --color-accent-gold: 14 165 233;   /* #0EA5E9 sky 500 */
+    --color-accent-purple: 99 102 241; /* #6366F1 indigo 500 */
+  }
+
   body {
-    @apply font-sans bg-bgDark text-gray-100 antialiased selection:bg-accentGold selection:text-bgDark;
+    @apply font-sans bg-bgDark text-gray-100 antialiased selection:bg-accentGold selection:text-bgDark leading-loose;
+  }
+
+  [data-theme='ocean'] {
+    --color-bg-dark: 8 47 73;         /* sky 900 */
+    --color-bg-darker: 4 29 48;       /* darker sky */
+    --color-bg-purple: 12 74 110;     /* sky 800 */
+    --color-accent-gold: 45 212 191;  /* teal 400 */
+    --color-accent-purple: 56 189 248;/* sky 400 */
+  }
+
+  [data-theme='nature'] {
+    --color-bg-dark: 6 78 59;         /* emerald 900 */
+    --color-bg-darker: 2 44 34;       /* emerald 950 */
+    --color-bg-purple: 4 120 87;      /* emerald 800 */
+    --color-accent-gold: 163 230 53;  /* lime 400 */
+    --color-accent-purple: 52 211 153;/* emerald 400 */
+  }
+
+  [data-theme='sunset'] {
+    --color-bg-dark: 88 28 135;       /* purple 900 */
+    --color-bg-darker: 59 7 100;      /* purple 950 */
+    --color-bg-purple: 126 34 206;    /* purple 800 */
+    --color-accent-gold: 251 146 60;  /* orange 400 */
+    --color-accent-purple: 244 114 182;/* pink 400 */
+  }
+
+  [data-theme='cyberpunk'] {
+    --color-bg-dark: 24 24 27;        /* zinc 900 */
+    --color-bg-darker: 9 9 11;        /* zinc 950 */
+    --color-bg-purple: 39 39 42;      /* zinc 800 */
+    --color-accent-gold: 236 72 153;  /* pink 500 */
+    --color-accent-purple: 6 182 212; /* cyan 500 */
+  }
+
+  [data-theme='midnight'] {
+    --color-bg-dark: 0 0 0;           /* black */
+    --color-bg-darker: 10 10 10;      /* neutral 950 */
+    --color-bg-purple: 23 23 23;      /* neutral 900 */
+    --color-accent-gold: 248 250 252; /* slate 50 */
+    --color-accent-purple: 148 163 184;/* slate 400 */
+  }
+
+  [data-theme='coffee'] {
+    --color-bg-dark: 69 26 3;         /* orange 950 */
+    --color-bg-darker: 42 16 2;       /* darker orange */
+    --color-bg-purple: 124 45 18;     /* orange 900 */
+    --color-accent-gold: 253 186 116; /* orange 300 */
+    --color-accent-purple: 217 119 6; /* amber 600 */
+  }
+
+  [data-theme='rose'] {
+    --color-bg-dark: 136 19 55;       /* rose 900 */
+    --color-bg-darker: 76 5 25;       /* rose 950 */
+    --color-bg-purple: 159 18 57;     /* rose 800 */
+    --color-accent-gold: 253 164 175; /* rose 300 */
+    --color-accent-purple: 251 113 133;/* rose 400 */
+  }
+
+  [data-theme='kids'] body {
+    @apply text-gray-800; /* Darker text for light background */
   }
 }
 
@@ -16,3 +103,4 @@
     direction: ltr;
   }
 }
+

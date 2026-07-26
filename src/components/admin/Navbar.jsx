@@ -1,9 +1,22 @@
 import React, { useContext } from 'react';
 import { Bell, Search, Menu, UserCircle } from 'lucide-react';
+import { NotificationDropdown } from '../ui/NotificationDropdown';
 import { AuthContext } from '../../context/AuthContext';
+import { useSearchParams } from 'react-router-dom';
 
 export const Navbar = ({ onMenuClick }) => {
   const { user } = useContext(AuthContext);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleSearch = (e) => {
+    const q = e.target.value;
+    if (q) {
+      setSearchParams({ search: q });
+    } else {
+      searchParams.delete('search');
+      setSearchParams(searchParams);
+    }
+  };
 
   return (
     <header className="sticky top-0 z-40 bg-bgDarker/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center justify-between px-4 lg:px-8">
@@ -20,17 +33,15 @@ export const Navbar = ({ onMenuClick }) => {
           <input 
             type="text" 
             placeholder="بحث..." 
+            value={searchParams.get('search') || ''}
+            onChange={handleSearch}
             className="bg-bgDark border border-white/10 rounded-xl py-2 pl-4 pr-10 text-sm text-white focus:outline-none focus:border-accentGold w-64 transition-colors"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
-        <button className="relative p-2 text-gray-400 hover:text-white rounded-lg hover:bg-white/5 transition-colors">
-          <Bell className="w-5 h-5" />
-          {/* Notification dot placeholder */}
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-bgDarker"></span>
-        </button>
+        <NotificationDropdown />
         
         <div className="h-8 w-px bg-white/10 mx-2 hidden sm:block"></div>
         
@@ -47,3 +58,4 @@ export const Navbar = ({ onMenuClick }) => {
     </header>
   );
 };
+

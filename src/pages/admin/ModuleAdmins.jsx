@@ -3,24 +3,36 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { DataTable } from '../../components/ui/DataTable';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { ShieldCheck, AlertCircle } from 'lucide-react';
+import { ShieldCheck, AlertCircle, UserPlus } from 'lucide-react';
 import api from '../../api/axios';
+
+import { AddModuleAdminModal } from '../../components/admin/modals/AddModuleAdminModal';
+import { UpdateModuleAdminModal } from '../../components/admin/modals/UpdateModuleAdminModal';
+import { ResetPasswordModal } from '../../components/admin/modals/ResetPasswordModal';
+
+import { useSearchParams } from 'react-router-dom';
 
 export const ModuleAdmins = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchParams] = useSearchParams();
+
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [selectedAdminForUpdate, setSelectedAdminForUpdate] = useState(null);
+  const [selectedAdminForPassword, setSelectedAdminForPassword] = useState(null);
 
   const fetchAdmins = async () => {
     try {
       setLoading(true);
       setError(null);
-      // Fetch all users and filter for MODULE_ADMIN
-      const res = await api.get('/admin/users/');
+      const q = searchParams.get('search');
+      const url = q ? `/admin/users/?search=${encodeURIComponent(q)}` : '/admin/users/';
+      const res = await api.get(url);
       setAdmins(res.data.filter(u => u.role === 'MODULE_ADMIN'));
     } catch (err) {
       console.error(err);
-      setError("حدث خطأ أثناء تحميل بيانات مشرفي الوحدات.");
+      setError("حدث خطأ أثناء تحميل البيانات.");
     } finally {
       setLoading(false);
     }
@@ -28,7 +40,27 @@ export const ModuleAdmins = () => {
 
   useEffect(() => {
     fetchAdmins();
-  }, []);
+  }, [searchParams]);
+
+  const handleStatusChange = async (user, isActive) => {
+    if (!window.confirm(`هل أنت متأكد من ${isActive ? 'تفعيل' : 'إيقاف'} حساب ${user.full_name}؟`)) return;
+    try {
+      await api.post(`/admin/users/${user.id}/update/`, { is_active: isActive });
+      fetchAdmins();
+    } catch (err) {
+      alert("حدث خطأ أثناء تغيير حالة الحساب.");
+    }
+  };
+
+  const handleDelete = async (user) => {
+    if (!window.confirm(`هل أنت متأكد من حذف حساب المشرف "${user.full_name}" نهائياً؟`)) return;
+    try {
+      await api.delete(`/admin/users/${user.id}/`);
+      fetchAdmins();
+    } catch (err) {
+      alert("حدث خطأ أثناء الحذف.");
+    }
+  };
 
   const columns = [
     { 
@@ -61,10 +93,27 @@ export const ModuleAdmins = () => {
   ];
 
   const rowActions = [
-    { label: 'عرض الملف الشخصي', onClick: (row) => console.log('View', row) },
-    { label: 'تعديل البيانات', onClick: (row) => console.log('Edit', row) },
-    { label: 'تفعيل/إيقاف الحساب', danger: true, onClick: (row) => console.log('Suspend', row) }
+    { label: 'تعديل البيانات', onClick: (row) => setSelectedAdminForUpdate(row) },
+    { label: 'إعادة تعيين كلمة المرور', onClick: (row) => setSelectedAdminForPassword(row) },
+    { label: (row) => row.is_active ? 'إيقاف الحساب' : 'تفعيل الحساب', danger: (row) => row.is_active, onClick: (row) => handleStatusChange(row, !row.is_active) },
+    { label: 'حذف المشرف', danger: true, onClick: (row) => handleDelete(row) }
   ];
+
+  const handleExport = async (format) => {
+    if (!format) format = 'csv';
+    try {
+      const res = await api.get(`/admin/users/export/?role=MODULE_ADMIN&format=${format}`, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `module_admins.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (err) {
+      alert("حدث خطأ أثناء التصدير.");
+    }
+  };
 
   if (error) {
     return (
@@ -83,7 +132,26 @@ export const ModuleAdmins = () => {
         description="إدارة حسابات مشرفي الوحدات الدراسية وصلاحياتهم"
         actionLabel="إضافة مشرف"
         actionIcon={ShieldCheck}
-        onAction={() => console.log("Open Add Admin Modal")}
+        onAction={() => setIsAddOpen(true)}
+      />
+
+      <AddModuleAdminModal 
+        isOpen={isAddOpen} 
+        onClose={() => setIsAddOpen(false)}
+        onSuccess={() => { fetchAdmins(); setIsAddOpen(false); }}
+      />
+
+      <UpdateModuleAdminModal 
+        isOpen={!!selectedAdminForUpdate}
+        onClose={() => setSelectedAdminForUpdate(null)}
+        admin={selectedAdminForUpdate}
+        onSuccess={() => { fetchAdmins(); setSelectedAdminForUpdate(null); }}
+      />
+      
+      <ResetPasswordModal 
+        isOpen={!!selectedAdminForPassword}
+        onClose={() => setSelectedAdminForPassword(null)}
+        user={selectedAdminForPassword}
       />
 
       <DataTable 
@@ -92,6 +160,7 @@ export const ModuleAdmins = () => {
         isLoading={loading}
         searchPlaceholder="ابحث باسم المشرف..."
         rowActions={rowActions}
+        onExport={() => handleExport('csv')}
         emptyStateTitle="لا يوجد مشرفين"
         emptyStateDesc="لم يتم إضافة أي مشرف للوحدات بعد."
       />

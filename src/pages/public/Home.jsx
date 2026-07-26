@@ -53,6 +53,7 @@ const Home = () => {
   const { t } = useTranslation();
   const { settings } = React.useContext(SettingsContext);
   const [modules, setModules] = useState([]);
+  const [siteSettings, setSiteSettings] = useState(null);
 
   useEffect(() => {
     api.get('/modules/')
@@ -64,6 +65,10 @@ const Home = () => {
           { slug: 'soroban', name: 'الحساب الذهني', description: 'تطوير السرعة في الحساب.', icon: '🧮' },
         ]);
       });
+
+    api.get('/public-site-settings/')
+      .then(res => setSiteSettings(res.data))
+      .catch(() => {});
   }, []);
 
   return (
@@ -126,7 +131,7 @@ const Home = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] py-2"
           >
-            منصة فطنة
+            {siteSettings?.landing_hero_title || 'منصة فطنة'}
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -134,7 +139,7 @@ const Home = () => {
             transition={{ delay: 0.2 }}
             className="text-2xl md:text-3xl font-bold mb-10 text-white max-w-3xl"
           >
-            نُعدّهم للحياة، لا للامتحانات!
+            {siteSettings?.landing_hero_subtitle || 'نُعدّهم للحياة، لا للامتحانات!'}
           </motion.p>
           
           <motion.div 
@@ -144,9 +149,9 @@ const Home = () => {
             className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto"
           >
             <a href="#programs" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:scale-105 duration-200">
-              ابدأ رحلتك الآن 🚀
+              {siteSettings?.landing_hero_button_text || "ابدأ رحلتك الآن 🚀"}
             </a>
-            <Link to="/login" className="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition transform hover:scale-105 duration-200">
+            <Link to={siteSettings?.landing_hero_button_url || "/login"} className="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition transform hover:scale-105 duration-200">
               تسجيل الدخول
             </Link>
           </motion.div>
@@ -174,7 +179,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 relative">
             <h2 className="text-5xl font-black text-white inline-block drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-              برامجنا الممتعة ✨
+              {siteSettings?.landing_programs_title || 'برامجنا الممتعة ✨'}
             </h2>
           </div>
 
@@ -247,17 +252,17 @@ const Home = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16 relative">
             <h2 className="text-4xl font-black text-white inline-block drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">
-              إنجازاتنا بالأرقام
+              {siteSettings?.landing_stats_title || 'إنجازاتنا بالأرقام'}
             </h2>
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
+            {(siteSettings?.landing_stats_json && siteSettings.landing_stats_json !== '[]' ? JSON.parse(siteSettings.landing_stats_json) : [
               { num: settings.stats.students, label: 'طالب وطالبة', emoji: '😊', glow: 'rgba(59,130,246,0.5)', prefix: '+' },
               { num: settings.stats.modules, label: 'برنامج تدريبي', emoji: '🏆', glow: 'rgba(245,197,24,0.5)', prefix: '+' },
               { num: 15, label: 'مدرب مميز', emoji: '🎓', glow: 'rgba(139,92,246,0.5)', prefix: '+' },
               { num: settings.stats.satisfaction, label: 'نسبة رضا الطلاب', emoji: '⭐', glow: 'rgba(16,185,129,0.5)', suffix: '%' },
-            ].map((stat, i) => (
+            ]).map((stat, i) => (
               <motion.div 
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
@@ -289,7 +294,7 @@ const Home = () => {
         
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_15px_rgba(245,197,24,0.4)] mb-6">من نحن؟</h2>
+            <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_15px_rgba(245,197,24,0.4)] mb-6">{siteSettings?.landing_about_title || 'من نحن؟'}</h2>
           </div>
           
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -299,8 +304,8 @@ const Home = () => {
               <div className="relative bg-bgPurple p-8 rounded-[3rem] border border-white/10 shadow-2xl overflow-hidden text-center w-full max-w-md">
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-accentGold to-yellow-400" />
                 <div className="text-8xl mb-6">💡</div>
-                <h3 className="text-4xl font-black text-white drop-shadow-md mb-2">منصة فطنة</h3>
-                <p className="text-accentGold font-bold text-xl">نُعدّهم للحياة، لا للامتحانات</p>
+                <h3 className="text-4xl font-black text-white drop-shadow-md mb-2">{siteSettings?.site_name || 'منصة فطنة'}</h3>
+                <p className="text-accentGold font-bold text-xl">{siteSettings?.landing_hero_subtitle || 'نُعدّهم للحياة، لا للامتحانات'}</p>
               </div>
             </div>
 
@@ -308,16 +313,20 @@ const Home = () => {
             <div className="flex-1 w-full space-y-6 text-right">
               <h3 className="text-4xl font-black text-white mb-6 leading-snug">أطفالنا يستحقون <span className="text-accentGold">أفضل من هذا</span></h3>
               
-              <div className="space-y-4 text-gray-300 font-bold text-lg leading-relaxed">
-                <p>
-                  نرى اليوم واقعاً مؤلماً؛ أطفال صغار تائهون بين شاشات الهواتف، يضيع وقتهم ويهدر ذكاؤهم في محتويات تافهة لا تسمن ولا تغني من جوع. المشكلة تتفاقم يوماً بعد يوم، وبتنا نسمع عن حوادث وجرائم يقع ضحيتها أطفالنا بسبب هذا الواقع المفتوح والخطير.
-                </p>
-                <p>
-                  من هذا الألم، وُلدت فكرة <span className="text-white">«منصة فطنة»</span>. لم نرد أن نكتفي بالشكوى، بل صممنا حلاً عملياً يمثل بديلاً آمناً، ذكياً، وجذاباً.
-                </p>
-                <p>
-                  فطنة ليست مجرد منصة تعليمية، بل هي بيئة متكاملة تهدف إلى احتضان شغف الأطفال وإشغالهم بما ينفعهم، لبناء مهاراتهم وتأسيس مستقبل مشرق لهم، بعيداً عن مخاطر الفراغ الرقمي.
-                </p>
+              <div className="space-y-4 text-gray-300 font-bold text-lg leading-relaxed whitespace-pre-line">
+                {siteSettings?.landing_about_text || (
+                  <>
+                    <p>
+                      نرى اليوم واقعاً مؤلماً؛ أطفال صغار تائهون بين شاشات الهواتف، يضيع وقتهم ويهدر ذكاؤهم في محتويات تافهة لا تسمن ولا تغني من جوع. المشكلة تتفاقم يوماً بعد يوم، وبتنا نسمع عن حوادث وجرائم يقع ضحيتها أطفالنا بسبب هذا الواقع المفتوح والخطير.
+                    </p>
+                    <p>
+                      من هذا الألم، وُلدت فكرة <span className="text-white">«منصة فطنة»</span>. لم نرد أن نكتفي بالشكوى، بل صممنا حلاً عملياً يمثل بديلاً آمناً، ذكياً، وجذاباً.
+                    </p>
+                    <p>
+                      فطنة ليست مجرد منصة تعليمية، بل هي بيئة متكاملة تهدف إلى احتضان شغف الأطفال وإشغالهم بما ينفعهم، لبناء مهاراتهم وتأسيس مستقبل مشرق لهم، بعيداً عن مخاطر الفراغ الرقمي.
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="grid sm:grid-cols-3 gap-4 pt-8 border-t border-white/10">
@@ -354,9 +363,13 @@ const Home = () => {
           <div className="text-center mb-16 relative">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }} className="inline-block text-5xl mb-4">👑</motion.div>
             <h2 className="text-5xl font-black text-white mb-6 drop-shadow-lg">
-              التعلم أصبح <span className="text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">أكثر متعة!</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">
+                {siteSettings?.landing_features_title || 'التعلم أصبح أكثر متعة!'}
+              </span>
             </h2>
-            <p className="text-xl text-gray-300 font-bold max-w-2xl mx-auto">تجربة تعليمية تفاعلية مليئة بالألعاب والتحديات والمكافآت لتحفزك كل يوم على التقدم والتعلم.</p>
+            <p className="text-xl text-gray-300 font-bold max-w-2xl mx-auto">
+              {siteSettings?.landing_features_subtitle || 'تجربة تعليمية تفاعلية مليئة بالألعاب والتحديات والمكافآت لتحفزك كل يوم على التقدم والتعلم.'}
+            </p>
           </div>
 
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -433,12 +446,12 @@ const Home = () => {
 
             {/* Right side: Features Stack */}
             <div className="flex-1 flex flex-col gap-6">
-              {[
-                { title: 'تحديات يومية', desc: 'أكمل التحديات اليومية واربح نقاط ومكافآت رائعة.', icon: <Target />, color: 'text-blue-400', bg: 'bg-blue-400/10' },
-                { title: 'نظام النقاط', desc: 'اجمع النقاط، ارتقِ في المستويات، وكن الأفضل!', icon: <Trophy />, color: 'text-accentGold', bg: 'bg-yellow-400/10' },
-                { title: 'شهادات وإنجازات', desc: 'احصل على شهادات معتمدة وشارك إنجازاتك مع أصدقائك.', icon: <Medal />, color: 'text-green-400', bg: 'bg-green-400/10' },
-                { title: 'متابعة أولياء الأمور', desc: 'تابع تقدم أبنائك وتعرف على تقارير تفصيلية بسهولة.', icon: <Users />, color: 'text-pink-400', bg: 'bg-pink-400/10' },
-              ].map((feature, i) => (
+              {(siteSettings?.landing_features_json && siteSettings.landing_features_json !== '[]' ? JSON.parse(siteSettings.landing_features_json) : [
+                { title: 'تحديات يومية', desc: 'أكمل التحديات اليومية واربح نقاط ومكافآت رائعة.', icon: '🎯', color: 'text-blue-400', bg: 'bg-blue-400/10' },
+                { title: 'نظام النقاط', desc: 'اجمع النقاط، ارتقِ في المستويات، وكن الأفضل!', icon: '🏆', color: 'text-accentGold', bg: 'bg-yellow-400/10' },
+                { title: 'شهادات وإنجازات', desc: 'احصل على شهادات معتمدة وشارك إنجازاتك مع أصدقائك.', icon: '🏅', color: 'text-green-400', bg: 'bg-green-400/10' },
+                { title: 'متابعة أولياء الأمور', desc: 'تابع تقدم أبنائك وتعرف على تقارير تفصيلية بسهولة.', icon: '👥', color: 'text-pink-400', bg: 'bg-pink-400/10' },
+              ]).map((feature, i) => (
                 <motion.div 
                   key={i}
                   initial={{ opacity: 0, x: -30 }}
@@ -447,8 +460,8 @@ const Home = () => {
                   transition={{ delay: i * 0.1 }}
                   className="bg-bgDark p-6 rounded-2xl border border-white/5 flex items-center gap-6 shadow-xl hover:bg-white/5 transition-colors"
                 >
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${feature.bg} ${feature.color}`}>
-                    {React.cloneElement(feature.icon, { size: 32 })}
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 ${feature.bg || 'bg-white/10'} ${feature.color || 'text-white'} text-3xl`}>
+                    {feature.icon}
                   </div>
                   <div>
                     <h3 className="text-xl font-black text-white mb-2">{feature.title}</h3>
@@ -464,14 +477,14 @@ const Home = () => {
       {/* How It Works */}
       <section className="py-24 bg-bgPurple border-y border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{t('how_it_works.title')}</h2>
+          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{siteSettings?.landing_how_it_works_title || t('how_it_works.title')}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            {[
+            {(siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]' ? JSON.parse(siteSettings.landing_programs_json) : [
               { num: 1, text: t('how_it_works.step1'), color: '#3B82F6' },
               { num: 2, text: t('how_it_works.step2'), color: '#F5C518' },
               { num: 3, text: t('how_it_works.step3'), color: '#10B981' },
               { num: 4, text: t('how_it_works.step4'), color: '#EF4444' }
-            ].map((step, i) => (
+            ]).map((step, i) => (
               <div key={i} className="flex flex-col items-center bg-bgDark p-8 rounded-3xl border border-white/5 shadow-xl hover:-translate-y-2 transition-transform">
                 <div 
                   className="w-20 h-20 rounded-2xl text-white flex items-center justify-center text-3xl font-black mb-6 shadow-lg rotate-3"
@@ -489,13 +502,13 @@ const Home = () => {
       {/* Testimonials */}
       <section className="py-24 bg-bgDark relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16">ماذا يقولون عنا؟</h2>
+          <h2 className="text-4xl font-black text-center mb-16">{siteSettings?.landing_testimonials_title || 'ماذا يقولون عنا؟'}</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
+            {(siteSettings?.landing_testimonials_json && siteSettings.landing_testimonials_json !== '[]' ? JSON.parse(siteSettings.landing_testimonials_json) : [
               { name: "أم أحمد", role: "ولية أمر", text: "لاحظت تغييراً كبيراً في شخصية ابني بعد انضمامه لبرنامج حل المشكلات." },
               { name: "ياسين", role: "طالب (16 سنة)", text: "البرامج هنا مختلفة تماماً عن المدرسة، نتعلم أشياء تفيدنا في حياتنا." },
               { name: "أ. محمد", role: "أستاذ رياضيات", text: "طريقة تقديم المعلومات في فطنة مبتكرة وتجعل التعلم ممتعاً." }
-            ].map((test, i) => (
+            ]).map((test, i) => (
               <div key={i} className="bg-bgPurple p-8 rounded-3xl border border-white/10 shadow-lg relative">
                 <div className="absolute -top-4 -right-4 text-5xl opacity-20">💬</div>
                 <div className="flex gap-1 mb-6 text-accentGold drop-shadow-[0_0_5px_rgba(245,197,24,0.5)]">
@@ -522,13 +535,13 @@ const Home = () => {
       {/* FAQ */}
       <section className="py-24 bg-bgPurple border-t border-white/5 relative z-10">
         <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16">الأسئلة الشائعة</h2>
+          <h2 className="text-4xl font-black text-center mb-16">{siteSettings?.landing_faq_title || 'الأسئلة الشائعة'}</h2>
           <div className="space-y-4">
-            {[
+            {(siteSettings?.landing_faq_json && siteSettings.landing_faq_json !== '[]' ? JSON.parse(siteSettings.landing_faq_json) : [
               { q: "هل هناك شهادات معتمدة؟", a: "نعم، يحصل الطالب على شهادة إتمام بعد اجتياز متطلبات كل برنامج بنجاح." },
               { q: "ما هي طرق الدفع المتاحة؟", a: "نوفر طرق دفع متعددة لتسهيل العملية على أولياء الأمور، ويمكنك معرفة المزيد من لوحة التحكم الخاصة بك." },
               { q: "هل الدروس مباشرة أم مسجلة؟", a: "نعتمد نظاماً يجمع بين الجلسات المباشرة التفاعلية والدروس المسجلة للمراجعة." }
-            ].map((faq, i) => (
+            ]).map((faq, i) => (
               <details key={i} className="group bg-bgDark rounded-2xl border border-white/10 [&_summary::-webkit-details-marker]:hidden">
                 <summary className="flex items-center justify-between p-6 cursor-pointer font-bold text-xl text-white">
                   {faq.q}
@@ -599,14 +612,14 @@ const Home = () => {
 
           <div className="relative z-10 max-w-2xl mx-auto">
             <h2 className="text-5xl md:text-6xl font-black mb-6 text-white drop-shadow-md">
-              جاهز تصنع إنجازك؟
+              {siteSettings?.landing_cta_title || 'جاهز تصنع إنجازك؟'}
             </h2>
-            <p className="text-xl text-gray-300 font-bold mb-10">
-              انضم الآن إلى آلاف الطلاب وابدأ رحلتك مع فطنة نحو التميز والإبداع!
+            <p className="text-xl text-gray-300 font-bold mb-10 whitespace-pre-line">
+              {siteSettings?.landing_cta_text || 'انضم الآن إلى آلاف الطلاب وابدأ رحلتك مع فطنة نحو التميز والإبداع!'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/login" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:-translate-y-1">
-                ابدأ الآن
+              <Link to={siteSettings?.landing_cta_button_url || '/login'} className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:-translate-y-1">
+                {siteSettings?.landing_cta_button_text || 'ابدأ الآن'}
               </Link>
               <a href="#programs" className="px-10 py-5 bg-white/10 border border-white/20 text-white font-bold rounded-2xl text-xl hover:bg-white/20 transition transform hover:-translate-y-1">
                 اعرف المزيد ←
@@ -620,12 +633,12 @@ const Home = () => {
       <section id="contact" className="py-24 bg-bgDark relative z-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-5xl font-black mb-8 text-white">{t('contact.title')}</h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-bold leading-relaxed">فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.</p>
+          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-bold leading-relaxed">{siteSettings?.footer_desc || 'فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.'}</p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="px-10 py-5 bg-[#25D366] text-white font-black rounded-2xl text-xl hover:bg-[#1DA851] transition flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:-translate-y-1">
+            <a href={`https://wa.me/${(siteSettings?.social_whatsapp || settings.contact.whatsapp).replace('+', '')}`} className="px-10 py-5 bg-[#25D366] text-white font-black rounded-2xl text-xl hover:bg-[#1DA851] transition flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:-translate-y-1">
               تواصل عبر واتساب
             </a>
-            <a href={`mailto:${settings.contact.email}`} className="px-10 py-5 bg-white/10 font-bold rounded-2xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3 border border-white/10 hover:-translate-y-1">
+            <a href={`mailto:${siteSettings?.contact_email || settings.contact.email}`} className="px-10 py-5 bg-white/10 font-bold rounded-2xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3 border border-white/10 hover:-translate-y-1">
               راسلنا عبر الإيميل
             </a>
           </div>

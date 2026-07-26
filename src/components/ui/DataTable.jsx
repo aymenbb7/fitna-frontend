@@ -63,6 +63,42 @@ export const DataTable = ({
   const totalPages = Math.ceil(sortedData.length / rowsPerPage);
   const paginatedData = sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
+  const paginationRange = useMemo(() => {
+    const siblingCount = 1;
+    const totalPageNumbers = siblingCount + 5;
+
+    if (totalPageNumbers >= totalPages) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 1;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPages;
+
+    if (!shouldShowLeftDots && shouldShowRightDots) {
+      let leftItemCount = 3 + 2 * siblingCount;
+      let leftRange = Array.from({ length: leftItemCount }, (_, i) => i + 1);
+      return [...leftRange, 'DOTS', totalPages];
+    }
+
+    if (shouldShowLeftDots && !shouldShowRightDots) {
+      let rightItemCount = 3 + 2 * siblingCount;
+      let rightRange = Array.from({ length: rightItemCount }, (_, i) => totalPages - rightItemCount + i + 1);
+      return [firstPageIndex, 'DOTS', ...rightRange];
+    }
+
+    if (shouldShowLeftDots && shouldShowRightDots) {
+      let middleRange = Array.from({ length: rightSiblingIndex - leftSiblingIndex + 1 }, (_, i) => leftSiblingIndex + i);
+      return [firstPageIndex, 'DOTS', ...middleRange, 'DOTS', lastPageIndex];
+    }
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }, [totalPages, currentPage]);
+
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -125,13 +161,22 @@ export const DataTable = ({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          {onExport && (
-            <Button size="sm" variant="ghost" onClick={onExport} icon={Download}>
-              تصدير
-            </Button>
-          )}
-        </div>
+          <div className="flex items-center gap-2">
+            {onExport && (
+              <div className="relative">
+                <Button size="sm" variant="ghost" onClick={() => setActiveMenu(activeMenu === 'export' ? null : 'export')} icon={Download}>
+                  تصدير
+                </Button>
+                {activeMenu === 'export' && (
+                  <div className="absolute left-0 mt-2 w-32 bg-bgDark border border-white/10 rounded-xl shadow-xl overflow-hidden z-20">
+                    <button onClick={() => { onExport('csv'); setActiveMenu(null); }} className="w-full text-right px-4 py-2 text-sm text-white hover:bg-white/5">CSV</button>
+                    <button onClick={() => { onExport('excel'); setActiveMenu(null); }} className="w-full text-right px-4 py-2 text-sm text-white hover:bg-white/5">Excel</button>
+                    <button onClick={() => { onExport('pdf'); setActiveMenu(null); }} className="w-full text-right px-4 py-2 text-sm text-white hover:bg-white/5">PDF</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
       </div>
 
       {/* Table */}
@@ -214,23 +259,27 @@ export const DataTable = ({
                             onClick={(e) => { e.stopPropagation(); setActiveMenu(null); }}
                           />
                           <div className="absolute left-4 top-10 w-48 bg-bgDarker border border-white/10 rounded-xl shadow-2xl z-40 overflow-hidden py-1">
-                            {rowActions.map((action, idx) => (
-                              <button
-                                key={idx}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActiveMenu(null);
-                                  action.onClick(row);
-                                }}
-                                className={`w-full text-right px-4 py-2 text-sm transition-colors ${
-                                  action.danger 
-                                    ? 'text-red-400 hover:bg-red-500/10' 
-                                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                                }`}
-                              >
-                                {action.label}
-                              </button>
-                            ))}
+                            {rowActions.map((action, idx) => {
+                              const isDanger = typeof action.danger === 'function' ? action.danger(row) : action.danger;
+                              const labelText = typeof action.label === 'function' ? action.label(row) : action.label;
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setActiveMenu(null);
+                                    action.onClick(row);
+                                  }}
+                                  className={`w-full text-right px-4 py-2 text-sm transition-colors ${
+                                    isDanger 
+                                      ? 'text-red-400 hover:bg-red-500/10' 
+                                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                                  }`}
+                                >
+                                  {labelText}
+                                </button>
+                              );
+                            })}
                           </div>
                         </>
                       )}
@@ -259,19 +308,28 @@ export const DataTable = ({
               <ChevronRight className="w-4 h-4" />
             </Button>
             
-            {Array.from({ length: totalPages }).map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentPage(idx + 1)}
-                className={`w-8 h-8 rounded-lg text-sm font-bold transition-colors ${
-                  currentPage === idx + 1
-                    ? 'bg-accentGold text-bgDark'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-                }`}
-              >
-                {idx + 1}
-              </button>
-            ))}
+            {paginationRange.map((pageNumber, idx) => {
+              if (pageNumber === 'DOTS') {
+                return (
+                  <span key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-gray-500 font-bold">
+                    ...
+                  </span>
+                );
+              }
+              return (
+                <button
+                  key={pageNumber}
+                  onClick={() => setCurrentPage(pageNumber)}
+                  className={`w-8 h-8 rounded-lg text-sm font-bold transition-colors ${
+                    currentPage === pageNumber
+                      ? 'bg-accentGold text-bgDark'
+                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                  }`}
+                >
+                  {pageNumber}
+                </button>
+              );
+            })}
 
             <Button
               variant="secondary"
