@@ -294,10 +294,24 @@ export const DataTable = ({
 
       {/* Pagination Footer */}
       {!isLoading && totalPages > 1 && (
-        <div className="p-4 border-t border-white/5 flex items-center justify-between">
-          <p className="text-sm text-gray-400">
-            إظهار {((currentPage - 1) * rowsPerPage) + 1} إلى {Math.min(currentPage * rowsPerPage, sortedData.length)} من {sortedData.length} سجل
-          </p>
+        <div className="p-4 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-gray-400">
+              إظهار {((currentPage - 1) * rowsPerPage) + 1} إلى {Math.min(currentPage * rowsPerPage, sortedData.length)} من {sortedData.length} سجل
+            </p>
+            <div className="flex items-center gap-2 border-r border-white/10 pr-4 mr-2">
+              <span className="text-sm text-gray-400">انتقال إلى:</span>
+              <select 
+                value={currentPage}
+                onChange={(e) => setCurrentPage(Number(e.target.value))}
+                className="bg-bgDark border border-white/10 rounded-lg text-sm text-white py-1 pl-2 pr-6 focus:outline-none focus:border-accentGold cursor-pointer appearance-none"
+              >
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>{i + 1}</option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="secondary"
@@ -310,10 +324,16 @@ export const DataTable = ({
             
             {paginationRange.map((pageNumber, idx) => {
               if (pageNumber === 'DOTS') {
+                const isLeft = idx === 1;
                 return (
-                  <span key={`dots-${idx}`} className="w-8 h-8 flex items-center justify-center text-gray-500 font-bold">
+                  <button
+                    key={`dots-${idx}`}
+                    onClick={() => setCurrentPage(p => isLeft ? Math.max(1, p - 5) : Math.min(totalPages, p + 5))}
+                    title={isLeft ? "الرجوع 5 صفحات" : "التقدم 5 صفحات"}
+                    className="w-8 h-8 flex items-center justify-center text-gray-500 font-bold hover:text-white hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
+                  >
                     ...
-                  </span>
+                  </button>
                 );
               }
               return (
