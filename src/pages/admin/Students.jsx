@@ -120,14 +120,13 @@ export const Students = () => {
     }
   ];
 
-  const rowActions = [
-    { label: 'الملف الشخصي', onClick: (row) => setSelectedStudentForModules(row) },
-    { label: 'تسجيل في وحدة جديدة', onClick: (row) => setSelectedStudentForEnrollment(row) },
-    { label: 'تعديل البيانات', onClick: (row) => setSelectedStudentForUpdate(row) },
+  const rowActions = React.useMemo(() => [
+    { label: 'عرض', onClick: (row) => setSelectedStudentForModules(row) },
+    { label: 'تعديل', onClick: (row) => setSelectedStudentForUpdate(row) },
     { label: 'إعادة تعيين كلمة المرور', onClick: (row) => setSelectedStudentForPassword(row) },
     { label: (row) => row.is_active ? 'إيقاف الحساب' : 'تفعيل الحساب', danger: (row) => row.is_active, onClick: (row) => handleStatusChange(row, !row.is_active) },
-    { label: 'حذف الحساب', danger: true, onClick: (row) => handleDelete(row) }
-  ];
+    { label: 'حذف', danger: true, onClick: (row) => handleDelete(row) }
+  ], []);
 
   if (error) {
     return (

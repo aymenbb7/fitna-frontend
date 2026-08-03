@@ -58,7 +58,7 @@ const Dashboard = () => {
     );
   }
 
-  const moduleColumns = [
+  const moduleColumns = React.useMemo(() => [
     { key: 'name', label: 'اسم الوحدة' },
     { key: 'total_students', label: 'إجمالي الطلاب' },
     { key: 'active_students', label: 'نشطين' },
@@ -74,7 +74,7 @@ const Dashboard = () => {
       label: 'معدل الإكمال',
       render: (val) => `${val}%`
     }
-  ];
+  ], []);
 
   return (
     <div className="space-y-8">

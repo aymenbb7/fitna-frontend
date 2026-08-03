@@ -92,12 +92,13 @@ export const ModuleAdmins = () => {
     }
   ];
 
-  const rowActions = [
-    { label: 'تعديل البيانات', onClick: (row) => setSelectedAdminForUpdate(row) },
+  const rowActions = React.useMemo(() => [
+    { label: 'عرض', onClick: (row) => setSelectedAdminForUpdate(row) },
+    { label: 'تعديل', onClick: (row) => setSelectedAdminForUpdate(row) },
     { label: 'إعادة تعيين كلمة المرور', onClick: (row) => setSelectedAdminForPassword(row) },
     { label: (row) => row.is_active ? 'إيقاف الحساب' : 'تفعيل الحساب', danger: (row) => row.is_active, onClick: (row) => handleStatusChange(row, !row.is_active) },
-    { label: 'حذف المشرف', danger: true, onClick: (row) => handleDelete(row) }
-  ];
+    { label: 'حذف', danger: true, onClick: (row) => handleDelete(row) }
+  ], []);
 
   const handleExport = async (format) => {
     if (!format) format = 'csv';
@@ -160,7 +161,7 @@ export const ModuleAdmins = () => {
         isLoading={loading}
         searchPlaceholder="ابحث باسم المشرف..."
         rowActions={rowActions}
-        onExport={() => handleExport('csv')}
+        onExport={handleExport}
         emptyStateTitle="لا يوجد مشرفين"
         emptyStateDesc="لم يتم إضافة أي مشرف للوحدات بعد."
       />

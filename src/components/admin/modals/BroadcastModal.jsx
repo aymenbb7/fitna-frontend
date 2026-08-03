@@ -90,7 +90,7 @@ export const BroadcastModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4 overflow-hidden">
+        <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-4 min-h-0">
           <div className="shrink-0 space-y-4">
             <div>
               <label className="block text-sm font-bold text-gray-400 mb-1">عنوان الإشعار</label>
@@ -134,7 +134,7 @@ export const BroadcastModal = ({ isOpen, onClose, onSuccess }) => {
           </div>
           
           {(targetType === 'MODULES' || targetType === 'STUDENTS') && (
-            <div className="flex-1 flex flex-col min-h-[200px] border border-white/10 rounded-xl bg-bgDark p-3 overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-[150px] border border-white/10 rounded-xl bg-bgDark p-3 overflow-hidden">
               <div className="relative mb-3 shrink-0">
                 <Search className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input 

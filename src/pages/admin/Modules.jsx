@@ -112,12 +112,12 @@ export const Modules = () => {
     }
   };
 
-  const rowActions = [
-    { label: 'إحصائيات الوحدة', onClick: (row) => setSelectedModuleForStats(row) },
-    { label: 'حذف الوحدة', danger: true, onClick: (row) => handleDelete(row) },
-    { label: 'إعدادات الوحدة', onClick: (row) => setSelectedModuleForUpdate(row) },
-    { label: (row) => row.is_active ? 'تعطيل الوحدة' : 'تفعيل الوحدة', danger: (row) => row.is_active, onClick: (row) => handleToggleActive(row) }
-  ];
+  const rowActions = React.useMemo(() => [
+    { label: 'عرض', onClick: (row) => setSelectedModuleForStats(row) },
+    { label: 'تعديل', onClick: (row) => setSelectedModuleForUpdate(row) },
+    { label: (row) => row.is_active ? 'إيقاف الحساب' : 'تفعيل الحساب', danger: (row) => row.is_active, onClick: (row) => handleToggleActive(row) },
+    { label: 'حذف', danger: true, onClick: (row) => handleDelete(row) }
+  ], []);
 
   if (error) {
     return (
