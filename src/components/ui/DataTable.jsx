@@ -217,76 +217,79 @@ export const DataTable = ({
               </tr>
             </thead>
             <tbody>
-              {paginatedData.map((row) => (
-                <tr 
-                  key={row.id} 
-                  className="border-b border-white/5 hover:bg-white/5 transition-colors group"
-                >
-                  <td className="px-4 py-3 text-center">
-                    <input
-                      type="checkbox"
-                      className="w-4 h-4 rounded border-gray-600 bg-bgDark checked:bg-accentGold focus:ring-accentGold focus:ring-offset-bgDark"
-                      checked={selectedRows.has(row.id)}
-                      onChange={() => handleSelectRow(row.id)}
-                    />
-                  </td>
-                  {columns.map((col) => (
-                    <td 
-                      key={col.key} 
-                      className={`px-4 py-3 text-sm text-gray-300 ${onRowClick ? 'cursor-pointer' : ''}`}
-                      onClick={() => onRowClick && onRowClick(row)}
-                    >
-                      {col.render ? col.render(row[col.key], row) : row[col.key]}
+              {paginatedData.map((row, index) => {
+                const rowKey = row.id || row.slug || index;
+                return (
+                  <tr 
+                    key={rowKey} 
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors group"
+                  >
+                    <td className="px-4 py-3 text-center">
+                      <input
+                        type="checkbox"
+                        className="w-4 h-4 rounded border-gray-600 bg-bgDark checked:bg-accentGold focus:ring-accentGold focus:ring-offset-bgDark"
+                        checked={selectedRows.has(rowKey)}
+                        onChange={() => handleSelectRow(rowKey)}
+                      />
                     </td>
-                  ))}
-                  {rowActions.length > 0 && (
-                    <td className="px-4 py-3 text-center relative">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setActiveMenu(activeMenu === row.id ? null : row.id);
-                        }}
-                        className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-white/10"
+                    {columns.map((col) => (
+                      <td 
+                        key={col.key} 
+                        className={`px-4 py-3 text-sm text-gray-300 ${onRowClick ? 'cursor-pointer' : ''}`}
+                        onClick={() => onRowClick && onRowClick(row)}
                       >
-                        <MoreVertical className="w-5 h-5" />
-                      </button>
-                      
-                      {/* Action Menu Dropdown */}
-                      {activeMenu === row.id && (
-                        <>
-                          <div 
-                            className="fixed inset-0 z-30" 
-                            onClick={(e) => { e.stopPropagation(); setActiveMenu(null); }}
-                          />
-                          <div className="absolute left-4 top-10 w-48 bg-bgDarker border border-white/10 rounded-xl shadow-2xl z-40 overflow-hidden py-1">
-                            {rowActions.map((action, idx) => {
-                              const isDanger = typeof action.danger === 'function' ? action.danger(row) : action.danger;
-                              const labelText = typeof action.label === 'function' ? action.label(row) : action.label;
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setActiveMenu(null);
-                                    action.onClick(row);
-                                  }}
-                                  className={`w-full text-right px-4 py-2 text-sm transition-colors ${
-                                    isDanger 
-                                      ? 'text-red-400 hover:bg-red-500/10' 
-                                      : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                                  }`}
-                                >
-                                  {labelText}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              ))}
+                        {col.render ? col.render(row[col.key], row) : row[col.key]}
+                      </td>
+                    ))}
+                    {rowActions.length > 0 && (
+                      <td className="px-4 py-3 text-center relative">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenu(activeMenu === rowKey ? null : rowKey);
+                          }}
+                          className="p-1.5 text-gray-400 hover:text-white rounded-lg hover:bg-white/10"
+                        >
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                        
+                        {/* Action Menu Dropdown */}
+                        {activeMenu === rowKey && (
+                          <>
+                            <div 
+                              className="fixed inset-0 z-30" 
+                              onClick={(e) => { e.stopPropagation(); setActiveMenu(null); }}
+                            />
+                            <div className="absolute left-4 top-10 w-48 bg-bgDarker border border-white/10 rounded-xl shadow-2xl z-40 overflow-hidden py-1">
+                              {rowActions.map((action, idx) => {
+                                const isDanger = typeof action.danger === 'function' ? action.danger(row) : action.danger;
+                                const labelText = typeof action.label === 'function' ? action.label(row) : action.label;
+                                return (
+                                  <button
+                                    key={idx}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveMenu(null);
+                                      action.onClick(row);
+                                    }}
+                                    className={`w-full text-right px-4 py-2 text-sm transition-colors ${
+                                      isDanger 
+                                        ? 'text-red-400 hover:bg-red-500/10' 
+                                        : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                                    }`}
+                                  >
+                                    {labelText}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </>
+                        )}
+                      </td>
+                    )}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

@@ -103,7 +103,7 @@ export const ModuleAdmins = () => {
   const handleExport = async (format) => {
     if (!format) format = 'csv';
     try {
-      const res = await api.get(`/admin/users/export/?role=MODULE_ADMIN&format=${format}`, { responseType: 'blob' });
+      const res = await api.get(`/admin/users/export/?role=MODULE_ADMIN&export_format=${format}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;

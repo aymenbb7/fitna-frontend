@@ -190,16 +190,17 @@ const EnrollmentModal = ({ mod, onClose }) => {
         last_name: data.last_name,
         full_name: `${data.first_name} ${data.last_name}`,
         email: data.email,
+        password: data.password,
         phone_number: data.parent_phone,
         age: age,
-        module_slugs: [mod.slug]
+        module_slug: mod.slug
       });
       setStatus('success');
     } catch (err) {
       console.error(err);
       // Extract specific backend error messages if available
       const data = err.response?.data;
-      let msg = 'حدث خطأ أثناء التسجيل. تأكد من صحة البيانات وأن الإيميل غير مسجل مسبقاً.';
+      let msg = 'حدث خطأ أثناء التسجيل. يرجى من فضلك المحاولة مرة أخرى لاحقاً.';
       if (data) {
         if (typeof data === 'string') {
           msg = data;
@@ -207,8 +208,7 @@ const EnrollmentModal = ({ mod, onClose }) => {
           msg = data.error;
         } else if (data.detail) {
           msg = data.detail;
-        } else {
-          // Join field-level errors (e.g. {email: ["already registered"]})
+        } else if (typeof data === 'object') {
           const fieldErrors = Object.entries(data)
             .map(([field, errors]) => {
               const errorText = Array.isArray(errors) ? errors.join(' ') : errors;
@@ -254,6 +254,11 @@ const EnrollmentModal = ({ mod, onClose }) => {
               <div>
                 <label className="block text-sm font-bold mb-1 text-gray-300">البريد الإلكتروني</label>
                 <input type="email" {...register('email', { required: true })} className="w-full border border-white/10 rounded-xl p-3 bg-bgDark focus:border-accentGold outline-none transition text-left" dir="ltr" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold mb-1 text-gray-300">كلمة المرور</label>
+                <input type="password" {...register('password', { required: true, minLength: 6 })} className="w-full border border-white/10 rounded-xl p-3 bg-bgDark focus:border-accentGold outline-none transition text-left" dir="ltr" />
               </div>
               
               <div>

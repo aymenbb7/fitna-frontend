@@ -140,7 +140,7 @@ export const Students = () => {
 
   const handleExport = async (format) => {
     try {
-      const res = await api.get(`/admin/users/export/?role=STUDENT&format=${format}`, { responseType: 'blob' });
+      const res = await api.get(`/admin/users/export/?role=STUDENT&export_format=${format}`, { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
