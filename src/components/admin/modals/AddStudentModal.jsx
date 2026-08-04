@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
 import { RefreshCw, Copy, CheckCircle } from 'lucide-react';
 import api from '../../../api/axios';
+import { toast } from '../../../utils/toast';
 
 export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
   const [email, setEmail] = useState('');
@@ -73,15 +74,16 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
         ...payments[slug]
       }));
 
-      const res = await api.post('/admin/students/create/', {
+      await api.post('/admin/students/create/', {
         email,
         full_name: fullName,
         password,
         module_slugs: selectedModules,
         payments: paymentsData
       });
-      setCreatedStudent(res.data.student || res.data);
-      // Wait for user to close modal to call onSuccess
+      toast.success("تم إنشاء حساب الطالب بنجاح!");
+      if (onSuccess) onSuccess();
+      onClose();
     } catch (err) {
       setError(err.response?.data?.error || "حدث خطأ أثناء إنشاء الحساب.");
     } finally {

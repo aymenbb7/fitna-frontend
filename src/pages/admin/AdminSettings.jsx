@@ -140,8 +140,11 @@ export const AdminSettings = () => {
   const handleSaveSettings = async () => {
     try {
       setLoading(true);
-      await api.post('/admin/site-settings/', { ...settings, action: 'update' });
+      const res = await api.post('/admin/site-settings/', { ...settings, action: 'update' });
       toast.success("تم حفظ الإعدادات بنجاح");
+      if (res.data && res.data.settings) {
+        setSettings(prev => ({ ...prev, ...res.data.settings }));
+      }
     } catch (err) {
       toast.error("حدث خطأ أثناء حفظ الإعدادات");
     } finally {
