@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
 import api from '../../../api/axios';
+import { toast } from '../../../utils/toast';
 
 export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
   const [fullName, setFullName] = useState('');
@@ -8,9 +9,26 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [isActive, setIsActive] = useState(true);
+  const [modules, setModules] = useState([]);
+  const [selectedModules, setSelectedModules] = useState([]);
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchModules();
+    }
+  }, [isOpen]);
+
+  const fetchModules = async () => {
+    try {
+      const res = await api.get('/admin/modules/');
+      setModules(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && student) {
@@ -19,6 +37,7 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
       setEmail(student.email || '');
       setPhone(student.phone || '');
       setIsActive(student.is_active);
+      setSelectedModules(student.enrollments ? student.enrollments.map(e => e.module.slug) : []);
       setError(null);
     }
   }, [isOpen, student]);
@@ -33,10 +52,13 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
         username,
         email,
         phone,
-        is_active: isActive
+        is_active: isActive,
+        module_slugs: selectedModules
       });
+      toast.success("تم حفظ التعديلات بنجاح");
       if (onSuccess) onSuccess();
     } catch (err) {
+      toast.error(err.response?.data?.error || "حدث خطأ أثناء حفظ التعديلات.");
       setError(err.response?.data?.error || "حدث خطأ أثناء حفظ التعديلات.");
     } finally {
       setLoading(false);
@@ -113,6 +135,32 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
               />
               <span className="text-white font-bold">الحساب نشط (تفعيل / إيقاف)</span>
             </label>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-400 mb-2">الدورات المسجل بها</label>
+            <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
+              {modules.map(mod => (
+                <label key={mod.slug} className="flex items-center space-x-3 space-x-reverse cursor-pointer bg-bgDark border border-white/10 p-3 rounded-xl hover:border-accentGold/50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={selectedModules.includes(mod.slug)}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedModules([...selectedModules, mod.slug]);
+                      else setSelectedModules(selectedModules.filter(s => s !== mod.slug));
+                    }}
+                    className="form-checkbox h-5 w-5 text-accentGold border-white/10 rounded focus:ring-accentGold focus:ring-offset-bgDark bg-bgDarker"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-white font-bold">{mod.name}</span>
+                    <span className="text-xs text-gray-400">{mod.price > 0 ? \`\${mod.price} د.ج\` : 'مجاني'}</span>
+                  </div>
+                </label>
+              ))}
+              {modules.length === 0 && (
+                <div className="text-gray-400 text-sm text-center py-4">جاري تحميل الدورات...</div>
+              )}
+            </div>
           </div>
           
           <div className="flex gap-4 mt-6">

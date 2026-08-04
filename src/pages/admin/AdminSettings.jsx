@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Settings, Save, Shield, Palette, Mail, LayoutTemplate, Send, Key, Check, X, AlertCircle, Phone, Clock } from 'lucide-react';
 import api from '../../api/axios';
+import { toast } from '../../utils/toast';
 
 export const AdminSettings = () => {
   const [activeTab, setActiveTab] = useState('branding');
@@ -79,10 +80,10 @@ export const AdminSettings = () => {
     try {
       setLoading(true);
       await api.post(`/admin/users/${id}/update/`, { is_approved: true });
-      alert("تم قبول التسجيل بنجاح وتفعيل حساب الطالب.");
+      toast.success("تم قبول التسجيل بنجاح وتفعيل حساب الطالب.");
       fetchPendingRegistrations();
     } catch (err) {
-      alert("حدث خطأ أثناء قبول التسجيل.");
+      toast.error("حدث خطأ أثناء قبول التسجيل.");
     } finally {
       setLoading(false);
     }
@@ -93,10 +94,10 @@ export const AdminSettings = () => {
     try {
       setLoading(true);
       await api.delete(`/admin/users/${id}/`);
-      alert("تم رفض وحذف الطلب بنجاح.");
+      toast.success("تم رفض وحذف الطلب بنجاح.");
       fetchPendingRegistrations();
     } catch (err) {
-      alert("حدث خطأ أثناء رفض الطلب.");
+      toast.error("حدث خطأ أثناء رفض الطلب.");
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,15 @@ export const AdminSettings = () => {
     const fetchSettings = async () => {
       try {
         const res = await api.get('/admin/site-settings/');
-        setSettings(res.data);
+        const data = res.data || {};
+        // Safely merge DB data with current state, converting nulls to empty strings
+        setSettings(prev => {
+          const merged = { ...prev };
+          for (const key in data) {
+            merged[key] = data[key] !== null ? data[key] : '';
+          }
+          return merged;
+        });
       } catch (err) {
         console.error("Failed to load settings");
       }
@@ -128,22 +137,22 @@ export const AdminSettings = () => {
     try {
       setLoading(true);
       await api.post('/admin/site-settings/', { ...settings, action: 'update' });
-      alert("تم حفظ الإعدادات بنجاح");
+      toast.success("تم حفظ الإعدادات بنجاح");
     } catch (err) {
-      alert("حدث خطأ أثناء حفظ الإعدادات");
+      toast.error("حدث خطأ أثناء حفظ الإعدادات");
     } finally {
       setLoading(false);
     }
   };
 
   const handleTestEmail = async () => {
-    if (!testEmail) return alert("أدخل بريد إلكتروني لاختبار الإرسال");
+    if (!testEmail) return toast.error("أدخل بريد إلكتروني لاختبار الإرسال");
     try {
       setLoading(true);
       const res = await api.post('/admin/site-settings/', { action: 'test_email', email: testEmail });
-      alert(res.data.message || "تم إرسال بريد الاختبار بنجاح!");
+      toast.success(res.data.message || "تم إرسال بريد الاختبار بنجاح!");
     } catch (err) {
-      alert(err.response?.data?.error || "فشل إرسال بريد الاختبار. تأكد من صحة إعدادات SMTP.");
+      toast.error(err.response?.data?.error || "فشل إرسال بريد الاختبار. تأكد من صحة إعدادات SMTP.");
     } finally {
       setLoading(false);
     }

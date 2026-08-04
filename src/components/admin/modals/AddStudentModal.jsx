@@ -77,11 +77,11 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
         email,
         full_name: fullName,
         password,
-        modules: selectedModules,
+        module_slugs: selectedModules,
         payments: paymentsData
       });
       setCreatedStudent(res.data.student);
-      if (onSuccess) onSuccess();
+      // Wait for user to close modal to call onSuccess
     } catch (err) {
       setError(err.response?.data?.error || "حدث خطأ أثناء إنشاء الحساب.");
     } finally {
@@ -122,7 +122,10 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
               <Button 
                 variant="primary" 
                 className="flex-1 justify-center" 
-                onClick={onClose}
+                onClick={() => {
+                  if (onSuccess) onSuccess();
+                  onClose();
+                }}
               >
                 إغلاق
               </Button>
