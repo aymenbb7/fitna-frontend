@@ -80,7 +80,7 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
         module_slugs: selectedModules,
         payments: paymentsData
       });
-      setCreatedStudent(res.data.student);
+      setCreatedStudent(res.data.student || res.data);
       // Wait for user to close modal to call onSuccess
     } catch (err) {
       setError(err.response?.data?.error || "حدث خطأ أثناء إنشاء الحساب.");

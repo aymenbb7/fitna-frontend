@@ -12,6 +12,10 @@ export const AdminSettings = () => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('fitna_theme') || 'luxury');
 
   const [settings, setSettings] = useState({
+    site_name: '',
+    logo_url: '',
+    site_primary_color: '#F5C518',
+    site_secondary_color: '#7C3AED',
     smtp_host: '',
     smtp_port: 587,
     smtp_username: '',

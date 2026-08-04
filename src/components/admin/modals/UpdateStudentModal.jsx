@@ -35,9 +35,12 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
       setFullName(student.full_name || '');
       setUsername(student.username || '');
       setEmail(student.email || '');
-      setPhone(student.phone || '');
+      setPhone(student.phone_number || student.phone || '');
       setIsActive(student.is_active);
-      setSelectedModules(student.enrollments ? student.enrollments.map(e => e.module.slug) : []);
+      const enrolledSlugs = student.enrolled_modules 
+        ? student.enrolled_modules.map(m => typeof m === 'object' ? m.slug : m)
+        : (student.enrollments ? student.enrollments.map(e => e.module?.slug || e.slug || e) : []);
+      setSelectedModules(enrolledSlugs);
       setError(null);
     }
   }, [isOpen, student]);
@@ -51,7 +54,7 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
         full_name: fullName,
         username,
         email,
-        phone,
+        phone_number: phone,
         is_active: isActive,
         module_slugs: selectedModules
       });
@@ -153,7 +156,7 @@ export const UpdateStudentModal = ({ isOpen, onClose, student, onSuccess }) => {
                   />
                   <div className="flex flex-col">
                     <span className="text-white font-bold">{mod.name}</span>
-                    <span className="text-xs text-gray-400">{mod.price > 0 ? \`\${mod.price} د.ج\` : 'مجاني'}</span>
+                    <span className="text-xs text-gray-400">{mod.price > 0 ? `${mod.price} د.ج` : 'مجاني'}</span>
                   </div>
                 </label>
               ))}
