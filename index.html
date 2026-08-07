@@ -5,166 +5,211 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>منصة فطنة</title>
+    <meta name="description" content="منصة فطنة - نُعدّهم للحياة، لا للامتحانات! منصة تعليمية تربوية متكاملة للأطفال." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      /* ============================================================
+         CRITICAL CSS - Renders immediately, no FOUC
+         ============================================================ */
+      :root {
+        --color-bg-dark: #0D0B2B;
+        --color-bg-darker: #1A0A4B;
+        --color-accent-gold: #F5C518;
+      }
+      *, *::before, *::after { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--color-bg-dark);
+        font-family: 'Cairo', sans-serif;
+        color: #ffffff;
+        overflow-x: hidden;
+        direction: rtl;
+      }
+
+      /* Shell styles - shown before React mounts */
+      #shell {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background-color: var(--color-bg-dark);
+        transition: opacity 0.3s ease;
+      }
+      #shell.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .shell-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background-color: rgba(13, 11, 43, 0.9);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        height: 64px;
+        display: flex;
+        align-items: center;
+      }
+      .shell-container {
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 0 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .shell-brand {
+        font-size: 1.875rem;
+        font-weight: 900;
+        background: linear-gradient(to right, var(--color-accent-gold), #fde047);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-decoration: none;
+      }
+      .shell-nav-links {
+        display: none;
+        gap: 32px;
+      }
+      @media (min-width: 768px) {
+        .shell-nav-links { display: flex; }
+      }
+      .shell-nav-link {
+        color: #d1d5db;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1rem;
+      }
+      .shell-nav-btn {
+        padding: 8px 24px;
+        background-color: var(--color-accent-gold);
+        color: #0D0B2B;
+        font-weight: 900;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 1rem;
+        box-shadow: 0 0 15px rgba(245, 197, 24, 0.4);
+      }
+      .shell-hero {
+        min-height: calc(100vh - 64px);
+        background: linear-gradient(to bottom right, var(--color-bg-dark), var(--color-bg-darker));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 80px 16px 128px;
+        overflow: hidden;
+      }
+      .shell-hero-content {
+        width: 100%;
+        max-width: 1024px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .shell-hero-title {
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        font-weight: 900;
+        margin: 0 0 24px;
+        background: linear-gradient(to right, var(--color-accent-gold), #fde047);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.2;
+        filter: drop-shadow(0 0 20px rgba(245, 197, 24, 0.6));
+      }
+      .shell-hero-subtitle {
+        font-size: clamp(1.25rem, 3vw, 1.875rem);
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 40px;
+        max-width: 768px;
+      }
+      .shell-hero-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        width: 100%;
+        max-width: 400px;
+      }
+      @media (min-width: 640px) {
+        .shell-hero-buttons {
+          flex-direction: row;
+          justify-content: center;
+          width: auto;
+          max-width: none;
+        }
+      }
+      .shell-btn-primary {
+        padding: 20px 40px;
+        background-color: var(--color-accent-gold);
+        color: #0D0B2B;
+        font-weight: 900;
+        border-radius: 16px;
+        text-decoration: none;
+        font-size: 1.25rem;
+        box-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
+        transition: transform 0.2s;
+      }
+      .shell-btn-secondary {
+        padding: 20px 40px;
+        background-color: transparent;
+        border: 2px solid #ffffff;
+        color: #ffffff;
+        font-weight: 700;
+        border-radius: 16px;
+        text-decoration: none;
+        font-size: 1.25rem;
+        transition: transform 0.2s;
+      }
+      /* Floating emoji decorations */
+      .shell-emoji {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.8;
+        animation: floatEmoji 10s ease-in-out infinite;
+      }
+      @keyframes floatEmoji {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-30px) rotate(10deg); }
+      }
+      /* Trust badge */
+      .shell-trust {
+        margin-top: 48px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 12px 24px;
+        border-radius: 9999px;
+        font-weight: 700;
+        font-size: 1.125rem;
+      }
+      .shell-trust-dots {
+        display: flex;
+        margin-left: -16px;
+      }
+      .shell-trust-dot {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--color-bg-dark);
+        margin-left: -12px;
+      }
+    </style>
   </head>
   <body>
-    <div id="root">
-      <!-- Prerendered Homepage Shell to render immediately on first paint -->
-      <style>
-        :root {
-          --color-bg-dark: #0D0B2B;
-          --color-bg-darker: #1A0A4B;
-          --color-accent-gold: #F5C518;
-        }
-        body {
-          margin: 0;
-          background-color: var(--color-bg-dark);
-          font-family: 'Cairo', sans-serif;
-          color: #ffffff;
-          overflow-x: hidden;
-          direction: rtl;
-        }
-        .shell-navbar {
-          position: sticky;
-          top: 0;
-          z-index: 50;
-          background-color: rgba(13, 11, 43, 0.9);
-          backdrop-filter: blur(12px);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-          height: 64px;
-          display: flex;
-          align-items: center;
-        }
-        .shell-container {
-          width: 100%;
-          max-width: 1280px;
-          margin: 0 auto;
-          padding: 0 16px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          box-sizing: border-box;
-        }
-        .shell-brand {
-          font-size: 1.875rem;
-          font-weight: 900;
-          background: linear-gradient(to right, var(--color-accent-gold), #fde047);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          text-decoration: none;
-        }
-        .shell-nav-links {
-          display: none;
-          gap: 32px;
-        }
-        @media (min-width: 768px) {
-          .shell-nav-links {
-            display: flex;
-          }
-        }
-        .shell-nav-link {
-          color: #d1d5db;
-          font-weight: 700;
-          text-decoration: none;
-          font-size: 1rem;
-        }
-        .shell-nav-btn {
-          padding: 8px 24px;
-          background-color: var(--color-accent-gold);
-          color: #0D0B2B;
-          font-weight: 900;
-          border-radius: 8px;
-          text-decoration: none;
-          font-size: 1rem;
-          box-shadow: 0 0 15px rgba(245, 197, 24, 0.4);
-        }
-        .shell-hero {
-          min-height: 90vh;
-          background: linear-gradient(to bottom right, var(--color-bg-dark), var(--color-bg-darker));
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          padding-top: 80px;
-          padding-bottom: 128px;
-          box-sizing: border-box;
-        }
-        .shell-hero-content {
-          width: 100%;
-          max-width: 1024px;
-          padding: 0 16px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          box-sizing: border-box;
-        }
-        .shell-hero-title {
-          font-size: 3.75rem;
-          font-weight: 900;
-          margin-bottom: 24px;
-          margin-top: 0;
-          background: linear-gradient(to right, var(--color-accent-gold), #fde047);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          line-height: 1.2;
-        }
-        @media (min-width: 768px) {
-          .shell-hero-title {
-            font-size: 5rem;
-          }
-        }
-        .shell-hero-subtitle {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #ffffff;
-          margin-bottom: 40px;
-          margin-top: 0;
-          max-width: 768px;
-        }
-        @media (min-width: 768px) {
-          .shell-hero-subtitle {
-            font-size: 1.875rem;
-          }
-        }
-        .shell-hero-buttons {
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-          width: 100%;
-          max-width: 400px;
-        }
-        @media (min-width: 640px) {
-          .shell-hero-buttons {
-            flex-direction: row;
-            justify-content: center;
-            width: auto;
-            max-width: none;
-          }
-        }
-        .shell-btn-primary {
-          padding: 20px 40px;
-          background-color: var(--color-accent-gold);
-          color: #0D0B2B;
-          font-weight: 900;
-          border-radius: 16px;
-          text-decoration: none;
-          font-size: 1.25rem;
-          box-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
-        }
-        .shell-btn-secondary {
-          padding: 20px 40px;
-          background-color: transparent;
-          border: 2px solid #ffffff;
-          color: #ffffff;
-          font-weight: 700;
-          border-radius: 16px;
-          text-decoration: none;
-          font-size: 1.25rem;
-        }
-      </style>
-      <div class="shell-navbar">
+    <!-- 
+      STATIC SHELL: Renders at zero JS cost, covers screen while React bundle loads.
+      Positioned OUTSIDE #root so React.createRoot() does NOT wipe it.
+      Removed via JS once React has painted real content.
+    -->
+    <div id="shell">
+      <nav class="shell-navbar">
         <div class="shell-container">
           <a href="/" class="shell-brand">فطنة</a>
           <div class="shell-nav-links">
@@ -174,8 +219,15 @@
           </div>
           <a href="/login" class="shell-nav-btn">تسجيل الدخول</a>
         </div>
-      </div>
+      </nav>
+
       <section class="shell-hero">
+        <!-- Floating emojis for visual richness -->
+        <span class="shell-emoji" style="top:15%; left:10%; font-size:4rem; animation-duration:12s;">🚀</span>
+        <span class="shell-emoji" style="top:70%; left:85%; font-size:3.5rem; animation-duration:15s; animation-delay:-5s;">⭐</span>
+        <span class="shell-emoji" style="top:30%; left:88%; font-size:4.5rem; animation-duration:10s; animation-delay:-2s;">⚡</span>
+        <span class="shell-emoji" style="top:80%; left:12%; font-size:4rem; animation-duration:18s; animation-delay:-7s;">🏆</span>
+
         <div class="shell-hero-content">
           <h1 class="shell-hero-title">منصة فطنة</h1>
           <p class="shell-hero-subtitle">نُعدّهم للحياة، لا للامتحانات!</p>
@@ -183,9 +235,64 @@
             <a href="#programs" class="shell-btn-primary">ابدأ رحلتك الآن 🚀</a>
             <a href="/login" class="shell-btn-secondary">تسجيل الدخول</a>
           </div>
+          <div class="shell-trust">
+            <div class="shell-trust-dots">
+              <div class="shell-trust-dot" style="background: linear-gradient(to bottom right, #7C3AED, #4F46E5);"></div>
+              <div class="shell-trust-dot" style="background: linear-gradient(to bottom right, #4F46E5, #6D28D9);"></div>
+              <div class="shell-trust-dot" style="background: linear-gradient(to bottom right, #6D28D9, #7C3AED);"></div>
+              <div class="shell-trust-dot" style="background: linear-gradient(to bottom right, #7C3AED, #8B5CF6);"></div>
+            </div>
+            <div><span style="color: var(--color-accent-gold);">+5000</span> طالب يثقون بنا</div>
+          </div>
         </div>
       </section>
     </div>
+
+    <!-- React mounts here - shell above covers it until React is ready -->
+    <div id="root"></div>
+
+    <script>
+      // Hide the shell once React has painted content into #root.
+      // We use a MutationObserver so we detect the exact moment React appends its first child.
+      (function() {
+        var shell = document.getElementById('shell');
+        if (!shell) return;
+
+        var observer = new MutationObserver(function(mutations) {
+          var root = document.getElementById('root');
+          // React has mounted when #root has children
+          if (root && root.children.length > 0) {
+            // Give React one more frame to finish painting before fading shell out
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                shell.classList.add('hidden');
+                // Fully remove after fade transition
+                setTimeout(function() {
+                  if (shell && shell.parentNode) {
+                    shell.parentNode.removeChild(shell);
+                  }
+                }, 400);
+              });
+            });
+            observer.disconnect();
+          }
+        });
+
+        observer.observe(document.getElementById('root'), { childList: true, subtree: false });
+
+        // Failsafe: remove shell after 5 seconds regardless
+        setTimeout(function() {
+          if (shell && shell.parentNode) {
+            shell.classList.add('hidden');
+            setTimeout(function() {
+              if (shell && shell.parentNode) shell.parentNode.removeChild(shell);
+            }, 400);
+          }
+          observer.disconnect();
+        }, 5000);
+      })();
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

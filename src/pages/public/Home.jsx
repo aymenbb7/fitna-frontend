@@ -127,25 +127,23 @@ const Home = () => {
 
         <div className="z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center relative">
           <motion.h1 
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
             className="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] py-2"
           >
             {siteSettings?.landing_hero_title || 'منصة فطنة'}
           </motion.h1>
           <motion.p 
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
             className="text-2xl md:text-3xl font-bold mb-10 text-white max-w-3xl"
           >
             {siteSettings?.landing_hero_subtitle || 'نُعدّهم للحياة، لا للامتحانات!'}
           </motion.p>
           
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 1, y: 0 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-6 justify-center w-full sm:w-auto"
           >
             <a href="#programs" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:scale-105 duration-200">
@@ -157,9 +155,8 @@ const Home = () => {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 1 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
             className="mt-12 flex items-center gap-4 bg-bgPurple/50 backdrop-blur border border-white/10 py-3 px-6 rounded-full"
           >
             <div className="flex -space-x-4 space-x-reverse">
