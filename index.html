@@ -11,41 +11,180 @@
   </head>
   <body>
     <div id="root">
+      <!-- Prerendered Homepage Shell to render immediately on first paint -->
       <style>
-        .initial-loader {
-          position: fixed;
-          inset: 0;
+        :root {
+          --color-bg-dark: #0D0B2B;
+          --color-bg-darker: #1A0A4B;
+          --color-accent-gold: #F5C518;
+        }
+        body {
+          margin: 0;
+          background-color: var(--color-bg-dark);
+          font-family: 'Cairo', sans-serif;
+          color: #ffffff;
+          overflow-x: hidden;
+          direction: rtl;
+        }
+        .shell-navbar {
+          position: sticky;
+          top: 0;
+          z-index: 50;
+          background-color: rgba(13, 11, 43, 0.9);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          height: 64px;
+          display: flex;
+          align-items: center;
+        }
+        .shell-container {
+          width: 100%;
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 16px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          box-sizing: border-box;
+        }
+        .shell-brand {
+          font-size: 1.875rem;
+          font-weight: 900;
+          background: linear-gradient(to right, var(--color-accent-gold), #fde047);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          text-decoration: none;
+        }
+        .shell-nav-links {
+          display: none;
+          gap: 32px;
+        }
+        @media (min-width: 768px) {
+          .shell-nav-links {
+            display: flex;
+          }
+        }
+        .shell-nav-link {
+          color: #d1d5db;
+          font-weight: 700;
+          text-decoration: none;
+          font-size: 1rem;
+        }
+        .shell-nav-btn {
+          padding: 8px 24px;
+          background-color: var(--color-accent-gold);
+          color: #0D0B2B;
+          font-weight: 900;
+          border-radius: 8px;
+          text-decoration: none;
+          font-size: 1rem;
+          box-shadow: 0 0 15px rgba(245, 197, 24, 0.4);
+        }
+        .shell-hero {
+          min-height: 90vh;
+          background: linear-gradient(to bottom right, var(--color-bg-dark), var(--color-bg-darker));
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding-top: 80px;
+          padding-bottom: 128px;
+          box-sizing: border-box;
+        }
+        .shell-hero-content {
+          width: 100%;
+          max-width: 1024px;
+          padding: 0 16px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          justify-content: center;
-          background-color: #0D0B2B;
-          color: #ffffff;
-          font-family: 'Cairo', sans-serif;
-          z-index: 9999;
+          box-sizing: border-box;
         }
-        .loader-spinner {
-          width: 50px;
-          height: 50px;
-          border: 5px solid rgba(245, 197, 24, 0.2);
-          border-top-color: #F5C518;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-          margin-bottom: 20px;
+        .shell-hero-title {
+          font-size: 3.75rem;
+          font-weight: 900;
+          margin-bottom: 24px;
+          margin-top: 0;
+          background: linear-gradient(to right, var(--color-accent-gold), #fde047);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          line-height: 1.2;
         }
-        .loader-text {
-          font-size: 1.25rem;
+        @media (min-width: 768px) {
+          .shell-hero-title {
+            font-size: 5rem;
+          }
+        }
+        .shell-hero-subtitle {
+          font-size: 1.5rem;
           font-weight: 700;
-          color: #E2E8F0;
+          color: #ffffff;
+          margin-bottom: 40px;
+          margin-top: 0;
+          max-width: 768px;
         }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
+        @media (min-width: 768px) {
+          .shell-hero-subtitle {
+            font-size: 1.875rem;
+          }
+        }
+        .shell-hero-buttons {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          width: 100%;
+          max-width: 400px;
+        }
+        @media (min-width: 640px) {
+          .shell-hero-buttons {
+            flex-direction: row;
+            justify-content: center;
+            width: auto;
+            max-width: none;
+          }
+        }
+        .shell-btn-primary {
+          padding: 20px 40px;
+          background-color: var(--color-accent-gold);
+          color: #0D0B2B;
+          font-weight: 900;
+          border-radius: 16px;
+          text-decoration: none;
+          font-size: 1.25rem;
+          box-shadow: 0 0 20px rgba(245, 197, 24, 0.5);
+        }
+        .shell-btn-secondary {
+          padding: 20px 40px;
+          background-color: transparent;
+          border: 2px solid #ffffff;
+          color: #ffffff;
+          font-weight: 700;
+          border-radius: 16px;
+          text-decoration: none;
+          font-size: 1.25rem;
         }
       </style>
-      <div class="initial-loader">
-        <div class="loader-spinner"></div>
-        <div class="loader-text">جاري التحميل...</div>
+      <div class="shell-navbar">
+        <div class="shell-container">
+          <a href="/" class="shell-brand">فطنة</a>
+          <div class="shell-nav-links">
+            <a href="#programs" class="shell-nav-link">البرامج</a>
+            <a href="#about" class="shell-nav-link">من نحن</a>
+            <a href="#contact" class="shell-nav-link">تواصل معنا</a>
+          </div>
+          <a href="/login" class="shell-nav-btn">تسجيل الدخول</a>
+        </div>
       </div>
+      <section class="shell-hero">
+        <div class="shell-hero-content">
+          <h1 class="shell-hero-title">منصة فطنة</h1>
+          <p class="shell-hero-subtitle">نُعدّهم للحياة، لا للامتحانات!</p>
+          <div class="shell-hero-buttons">
+            <a href="#programs" class="shell-btn-primary">ابدأ رحلتك الآن 🚀</a>
+            <a href="/login" class="shell-btn-secondary">تسجيل الدخول</a>
+          </div>
+        </div>
+      </section>
     </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
