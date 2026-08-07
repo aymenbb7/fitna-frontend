@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useInView, animate } from 'framer-motion';
 import { SettingsContext } from '../../context/SettingsContext';
@@ -51,9 +51,8 @@ const Counter = ({ from, to, duration = 2, delay = 0 }) => {
 
 const Home = () => {
   const { t } = useTranslation();
-  const { settings } = React.useContext(SettingsContext);
+  const { settings, siteSettings } = useContext(SettingsContext);
   const [modules, setModules] = useState([]);
-  const [siteSettings, setSiteSettings] = useState(null);
 
   useEffect(() => {
     api.get('/modules/')
@@ -65,10 +64,6 @@ const Home = () => {
           { slug: 'soroban', name: 'الحساب الذهني', description: 'تطوير السرعة في الحساب.', icon: '🧮' },
         ]);
       });
-
-    api.get('/public-site-settings/')
-      .then(res => setSiteSettings(res.data))
-      .catch(() => {});
   }, []);
 
   return (
@@ -474,14 +469,14 @@ const Home = () => {
       {/* How It Works */}
       <section className="py-24 bg-bgPurple border-y border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{siteSettings?.landing_how_it_works_title || t('how_it_works.title')}</h2>
+          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{siteSettings?.landing_how_it_works_title || 'كيف يعمل الموقع؟'}</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            {(siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]' ? JSON.parse(siteSettings.landing_programs_json) : [
-              { num: 1, text: t('how_it_works.step1'), color: '#3B82F6' },
-              { num: 2, text: t('how_it_works.step2'), color: '#F5C518' },
-              { num: 3, text: t('how_it_works.step3'), color: '#10B981' },
-              { num: 4, text: t('how_it_works.step4'), color: '#EF4444' }
-            ]).map((step, i) => (
+            {[
+              { num: 1, text: t('how_it_works.step1') || 'سجّل في البرنامج المناسب لك', color: '#3B82F6' },
+              { num: 2, text: t('how_it_works.step2') || 'احضر الجلسات التفاعلية', color: '#F5C518' },
+              { num: 3, text: t('how_it_works.step3') || 'تدرّب وحلّ التحديات', color: '#10B981' },
+              { num: 4, text: t('how_it_works.step4') || 'احصل على شهادتك', color: '#EF4444' }
+            ].map((step, i) => (
               <div key={i} className="flex flex-col items-center bg-bgDark p-8 rounded-3xl border border-white/5 shadow-xl hover:-translate-y-2 transition-transform">
                 <div 
                   className="w-20 h-20 rounded-2xl text-white flex items-center justify-center text-3xl font-black mb-6 shadow-lg rotate-3"
