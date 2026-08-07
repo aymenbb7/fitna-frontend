@@ -127,7 +127,7 @@ export const BroadcastModal = ({ isOpen, onClose, onSuccess }) => {
                 {user?.role === 'SUPER_ADMIN' && <option value="ALL">الجميع (طلاب ومشرفين)</option>}
                 <option value="ALL_STUDENTS">جميع الطلاب</option>
                 {user?.role === 'SUPER_ADMIN' && <option value="ALL_MODULE_ADMINS">جميع مشرفي الوحدات</option>}
-                <option value="MODULES">وحدات دراسية محددة</option>
+                {user?.role === 'SUPER_ADMIN' && <option value="MODULES">وحدات دراسية محددة</option>}
                 <option value="STUDENTS">طلاب محددين</option>
               </select>
             </div>

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button } from '../../ui/Button';
 import { RefreshCw, Copy, CheckCircle } from 'lucide-react';
 import api from '../../../api/axios';
 import { toast } from '../../../utils/toast';
+import { AuthContext } from '../../../context/AuthContext';
 
 export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
+  const { user } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
   const [password, setPassword] = useState('');
@@ -74,7 +76,12 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
         ...payments[slug]
       }));
 
-      await api.post('/admin/students/create/', {
+      // SUPER_ADMIN uses the privileged endpoint; MODULE_ADMIN uses the open one
+      const endpoint = user?.role === 'SUPER_ADMIN'
+        ? '/admin/students/create/'
+        : '/admin/students/create-by-admin/';
+
+      await api.post(endpoint, {
         email,
         full_name: fullName,
         password,
