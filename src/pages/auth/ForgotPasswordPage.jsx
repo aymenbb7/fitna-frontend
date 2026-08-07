@@ -13,7 +13,7 @@ const ForgotPasswordPage = () => {
         </p>
 
         <a 
-          href="https://wa.me/213795375422" 
+          href="https://wa.me/213773650836" 
           target="_blank" 
           rel="noopener noreferrer"
           className="w-full py-4 bg-[#25D366] text-white font-black rounded-xl text-lg hover:scale-[1.02] transition shadow-lg flex items-center justify-center gap-3 mb-6 hover:bg-[#1DA851]"

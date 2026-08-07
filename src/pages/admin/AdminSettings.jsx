@@ -117,16 +117,23 @@ export const AdminSettings = () => {
       try {
         const res = await api.get('/admin/site-settings/');
         const data = res.data || {};
-        // Safely merge DB data with current state, converting nulls to empty strings
         setSettings(prev => {
           const merged = { ...prev };
           for (const key in data) {
-            merged[key] = data[key] !== null ? data[key] : '';
+            if (data[key] !== null && data[key] !== undefined) {
+              merged[key] = data[key];
+            }
+          }
+          if (data.social_whatsapp && !merged.whatsapp_number) {
+            merged.whatsapp_number = data.social_whatsapp;
+          }
+          if (data.whatsapp_number && !merged.social_whatsapp) {
+            merged.social_whatsapp = data.whatsapp_number;
           }
           return merged;
         });
       } catch (err) {
-        console.error("Failed to load settings");
+        console.error("Failed to load settings", err);
       }
     };
     fetchSettings();
@@ -134,7 +141,14 @@ export const AdminSettings = () => {
 
   const handleChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
-    setSettings({ ...settings, [e.target.name]: value });
+    const name = e.target.name;
+    const updated = { ...settings, [name]: value };
+    if (name === 'social_whatsapp') {
+      updated.whatsapp_number = value;
+    } else if (name === 'whatsapp_number') {
+      updated.social_whatsapp = value;
+    }
+    setSettings(updated);
   };
 
   const handleSaveSettings = async () => {
@@ -146,7 +160,9 @@ export const AdminSettings = () => {
         setSettings(prev => ({ ...prev, ...res.data.settings }));
       }
     } catch (err) {
-      toast.error("حدث خطأ أثناء حفظ الإعدادات");
+      console.error("Save settings error:", err.response?.data);
+      const errorMsg = err.response?.data?.error || err.response?.data?.detail || "حدث خطأ أثناء حفظ الإعدادات";
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }

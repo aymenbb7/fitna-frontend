@@ -632,14 +632,39 @@ const Home = () => {
       {/* Contact Section */}
       <section id="contact" className="py-24 bg-bgDark relative z-10">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-5xl font-black mb-8 text-white">{t('contact.title')}</h2>
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto font-bold leading-relaxed">{siteSettings?.footer_desc || 'فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.'}</p>
+          <h2 className="text-5xl font-black mb-6 text-white">{siteSettings?.landing_contact_title || t('contact.title')}</h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto font-bold leading-relaxed">{siteSettings?.footer_desc || 'فريقنا مستعد دائماً للإجابة على استفساراتكم ومساعدتكم في اختيار البرنامج الأنسب.'}</p>
+          
+          {/* Dynamic Contact Details Badges */}
+          <div className="flex flex-wrap gap-4 justify-center items-center mb-10 text-gray-200 text-lg font-bold">
+            <div className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 shadow-md">
+              <span className="text-xl">📧</span>
+              <span className="dir-ltr font-mono text-accentGold">{siteSettings?.contact_email || settings?.contact?.email || 'info@fitna.dz'}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 shadow-md">
+              <span className="text-xl">📞</span>
+              <span className="dir-ltr font-mono text-green-400">{siteSettings?.contact_phone || settings?.contact?.phone || '+213773650836'}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/5 px-6 py-3 rounded-2xl border border-white/10 shadow-md">
+              <span className="text-xl">📍</span>
+              <span>{siteSettings?.contact_address || settings?.contact?.address || 'الجزائر العاصمة'}</span>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
-            <a href={`https://wa.me/${(siteSettings?.social_whatsapp || settings.contact.whatsapp).replace('+', '')}`} className="px-10 py-5 bg-[#25D366] text-white font-black rounded-2xl text-xl hover:bg-[#1DA851] transition flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:-translate-y-1">
-              تواصل عبر واتساب
+            <a 
+              href={`https://wa.me/${(siteSettings?.social_whatsapp || siteSettings?.whatsapp_number || settings?.contact?.whatsapp || '+213773650836').replace('+', '').replace(/\s+/g, '')}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="px-10 py-5 bg-[#25D366] text-white font-black rounded-2xl text-xl hover:bg-[#1DA851] transition flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(37,211,102,0.4)] hover:-translate-y-1"
+            >
+              راسلنا على واتساب 💬
             </a>
-            <a href={`mailto:${siteSettings?.contact_email || settings.contact.email}`} className="px-10 py-5 bg-white/10 font-bold rounded-2xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3 border border-white/10 hover:-translate-y-1">
-              راسلنا عبر الإيميل
+            <a 
+              href={`mailto:${siteSettings?.contact_email || settings?.contact?.email || 'info@fitna.dz'}`} 
+              className="px-10 py-5 bg-white/10 font-bold rounded-2xl text-xl hover:bg-white/20 transition flex items-center justify-center gap-3 border border-white/10 hover:-translate-y-1"
+            >
+              راسلنا عبر الإيميل ✉️
             </a>
           </div>
         </div>

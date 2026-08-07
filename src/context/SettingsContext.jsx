@@ -6,9 +6,9 @@ export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('siteSettings');
     return saved ? JSON.parse(saved) : {
-      stats: { students: 1200, modules: 9, satisfaction: 98 },
-      about: "فطنة هي أكاديمية رائدة تهدف إلى إعداد الجيل القادم وتزويدهم بالمهارات الحياتية الضرورية.",
-      contact: { whatsapp: "+213795375422", email: "info@fitna.dz", address: "الجزائر العاصمة" },
+      stats: { students: 1250, modules: 8, satisfaction: 98 },
+      about: "فطنة هي منصة تعليمية تربوية تهدف لتأسيس أطفالنا وتطوير مهاراتهم باللعب والتفاعل.",
+      contact: { whatsapp: "+213773650836", email: "info@fitna.dz", address: "الجزائر العاصمة", phone: "+213773650836" },
       fontFamily: "Cairo"
     };
   });
