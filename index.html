@@ -10,7 +10,43 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        .initial-loader {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          background-color: #0D0B2B;
+          color: #ffffff;
+          font-family: 'Cairo', sans-serif;
+          z-index: 9999;
+        }
+        .loader-spinner {
+          width: 50px;
+          height: 50px;
+          border: 5px solid rgba(245, 197, 24, 0.2);
+          border-top-color: #F5C518;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin-bottom: 20px;
+        }
+        .loader-text {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #E2E8F0;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      </style>
+      <div class="initial-loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">جاري التحميل...</div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
