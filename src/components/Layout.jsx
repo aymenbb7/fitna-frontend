@@ -11,6 +11,15 @@ const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Safe WhatsApp number helper – never crashes on undefined
+  const DEFAULT_WA = '213773650836';
+  const waNumber = (num) => String(num || DEFAULT_WA).replace('+', '').replace(/\s+/g, '');
+
+  // Safe contact field accessors
+  const contactWhatsapp = settings?.contact?.whatsapp || `+${DEFAULT_WA}`;
+  const contactEmail    = settings?.contact?.email    || 'info@fitna.dz';
+  const contactAddress  = settings?.contact?.address  || 'الجزائر العاصمة';
+
   useEffect(() => {
     if (location.pathname === '/' && location.hash) {
       const id = location.hash.replace('#', '');
@@ -109,7 +118,7 @@ const Layout = () => {
 
       {/* Floating WhatsApp */}
       <a 
-        href={`https://wa.me/${(settings?.contact?.whatsapp || '+213773650836').replace('+', '').replace(/\s+/g, '')}`} 
+        href={`https://wa.me/${waNumber(contactWhatsapp)}`} 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-6 left-6 z-50 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 hover:scale-110 transition-all duration-300"
@@ -142,7 +151,7 @@ const Layout = () => {
                     <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.16-3.44-3.37-3.65-5.71-.24-1.79.15-3.69 1.07-5.16 1.17-1.87 3.28-3.09 5.49-3.23 1.25-.09 2.52.12 3.64.63l-.06 4.13c-.93-.4-2-.48-2.98-.24-1.16.27-2.15 1.09-2.58 2.2-.42 1.06-.31 2.33.3 3.27.67 1.05 1.91 1.68 3.15 1.58 1.35-.09 2.52-1.01 2.84-2.31.14-.58.18-1.18.17-1.77V.02z" />
                   </svg>
                 </a>
-                <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:text-[#25D366] hover:bg-[#25D366]/20 transition-colors">
+                <a href={`https://wa.me/${waNumber(contactWhatsapp)}`} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:text-[#25D366] hover:bg-[#25D366]/20 transition-colors">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12.031 0C5.399 0 0 5.405 0 12.04c0 2.121.554 4.195 1.611 6.015L.302 23.364l5.485-1.44a11.96 11.96 0 006.244 1.737h.005c6.626 0 12.029-5.4 12.029-12.038C24.062 5.407 18.66 0 12.031 0zm0 21.65h-.004a9.98 9.98 0 01-5.093-1.39l-.365-.217-3.784.992.997-3.687-.238-.38A9.973 9.973 0 012 12.04c0-5.526 4.49-10.024 10.034-10.024 5.527 0 10.03 4.497 10.03 10.023 0 5.529-4.502 10.012-10.033 10.012zM17.544 14.15c-.302-.15-1.785-.88-2.062-.982-.276-.1-.478-.15-.68.15-.201.303-.78 1.026-.957 1.233-.177.208-.354.233-.655.083-1.637-.813-2.946-1.89-4.053-3.753-.11-.186.113-.174.407-.76.076-.151.038-.283-.02-.435-.058-.15-.68-1.642-.931-2.25-.245-.591-.493-.51-.68-.52h-.581c-.201 0-.528.075-.805.378-.276.303-1.055 1.03-1.055 2.511 0 1.482 1.08 2.915 1.23 3.118.15.202 2.128 3.25 5.155 4.553.72.31 1.28.496 1.716.635.723.23 1.382.197 1.9.12.584-.087 1.785-.73 2.037-1.436.251-.707.251-1.31.176-1.436-.075-.127-.277-.202-.578-.354z" />
                   </svg>
@@ -183,18 +192,18 @@ const Layout = () => {
               <ul className="space-y-4 font-bold text-gray-400">
                 <li className="flex items-center gap-3">
                   <span className="text-xl">📧</span>
-                  <a href={`mailto:${settings.contact.email}`} className="hover:text-white transition-colors" dir="ltr">{settings.contact.email}</a>
+                  <a href={`mailto:${contactEmail}`} className="hover:text-white transition-colors" dir="ltr">{contactEmail}</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="text-xl">📞</span>
-                  <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="hover:text-white transition-colors" dir="ltr">{settings.contact.whatsapp}</a>
+                  <a href={`https://wa.me/${waNumber(contactWhatsapp)}`} className="hover:text-white transition-colors" dir="ltr">{contactWhatsapp}</a>
                 </li>
                 <li className="flex items-center gap-3">
                   <span className="text-xl">📍</span>
-                  <span>{settings.contact.address}</span>
+                  <span>{contactAddress}</span>
                 </li>
               </ul>
-              <a href={`https://wa.me/${settings.contact.whatsapp.replace('+', '')}`} className="mt-6 inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1DA851] transition-colors shadow-lg">
+              <a href={`https://wa.me/${waNumber(contactWhatsapp)}`} className="mt-6 inline-flex items-center gap-2 bg-[#25D366] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#1DA851] transition-colors shadow-lg">
                 <MessageCircle size={20} />
                 راسلنا على واتساب
               </a>

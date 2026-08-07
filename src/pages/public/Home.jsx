@@ -255,10 +255,10 @@ const Home = () => {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {(siteSettings?.landing_stats_json && siteSettings.landing_stats_json !== '[]' ? JSON.parse(siteSettings.landing_stats_json) : [
-              { num: settings.stats.students, label: 'طالب وطالبة', emoji: '😊', glow: 'rgba(59,130,246,0.5)', prefix: '+' },
-              { num: settings.stats.modules, label: 'برنامج تدريبي', emoji: '🏆', glow: 'rgba(245,197,24,0.5)', prefix: '+' },
+              { num: settings?.stats?.students || 1250, label: 'طالب وطالبة', emoji: '😊', glow: 'rgba(59,130,246,0.5)', prefix: '+' },
+              { num: settings?.stats?.modules || 8, label: 'برنامج تدريبي', emoji: '🏆', glow: 'rgba(245,197,24,0.5)', prefix: '+' },
               { num: 15, label: 'مدرب مميز', emoji: '🎓', glow: 'rgba(139,92,246,0.5)', prefix: '+' },
-              { num: settings.stats.satisfaction, label: 'نسبة رضا الطلاب', emoji: '⭐', glow: 'rgba(16,185,129,0.5)', suffix: '%' },
+              { num: settings?.stats?.satisfaction || 98, label: 'نسبة رضا الطلاب', emoji: '⭐', glow: 'rgba(16,185,129,0.5)', suffix: '%' },
             ]).map((stat, i) => (
               <motion.div 
                 key={i}
@@ -270,7 +270,7 @@ const Home = () => {
                 style={{ boxShadow: `0 10px 40px -10px ${stat.glow}` }}
               >
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="text-6xl mb-4 drop-shadow-[0_0_15px_currentColor]" style={{ color: stat.glow.replace('0.5)', '1)') }}>
+                <div className="text-6xl mb-4 drop-shadow-[0_0_15px_currentColor]" style={{ color: (stat.glow || 'rgba(255,255,255,0.5)').replace('0.5)', '1)') }}>
                   {stat.emoji}
                 </div>
                 <div className="text-4xl font-black text-white mb-2 flex justify-center items-center gap-1">
