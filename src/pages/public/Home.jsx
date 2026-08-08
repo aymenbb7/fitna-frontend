@@ -55,22 +55,43 @@ const Home = () => {
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
-      try {
-        const parsed = JSON.parse(siteSettings.landing_programs_json);
-        if (parsed.length > 0) {
-          setModules(parsed);
-          return;
-        }
-      } catch (e) {
-        console.error("Failed to parse landing_programs_json", e);
-      }
-    }
-    
-    // Fallback if no settings
+    // Always fetch the live modules from the API to ensure all 9 modules appear.
+    // landing_programs_json is used for display metadata (icons, descriptions) but
+    // we always merge with the live API to avoid showing a stale/partial list.
     api.get('/modules/')
-      .then(res => setModules(res.data))
+      .then(res => {
+        const liveModules = res.data;
+        // If the site settings has a custom programs JSON with icons/descriptions,
+        // merge that metadata on top of the live modules (preserving all 9 from the API)
+        if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
+          try {
+            const customPrograms = JSON.parse(siteSettings.landing_programs_json);
+            const customMap = {};
+            customPrograms.forEach(p => { if (p.slug) customMap[p.slug] = p; });
+            const merged = liveModules.map(mod => ({
+              ...mod,
+              ...(customMap[mod.slug] ? {
+                name: customMap[mod.slug].name || mod.name,
+                description: customMap[mod.slug].description || mod.description,
+                icon: customMap[mod.slug].icon || mod.icon,
+              } : {})
+            }));
+            setModules(merged);
+            return;
+          } catch (e) {
+            console.error("Failed to parse landing_programs_json", e);
+          }
+        }
+        setModules(liveModules);
+      })
       .catch(err => {
+        // Final fallback: try landing_programs_json before hardcoded list
+        if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
+          try {
+            const parsed = JSON.parse(siteSettings.landing_programs_json);
+            if (parsed.length > 0) { setModules(parsed); return; }
+          } catch (e) { /* ignore */ }
+        }
         setModules([
           { slug: 'quran', name: 'قسم التعليم القرآني', description: 'حفظ وتجويد بطرق تفاعلية.', icon: '🕌' },
           { slug: 'memory', name: 'الذاكرة الخارقة', description: 'تطوير مهارات الحفظ السريع.', icon: '🧠' },
