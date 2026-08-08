@@ -115,7 +115,8 @@ const TrialPage = () => {
                 ))}
 
                 {lesson.documents?.length > 0 && lesson.documents.map(doc => {
-                  const fileUrl = getMediaUrl(doc.document_file || doc.file_url);
+                  // effective_url is server-computed and only returns valid HTTP(S) URLs
+                  const fileUrl = doc.effective_url || getMediaUrl(doc.file_url) || getMediaUrl(doc.document_file);
                   const hasFile = !!fileUrl;
                   return (
                     <div key={doc.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
@@ -160,7 +161,8 @@ const TrialPage = () => {
                 })}
 
                 {lesson.voice_messages?.length > 0 && lesson.voice_messages.map(voice => {
-                  const audioUrl = getMediaUrl(voice.audio_file || voice.audio_url);
+                  // effective_url is server-computed and only returns valid HTTP(S) URLs
+                  const audioUrl = voice.effective_url || getMediaUrl(voice.audio_url) || getMediaUrl(voice.audio_file);
                   const hasAudio = !!audioUrl;
                   return (
                     <div key={voice.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
@@ -205,7 +207,7 @@ const TrialPage = () => {
                     </div>
                     <div className="bg-black flex items-center justify-center p-4">
                       <img 
-                        src={getMediaUrl(photo.image_file || photo.photo_url)} 
+                        src={photo.effective_url || getMediaUrl(photo.photo_url) || getMediaUrl(photo.image_file)} 
                         alt={photo.title}
                         className="max-h-96 object-contain rounded-xl"
                       />

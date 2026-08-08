@@ -125,7 +125,7 @@ const ModuleContent = () => {
   };
 
   const handleViewPDF = (item) => {
-    const url = getMediaUrl(item.document_file || item.file_url);
+    const url = item.effective_url || getMediaUrl(item.file_url) || getMediaUrl(item.document_file);
     if (!url) {
       alert("الملف غير متاح حالياً.");
       return;
@@ -222,7 +222,7 @@ const ModuleContent = () => {
           ))}
 
           {activeTab === 'documents' && documents.map(d => {
-            const fileUrl = getMediaUrl(d.document_file || d.file_url);
+            const fileUrl = d.effective_url || getMediaUrl(d.file_url) || getMediaUrl(d.document_file);
             const hasFile = !!fileUrl;
             return (
               <div key={d.id} className="bg-bgDark p-4 rounded-2xl border border-white/5 hover:border-accentGold/50 transition flex items-center justify-between group">
@@ -288,7 +288,7 @@ const ModuleContent = () => {
           ))}
 
           {activeTab === 'voice_messages' && voiceMessages.map(v => {
-            const audioUrl = getMediaUrl(v.audio_file || v.audio_url);
+            const audioUrl = v.effective_url || getMediaUrl(v.audio_url) || getMediaUrl(v.audio_file);
             const hasAudio = !!audioUrl;
             return (
               <div key={v.id} className="bg-bgDark p-6 rounded-3xl border border-white/5 hover:border-accentGold/50 transition flex flex-col gap-4 group">
@@ -338,7 +338,7 @@ const ModuleContent = () => {
               </div>
               <div className="flex flex-col gap-2 mt-4">
                 <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-black flex justify-center">
-                  <img src={getMediaUrl(p.image_file || p.photo_url)} alt={p.title} className="max-h-[60vh] object-contain" />
+                  <img src={p.effective_url || getMediaUrl(p.photo_url) || getMediaUrl(p.image_file)} alt={p.title} className="max-h-[60vh] object-contain" />
                 </div>
                 <button onClick={() => handleDownload(p, 'photos')} className="self-end px-6 py-2 bg-pink-500/10 text-pink-400 border border-pink-500/20 rounded-xl font-bold text-sm hover:bg-pink-500 hover:text-white transition">
                   تحميل الصورة
