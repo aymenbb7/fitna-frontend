@@ -9,7 +9,7 @@ const MyModules = () => {
 
   useEffect(() => {
     // Fetch user's enrolled modules
-    api.get('/modules/')
+    api.get('/modules/?enrolled=true')
       .then(res => setModules(res.data))
       .catch(err => {
         console.error("Failed to load modules:", err);

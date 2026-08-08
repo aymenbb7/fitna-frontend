@@ -55,6 +55,19 @@ const Home = () => {
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
+    if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
+      try {
+        const parsed = JSON.parse(siteSettings.landing_programs_json);
+        if (parsed.length > 0) {
+          setModules(parsed);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse landing_programs_json", e);
+      }
+    }
+    
+    // Fallback if no settings
     api.get('/modules/')
       .then(res => setModules(res.data))
       .catch(err => {
@@ -64,7 +77,7 @@ const Home = () => {
           { slug: 'soroban', name: 'الحساب الذهني', description: 'تطوير السرعة في الحساب.', icon: '🧮' },
         ]);
       });
-  }, []);
+  }, [siteSettings]);
 
   return (
     <div className="w-full bg-bgDark overflow-hidden text-white font-sans relative">
