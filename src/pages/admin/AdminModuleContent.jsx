@@ -16,7 +16,18 @@ const AdminModuleContent = () => {
   const [activeLesson, setActiveLesson] = useState(null);
   const [showQuizzes, setShowQuizzes] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  
+
+  // Inline modal state for adding sections and lessons
+  const [addSectionModal, setAddSectionModal] = useState(false);
+  const [addSectionTitle, setAddSectionTitle] = useState('');
+  const [addSectionError, setAddSectionError] = useState('');
+  const [addSectionLoading, setAddSectionLoading] = useState(false);
+
+  const [addLessonModal, setAddLessonModal] = useState(null); // holds sectionId
+  const [addLessonTitle, setAddLessonTitle] = useState('');
+  const [addLessonError, setAddLessonError] = useState('');
+  const [addLessonLoading, setAddLessonLoading] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,25 +59,49 @@ const AdminModuleContent = () => {
     setExpandedSections(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const openAddSection = () => {
+    setAddSectionTitle('');
+    setAddSectionError('');
+    setAddSectionModal(true);
+  };
+
   const handleAddSection = async () => {
-    const title = window.prompt("اسم القسم الجديد:");
-    if (!title) return;
+    if (!addSectionTitle.trim()) { setAddSectionError('الرجاء إدخال اسم القسم'); return; }
+    setAddSectionLoading(true);
+    setAddSectionError('');
     try {
-      await api.post(`/modules/${slug}/sections/`, { title });
+      await api.post(`/modules/${slug}/sections/`, { title: addSectionTitle.trim() });
+      setAddSectionModal(false);
       fetchData();
     } catch (err) {
-      alert("حدث خطأ أثناء إضافة القسم");
+      const errData = err.response?.data;
+      const msg = errData?.title?.[0] || errData?.error || errData?.detail || JSON.stringify(errData) || 'حدث خطأ أثناء إضافة القسم';
+      setAddSectionError(msg);
+    } finally {
+      setAddSectionLoading(false);
     }
   };
 
-  const handleAddLesson = async (sectionId) => {
-    const title = window.prompt("اسم الدرس الجديد:");
-    if (!title) return;
+  const openAddLesson = (sectionId) => {
+    setAddLessonTitle('');
+    setAddLessonError('');
+    setAddLessonModal(sectionId);
+  };
+
+  const handleAddLesson = async () => {
+    if (!addLessonTitle.trim()) { setAddLessonError('الرجاء إدخال اسم الدرس'); return; }
+    setAddLessonLoading(true);
+    setAddLessonError('');
     try {
-      await api.post(`/modules/${slug}/lessons/`, { title, section: sectionId });
+      await api.post(`/modules/${slug}/lessons/`, { title: addLessonTitle.trim(), section: addLessonModal });
+      setAddLessonModal(null);
       fetchData();
     } catch (err) {
-      alert("حدث خطأ أثناء إضافة الدرس");
+      const errData = err.response?.data;
+      const msg = errData?.title?.[0] || errData?.error || errData?.detail || JSON.stringify(errData) || 'حدث خطأ أثناء إضافة الدرس';
+      setAddLessonError(msg);
+    } finally {
+      setAddLessonLoading(false);
     }
   };
 
@@ -122,14 +157,68 @@ const AdminModuleContent = () => {
           إعدادات الوحدة
         </Button>
       </div>
-      
-      <UpdateModuleModal 
+
+      <UpdateModuleModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
         module={module}
         onSuccess={() => { fetchData(); setIsUpdateModalOpen(false); }}
       />
-      
+
+      {/* Add Section Modal */}
+      {addSectionModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setAddSectionModal(false)}>
+          <div className="bg-bgPurple rounded-2xl border border-white/10 p-6 w-full max-w-md space-y-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-black text-white">إضافة قسم جديد</h3>
+            <div>
+              <label className="block text-xs text-gray-400 font-bold mb-1">اسم القسم *</label>
+              <input
+                autoFocus
+                value={addSectionTitle}
+                onChange={e => setAddSectionTitle(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAddSection()}
+                placeholder="مثال: الوحدة الأولى — مقدمة"
+                className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50"
+              />
+              {addSectionError && <p className="text-red-400 text-sm mt-2 font-bold">{addSectionError}</p>}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setAddSectionModal(false)} className="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition">إلغاء</button>
+              <button onClick={handleAddSection} disabled={addSectionLoading} className="flex-1 py-3 rounded-xl bg-accentGold text-bgDark font-black hover:brightness-110 transition disabled:opacity-50">
+                {addSectionLoading ? 'جاري الإضافة...' : 'إضافة القسم'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Lesson Modal */}
+      {addLessonModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setAddLessonModal(null)}>
+          <div className="bg-bgPurple rounded-2xl border border-white/10 p-6 w-full max-w-md space-y-4" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-black text-white">إضافة درس جديد</h3>
+            <div>
+              <label className="block text-xs text-gray-400 font-bold mb-1">اسم الدرس *</label>
+              <input
+                autoFocus
+                value={addLessonTitle}
+                onChange={e => setAddLessonTitle(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAddLesson()}
+                placeholder="مثال: الدرس الأول — أساسيات الحفظ"
+                className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50"
+              />
+              {addLessonError && <p className="text-red-400 text-sm mt-2 font-bold">{addLessonError}</p>}
+            </div>
+            <div className="flex gap-3">
+              <button onClick={() => setAddLessonModal(null)} className="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition">إلغاء</button>
+              <button onClick={handleAddLesson} disabled={addLessonLoading} className="flex-1 py-3 rounded-xl bg-accentGold text-bgDark font-black hover:brightness-110 transition disabled:opacity-50">
+                {addLessonLoading ? 'جاري الإضافة...' : 'إضافة الدرس'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sidebar for Sections & Lessons */}
         <div className="lg:col-span-1 bg-bgPurple rounded-3xl border border-white/5 p-6 h-[70vh] overflow-y-auto custom-scrollbar">
@@ -138,7 +227,7 @@ const AdminModuleContent = () => {
               <BookOpen size={20} className="text-accentGold" />
               المنهج الدراسي
             </h3>
-            <button onClick={handleAddSection} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-accentGold hover:bg-accentGold hover:text-bgDark transition">
+            <button onClick={openAddSection} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-accentGold hover:bg-accentGold hover:text-bgDark transition">
               <Plus size={18} />
             </button>
           </div>
@@ -160,7 +249,7 @@ const AdminModuleContent = () => {
                       <span className="font-bold text-white">{section.title}</span>
                     </div>
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                      <button onClick={(e) => { e.stopPropagation(); handleAddLesson(section.id); }} className="text-green-400 hover:text-green-300" title="إضافة درس">
+                      <button onClick={(e) => { e.stopPropagation(); openAddLesson(section.id); }} className="text-green-400 hover:text-green-300" title="إضافة درس">
                         <Plus size={16} />
                       </button>
                       <button onClick={(e) => handleDeleteSection(e, section.id)} className="text-red-400 hover:text-red-300" title="حذف القسم">
@@ -260,6 +349,7 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
   const [questionForm, setQuestionForm] = useState(emptyQForm);
   const [questions, setQuestions] = useState([]);
   const [questionsLoading, setQuestionsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchQuizzes = async () => {
     setLoading(true);
@@ -332,25 +422,32 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
   };
 
   const handleCreateQuestion = async () => {
+    if (isSaving) return;
     const { text, choices, question_type, points, explanation } = questionForm;
     if (!text.trim()) return alert('أدخل نص السؤال');
     if (choices.some(c => !c.text.trim())) return alert('أدخل نص جميع الخيارات');
     if (!choices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة');
+    
+    setIsSaving(true);
     try {
-      const qRes = await api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/`, {
-        text, question_type, points, explanation, display_order: questions.length
+      const res = await api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/`, {
+        text, 
+        question_type, 
+        points, 
+        explanation, 
+        display_order: questions.length,
+        choices: choices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
       });
-      const qId = qRes.data.id;
-      // Create 4 choices via the answer choices endpoint
-      await Promise.all(choices.map((c, i) =>
-        api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/${qId}/choices/`, {
-          text: c.text, is_correct: c.is_correct, display_order: i
-        })
-      ));
+      
+      setQuestions(prev => [...prev, res.data]);
       setQuestionForm(emptyQForm);
-      setEditingQuestion(null);
-      fetchQuestions(activeQuiz.id);
-    } catch (err) { console.error(err); alert('خطأ أثناء إضافة السؤال'); }
+      setQuizzes(prev => prev.map(q => q.id === activeQuiz.id ? { ...q, questions_count: (q.questions_count ?? 0) + 1 } : q));
+    } catch (err) { 
+      console.error(err); 
+      alert('خطأ أثناء إضافة السؤال'); 
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteQuestion = async (qId) => {
@@ -494,7 +591,7 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
           </div>
           <div className="flex gap-2 pt-1">
             <button onClick={() => setEditingQuestion(null)} className="flex-1 py-2 rounded-lg border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition text-xs">إلغاء</button>
-            <button onClick={handleCreateQuestion} className="flex-1 py-2 rounded-lg bg-accentGold text-bgDark font-black hover:brightness-110 transition text-xs">إضافة السؤال</button>
+            <button onClick={handleCreateQuestion} disabled={isSaving} className="flex-1 py-2 rounded-lg bg-accentGold text-bgDark font-black hover:brightness-110 transition text-xs disabled:opacity-50 disabled:cursor-not-allowed">{isSaving ? "جاري الإضافة..." : "إضافة السؤال"}</button>
           </div>
         </div>
       )}
@@ -549,6 +646,7 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [questionsLoading, setQuestionsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const emptyQuizForm = { title: '', description: '', time_limit_minutes: 0, passing_score: 70, is_active: true };
   const [quizForm, setQuizForm] = useState(emptyQuizForm);
@@ -622,25 +720,32 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
   };
 
   const handleCreateQuestion = async () => {
+    if (isSaving) return;
     const { text, choices, question_type, points, explanation } = questionForm;
     if (!text.trim()) return alert('أدخل نص السؤال');
     if (choices.some(c => !c.text.trim())) return alert('أدخل نص جميع الخيارات');
     if (!choices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة');
+    
+    setIsSaving(true);
     try {
-      const qRes = await api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/`, {
-        text, question_type, points, explanation, display_order: questions.length
+      const res = await api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/`, {
+        text, 
+        question_type, 
+        points, 
+        explanation, 
+        display_order: questions.length,
+        choices: choices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
       });
-      const qId = qRes.data.id;
-      await Promise.all(choices.map((c, i) =>
-        api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/${qId}/choices/`, {
-          text: c.text, is_correct: c.is_correct, display_order: i
-        })
-      ));
+      
+      setQuestions(prev => [...prev, res.data]);
       setQuestionForm(emptyQForm);
-      setEditingQuestion(null);
-      fetchQuestions(activeQuiz.id);
-      fetchQuizzes(); // refresh count
-    } catch (err) { console.error(err); alert('خطأ أثناء إضافة السؤال'); }
+      setQuizzes(prev => prev.map(q => q.id === activeQuiz.id ? { ...q, questions_count: (q.questions_count ?? 0) + 1 } : q));
+    } catch (err) { 
+      console.error(err); 
+      alert('خطأ أثناء إضافة السؤال'); 
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleDeleteQuestion = async (qId) => {
@@ -769,7 +874,7 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
           </div>
           <div className="flex gap-2 pt-1">
             <button onClick={() => setEditingQuestion(null)} className="flex-1 py-2 rounded-lg border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition text-xs">إلغاء</button>
-            <button onClick={handleCreateQuestion} className="flex-1 py-2 rounded-lg bg-accentGold text-bgDark font-black hover:brightness-110 transition text-xs">إضافة السؤال</button>
+            <button onClick={handleCreateQuestion} disabled={isSaving} className="flex-1 py-2 rounded-lg bg-accentGold text-bgDark font-black hover:brightness-110 transition text-xs disabled:opacity-50 disabled:cursor-not-allowed">{isSaving ? "جاري الإضافة..." : "إضافة السؤال"}</button>
           </div>
         </div>
       )}
