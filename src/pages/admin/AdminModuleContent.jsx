@@ -218,33 +218,7 @@ const AdminModuleContent = () => {
         <div className="lg:col-span-2 bg-bgPurple rounded-3xl border border-white/5 p-6 h-[70vh] flex flex-col">
           {showQuizzes ? (
             <div className="flex-1 flex flex-col h-full">
-              <div className="flex items-center justify-between mb-6 shrink-0">
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-1">الاختبارات</h3>
-                  <p className="text-sm text-gray-400">إدارة اختبارات الوحدة التدريبية</p>
-                </div>
-              </div>
-              <div className="flex-1 overflow-y-auto custom-scrollbar">
-                {quizzes.length === 0 ? (
-                  <div className="text-center p-12 border border-dashed border-white/10 rounded-2xl bg-bgDark">
-                    <p className="text-gray-500 mb-4">لا توجد اختبارات في هذه الوحدة.</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {quizzes.map(q => (
-                      <div key={q.id} className="bg-bgDark p-6 rounded-xl border border-white/5 flex items-center justify-between">
-                        <div>
-                          <h4 className="font-bold text-white mb-1">{q.title}</h4>
-                          <p className="text-xs text-gray-400">الأسئلة: {q.questions?.length || 0} | الحد الأدنى: {q.passing_score}%</p>
-                        </div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${q.is_active ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
-                          {q.is_active ? 'نشط' : 'غير نشط'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ModuleLevelQuizPanel moduleSlug={slug} quizzes={quizzes} onRefresh={fetchData} />
             </div>
           ) : !activeLesson ? (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-500">
@@ -290,9 +264,9 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
   const fetchQuizzes = async () => {
     setLoading(true);
     try {
-      const res = await api.get(`/modules/${moduleSlug}/quizzes/`);
-      const lessonQuizzes = res.data.filter(q => q.lesson === lesson.id);
-      setQuizzes(lessonQuizzes);
+      // Use server-side filter by lesson ID — much more reliable than client-side filter
+      const res = await api.get(`/modules/${moduleSlug}/quizzes/?lesson=${lesson.id}`);
+      setQuizzes(res.data);
     } catch (err) { console.error(err); }
     finally { setLoading(false); }
   };
@@ -315,10 +289,13 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
   const handleCreateQuiz = async () => {
     if (!quizForm.title.trim()) return alert('أدخل عنوان الاختبار');
     try {
-      await api.post(`/modules/${moduleSlug}/quizzes/`, { ...quizForm, lesson: lesson.id });
+      const res = await api.post(`/modules/${moduleSlug}/quizzes/`, { ...quizForm, lesson: lesson.id });
+      const newQuiz = res.data;
       setQuizForm(emptyQuizForm);
       setEditingQuiz(null);
-      fetchQuizzes();
+      await fetchQuizzes();
+      // Auto-navigate to the questions view so admin can immediately add questions
+      setActiveQuiz(newQuiz);
     } catch (err) { alert('خطأ أثناء إنشاء الاختبار'); }
   };
 
@@ -408,16 +385,16 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
         ) : (
           <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar">
             {quizzes.map(q => (
-              <div key={q.id} className="bg-bgDark p-4 rounded-xl border border-white/5 flex items-center justify-between group hover:border-white/10 transition">
+              <div key={q.id} className="bg-bgDark p-4 rounded-xl border border-white/5 flex items-center justify-between hover:border-white/10 transition">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="font-bold text-white">{q.title}</span>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${q.is_active ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>{q.is_active ? 'نشط' : 'مسودة'}</span>
                   </div>
-                  <p className="text-xs text-gray-500">{q.passing_score}% للنجاح · {q.time_limit_minutes > 0 ? `${q.time_limit_minutes} دقيقة` : 'بدون حد زمني'}</p>
+                  <p className="text-xs text-gray-500">{q.questions_count ?? q.questions?.length ?? 0} سؤال · {q.passing_score}% للنجاح · {q.time_limit_minutes > 0 ? `${q.time_limit_minutes} دقيقة` : 'بدون حد زمني'}</p>
                 </div>
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition shrink-0">
-                  <button onClick={() => setActiveQuiz(q)} className="px-3 py-1.5 bg-accentGold/10 text-accentGold border border-accentGold/20 rounded-lg text-xs font-bold hover:bg-accentGold hover:text-bgDark transition">الأسئلة</button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button onClick={() => setActiveQuiz(q)} className="px-3 py-1.5 bg-accentGold/10 text-accentGold border border-accentGold/20 rounded-lg text-xs font-bold hover:bg-accentGold hover:text-bgDark transition">الأسئلة ({q.questions_count ?? q.questions?.length ?? 0})</button>
                   <button onClick={() => { setEditingQuiz(q); setQuizForm({ title: q.title, description: q.description, time_limit_minutes: q.time_limit_minutes, passing_score: q.passing_score, is_active: q.is_active }); }} className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition"><Edit size={14} /></button>
                   <button onClick={() => handleDeleteQuiz(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"><Trash2 size={14} /></button>
                 </div>
@@ -553,6 +530,278 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
                   <button onClick={() => handleDeleteQuestion(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition opacity-0 group-hover:opacity-100 shrink-0">
                     <Trash2 size={14} />
                   </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Module-level quiz panel for the sidebar "الاختبارات" section
+const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }) => {
+  const [quizzes, setQuizzes] = useState(initialQuizzes || []);
+  const [activeQuiz, setActiveQuiz] = useState(null);
+  const [editingQuiz, setEditingQuiz] = useState(null);
+  const [editingQuestion, setEditingQuestion] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [questionsLoading, setQuestionsLoading] = useState(false);
+
+  const emptyQuizForm = { title: '', description: '', time_limit_minutes: 0, passing_score: 70, is_active: true };
+  const [quizForm, setQuizForm] = useState(emptyQuizForm);
+  const emptyQForm = {
+    text: '', question_type: 'MCQ', points: 1, explanation: '',
+    choices: [
+      { text: '', is_correct: false }, { text: '', is_correct: false },
+      { text: '', is_correct: false }, { text: '', is_correct: false },
+    ]
+  };
+  const [questionForm, setQuestionForm] = useState(emptyQForm);
+
+  useEffect(() => { setQuizzes(initialQuizzes || []); }, [initialQuizzes]);
+
+  const fetchQuizzes = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get(`/modules/${moduleSlug}/quizzes/`);
+      setQuizzes(res.data);
+      if (onRefresh) onRefresh();
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
+  };
+
+  const fetchQuestions = async (quizId) => {
+    setQuestionsLoading(true);
+    try {
+      const res = await api.get(`/modules/${moduleSlug}/quizzes/${quizId}/questions/`);
+      setQuestions(res.data);
+    } catch (err) { console.error(err); }
+    finally { setQuestionsLoading(false); }
+  };
+
+  useEffect(() => { if (activeQuiz) fetchQuestions(activeQuiz.id); }, [activeQuiz]);
+
+  const handleCreateQuiz = async () => {
+    if (!quizForm.title.trim()) return alert('أدخل عنوان الاختبار');
+    try {
+      const res = await api.post(`/modules/${moduleSlug}/quizzes/`, quizForm);
+      const newQuiz = res.data;
+      setQuizForm(emptyQuizForm);
+      setEditingQuiz(null);
+      await fetchQuizzes();
+      setActiveQuiz(newQuiz);
+    } catch (err) { alert('خطأ أثناء إنشاء الاختبار'); }
+  };
+
+  const handleUpdateQuiz = async () => {
+    try {
+      await api.patch(`/modules/${moduleSlug}/quizzes/${editingQuiz.id}/`, quizForm);
+      setEditingQuiz(null);
+      await fetchQuizzes();
+      setActiveQuiz(prev => prev ? { ...prev, ...quizForm } : null);
+    } catch (err) { alert('خطأ أثناء التحديث'); }
+  };
+
+  const handleDeleteQuiz = async (id) => {
+    if (!window.confirm('هل أنت متأكد من حذف هذا الاختبار؟')) return;
+    try {
+      await api.delete(`/modules/${moduleSlug}/quizzes/${id}/`);
+      if (activeQuiz?.id === id) setActiveQuiz(null);
+      fetchQuizzes();
+    } catch (err) { alert('خطأ أثناء الحذف'); }
+  };
+
+  const handleSetCorrectChoice = (index) => {
+    setQuestionForm(prev => ({ ...prev, choices: prev.choices.map((c, i) => ({ ...c, is_correct: i === index })) }));
+  };
+  const handleChoiceText = (index, text) => {
+    setQuestionForm(prev => ({ ...prev, choices: prev.choices.map((c, i) => i === index ? { ...c, text } : c) }));
+  };
+
+  const handleCreateQuestion = async () => {
+    const { text, choices, question_type, points, explanation } = questionForm;
+    if (!text.trim()) return alert('أدخل نص السؤال');
+    if (choices.some(c => !c.text.trim())) return alert('أدخل نص جميع الخيارات');
+    if (!choices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة');
+    try {
+      const qRes = await api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/`, {
+        text, question_type, points, explanation, display_order: questions.length
+      });
+      const qId = qRes.data.id;
+      await Promise.all(choices.map((c, i) =>
+        api.post(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/${qId}/choices/`, {
+          text: c.text, is_correct: c.is_correct, display_order: i
+        })
+      ));
+      setQuestionForm(emptyQForm);
+      setEditingQuestion(null);
+      fetchQuestions(activeQuiz.id);
+      fetchQuizzes(); // refresh count
+    } catch (err) { console.error(err); alert('خطأ أثناء إضافة السؤال'); }
+  };
+
+  const handleDeleteQuestion = async (qId) => {
+    if (!window.confirm('حذف هذا السؤال؟')) return;
+    try {
+      await api.delete(`/modules/${moduleSlug}/quizzes/${activeQuiz.id}/questions/${qId}/`);
+      fetchQuestions(activeQuiz.id);
+      fetchQuizzes();
+    } catch (err) { alert('خطأ أثناء الحذف'); }
+  };
+
+  // ---- LIST VIEW ----
+  if (!activeQuiz && !editingQuiz) return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between mb-4 shrink-0">
+        <h3 className="text-xl font-black text-white">الاختبارات ({quizzes.length})</h3>
+        <button onClick={() => { setQuizForm(emptyQuizForm); setEditingQuiz('new'); }}
+          className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-xl font-bold text-sm hover:bg-yellow-500 hover:text-bgDark transition">
+          <Plus size={16} /> إنشاء اختبار
+        </button>
+      </div>
+      {loading ? <div className="text-center p-8 text-gray-500">جاري التحميل...</div> : quizzes.length === 0 ? (
+        <div className="text-center p-12 border border-dashed border-white/10 rounded-2xl bg-bgDark flex-1 flex flex-col items-center justify-center">
+          <CheckSquare size={40} className="text-white/10 mb-4" />
+          <p className="text-gray-500 mb-4">لا توجد اختبارات في هذه الوحدة.</p>
+          <button onClick={() => { setQuizForm(emptyQuizForm); setEditingQuiz('new'); }} className="px-6 py-2 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-xl font-bold text-sm hover:bg-yellow-500 hover:text-bgDark transition">إنشاء اختبار</button>
+        </div>
+      ) : (
+        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar">
+          {quizzes.map(q => (
+            <div key={q.id} className="bg-bgDark p-4 rounded-xl border border-white/5 flex items-center justify-between hover:border-white/10 transition">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="font-bold text-white">{q.title}</span>
+                  {q.lesson && <span className="text-xs text-blue-400 bg-blue-400/10 px-2 py-0.5 rounded-full">درس محدد</span>}
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${q.is_active ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>{q.is_active ? 'نشط' : 'مسودة'}</span>
+                </div>
+                <p className="text-xs text-gray-500">{q.questions_count ?? 0} سؤال · {q.passing_score}% للنجاح</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button onClick={() => setActiveQuiz(q)} className="px-3 py-1.5 bg-accentGold/10 text-accentGold border border-accentGold/20 rounded-lg text-xs font-bold hover:bg-accentGold hover:text-bgDark transition">الأسئلة ({q.questions_count ?? 0})</button>
+                <button onClick={() => { setEditingQuiz(q); setQuizForm({ title: q.title, description: q.description, time_limit_minutes: q.time_limit_minutes, passing_score: q.passing_score, is_active: q.is_active }); }} className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition"><Edit size={14} /></button>
+                <button onClick={() => handleDeleteQuiz(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"><Trash2 size={14} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+
+  // ---- QUIZ FORM ----
+  if (editingQuiz) return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 mb-6 shrink-0">
+        <button onClick={() => setEditingQuiz(null)} className="text-gray-400 hover:text-white transition"><ChevronRight size={20} /></button>
+        <h4 className="font-black text-white text-lg">{editingQuiz === 'new' ? 'إنشاء اختبار جديد' : 'تعديل الاختبار'}</h4>
+      </div>
+      <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4">
+        <div>
+          <label className="block text-xs text-gray-400 font-bold mb-1">عنوان الاختبار *</label>
+          <input value={quizForm.title} onChange={e => setQuizForm(p => ({...p, title: e.target.value}))} placeholder="مثال: اختبار الوحدة الأولى" className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50 text-sm" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-400 font-bold mb-1">وصف الاختبار (اختياري)</label>
+          <textarea value={quizForm.description} onChange={e => setQuizForm(p => ({...p, description: e.target.value}))} rows={2} placeholder="وصف مختصر..." className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50 text-sm resize-none" />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs text-gray-400 font-bold mb-1">الحد الزمني (دقائق) · 0 = بدون حد</label>
+            <input type="number" min="0" value={quizForm.time_limit_minutes} onChange={e => setQuizForm(p => ({...p, time_limit_minutes: parseInt(e.target.value)}))} className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-accentGold/50 text-sm" />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-400 font-bold mb-1">درجة النجاح (%)</label>
+            <input type="number" min="0" max="100" value={quizForm.passing_score} onChange={e => setQuizForm(p => ({...p, passing_score: parseInt(e.target.value)}))} className="w-full bg-bgDark border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-accentGold/50 text-sm" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button onClick={() => setQuizForm(p => ({...p, is_active: !p.is_active}))} className={`w-12 h-6 rounded-full transition relative shrink-0 ${quizForm.is_active ? 'bg-green-500' : 'bg-white/10'}`}>
+            <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${quizForm.is_active ? 'left-6' : 'left-0.5'}`} />
+          </button>
+          <span className="text-sm text-gray-300 font-bold">{quizForm.is_active ? 'مرئي للطلاب' : 'مخفي (مسودة)'}</span>
+        </div>
+      </div>
+      <div className="flex gap-3 pt-4 border-t border-white/5 shrink-0 mt-4">
+        <button onClick={() => setEditingQuiz(null)} className="flex-1 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition text-sm">إلغاء</button>
+        <button onClick={editingQuiz === 'new' ? handleCreateQuiz : handleUpdateQuiz} className="flex-1 py-3 rounded-xl bg-accentGold text-bgDark font-black hover:brightness-110 transition text-sm">{editingQuiz === 'new' ? 'إنشاء الاختبار' : 'حفظ التغييرات'}</button>
+      </div>
+    </div>
+  );
+
+  // ---- QUESTIONS VIEW ----
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 mb-4 shrink-0">
+        <button onClick={() => { setActiveQuiz(null); setEditingQuestion(null); }} className="text-gray-400 hover:text-white transition"><ChevronRight size={20} /></button>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-black text-white">{activeQuiz.title}</h4>
+          <p className="text-xs text-gray-500">{questions.length} أسئلة · {activeQuiz.passing_score}% للنجاح</p>
+        </div>
+        <button onClick={() => { setEditingQuestion('new'); setQuestionForm(emptyQForm); }} className="flex items-center gap-2 px-3 py-2 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-xl font-bold text-xs hover:bg-yellow-500 hover:text-bgDark transition shrink-0">
+          <Plus size={14} /> إضافة سؤال
+        </button>
+      </div>
+      {editingQuestion && (
+        <div className="bg-bgDark rounded-xl border border-accentGold/20 p-4 mb-4 shrink-0 space-y-3">
+          <h5 className="font-bold text-accentGold text-sm mb-2">{editingQuestion === 'new' ? 'سؤال جديد' : 'تعديل السؤال'}</h5>
+          <div>
+            <label className="block text-xs text-gray-400 font-bold mb-1">نص السؤال *</label>
+            <textarea value={questionForm.text} onChange={e => setQuestionForm(p => ({...p, text: e.target.value}))} rows={2} placeholder="أدخل نص السؤال..." className="w-full bg-bgPurple border border-white/10 rounded-xl p-3 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50 text-sm resize-none" />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {questionForm.choices.map((choice, i) => (
+              <div key={i} className={`flex items-center gap-2 p-2 rounded-xl border transition cursor-pointer ${choice.is_correct ? 'border-green-500/50 bg-green-500/5' : 'border-white/10 bg-bgPurple'}`} onClick={() => handleSetCorrectChoice(i)}>
+                <div className={`w-5 h-5 rounded-full border-2 shrink-0 flex items-center justify-center ${choice.is_correct ? 'border-green-400 bg-green-400' : 'border-white/20'}`}>
+                  {choice.is_correct && <div className="w-2 h-2 rounded-full bg-white" />}
+                </div>
+                <input value={choice.text} onChange={e => handleChoiceText(i, e.target.value)} onClick={e => e.stopPropagation()} placeholder={`الخيار ${i + 1}`} className="flex-1 bg-transparent text-white placeholder-gray-600 focus:outline-none text-xs font-bold" />
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-500">انقر على الخيار لتحديده كالإجابة الصحيحة</p>
+          <div>
+            <label className="block text-xs text-gray-400 font-bold mb-1">شرح الإجابة (اختياري)</label>
+            <input value={questionForm.explanation} onChange={e => setQuestionForm(p => ({...p, explanation: e.target.value}))} placeholder="اشرح لماذا هذه الإجابة صحيحة..." className="w-full bg-bgPurple border border-white/10 rounded-xl p-2 text-white placeholder-gray-600 focus:outline-none focus:border-accentGold/50 text-xs" />
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button onClick={() => setEditingQuestion(null)} className="flex-1 py-2 rounded-lg border border-white/10 text-gray-400 font-bold hover:bg-white/5 transition text-xs">إلغاء</button>
+            <button onClick={handleCreateQuestion} className="flex-1 py-2 rounded-lg bg-accentGold text-bgDark font-black hover:brightness-110 transition text-xs">إضافة السؤال</button>
+          </div>
+        </div>
+      )}
+      <div className="flex-1 overflow-y-auto custom-scrollbar">
+        {questionsLoading ? <div className="text-center p-8 text-gray-500">جاري التحميل...</div> : questions.length === 0 ? (
+          <div className="text-center p-8 border border-dashed border-white/10 rounded-2xl bg-bgDark">
+            <p className="text-gray-500 mb-3">لا توجد أسئلة في هذا الاختبار بعد.</p>
+            <button onClick={() => { setEditingQuestion('new'); setQuestionForm(emptyQForm); }} className="px-4 py-2 bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 rounded-xl font-bold text-sm hover:bg-yellow-500 hover:text-bgDark transition flex items-center gap-2 mx-auto">
+              <Plus size={14} /> إضافة سؤال الآن
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {questions.map((q, index) => (
+              <div key={q.id} className="bg-bgDark p-4 rounded-xl border border-white/5 hover:border-white/10 transition">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs text-accentGold font-bold bg-accentGold/10 px-2 py-0.5 rounded-full">س{index + 1}</span>
+                      <span className="text-xs text-gray-500">{q.points} نقاط</span>
+                    </div>
+                    <p className="text-white font-bold text-sm mb-3">{q.text}</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {q.choices?.map(c => (
+                        <div key={c.id} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold ${c.is_correct ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-white/3 text-gray-400'}`}>
+                          {c.is_correct && <span>✓</span>} {c.text}
+                        </div>
+                      ))}
+                    </div>
+                    {q.explanation && <p className="text-xs text-gray-500 mt-2 italic">💡 {q.explanation}</p>}
+                  </div>
+                  <button onClick={() => handleDeleteQuestion(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition shrink-0"><Trash2 size={14} /></button>
                 </div>
               </div>
             ))}
