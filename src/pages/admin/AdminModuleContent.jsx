@@ -6,6 +6,7 @@ import { BookOpen, FolderPlus, Plus, ChevronDown, ChevronRight, Video, FileText,
 import api, { getMediaUrl } from '../../api/axios';
 import { AddResourceModal } from '../../components/admin/modals/AddResourceModal';
 import { UpdateModuleModal } from '../../components/admin/modals/UpdateModuleModal';
+import { QuizAnalyticsModal } from '../../components/admin/modals/QuizAnalyticsModal';
 
 const AdminModuleContent = () => {
   const { slug } = useParams();
@@ -111,7 +112,8 @@ const AdminModuleContent = () => {
       await api.patch(`/modules/${slug}/lessons/${lesson.id}/`, { is_preview: !lesson.is_preview });
       fetchData();
     } catch (err) {
-      alert("حدث خطأ أثناء تعديل حالة التجربة المجانية");
+      console.error(err);
+      alert(`حدث خطأ أثناء تعديل حالة التجربة المجانية: ${err.message}`);
     }
   };
 
@@ -491,6 +493,7 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
                   <p className="text-xs text-gray-500">{q.questions_count ?? q.questions?.length ?? 0} سؤال · {q.passing_score}% للنجاح · {q.time_limit_minutes > 0 ? `${q.time_limit_minutes} دقيقة` : 'بدون حد زمني'}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
+                  <button onClick={() => setAnalyticsQuiz(q)} className="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-xs font-bold hover:bg-blue-500 hover:text-white transition">الإحصائيات</button>
                   <button onClick={() => setActiveQuiz(q)} className="px-3 py-1.5 bg-accentGold/10 text-accentGold border border-accentGold/20 rounded-lg text-xs font-bold hover:bg-accentGold hover:text-bgDark transition">الأسئلة ({q.questions_count ?? q.questions?.length ?? 0})</button>
                   <button onClick={() => { setEditingQuiz(q); setQuizForm({ title: q.title, description: q.description, time_limit_minutes: q.time_limit_minutes, passing_score: q.passing_score, is_active: q.is_active }); }} className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition"><Edit size={14} /></button>
                   <button onClick={() => handleDeleteQuiz(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"><Trash2 size={14} /></button>
@@ -641,6 +644,7 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
 const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }) => {
   const [quizzes, setQuizzes] = useState(initialQuizzes || []);
   const [activeQuiz, setActiveQuiz] = useState(null);
+  const [analyticsQuiz, setAnalyticsQuiz] = useState(null);
   const [editingQuiz, setEditingQuiz] = useState(null);
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -786,6 +790,7 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
                 <p className="text-xs text-gray-500">{q.questions_count ?? 0} سؤال · {q.passing_score}% للنجاح</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                <button onClick={() => setAnalyticsQuiz(q)} className="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-lg text-xs font-bold hover:bg-blue-500 hover:text-white transition">الإحصائيات</button>
                 <button onClick={() => setActiveQuiz(q)} className="px-3 py-1.5 bg-accentGold/10 text-accentGold border border-accentGold/20 rounded-lg text-xs font-bold hover:bg-accentGold hover:text-bgDark transition">الأسئلة ({q.questions_count ?? 0})</button>
                 <button onClick={() => { setEditingQuiz(q); setQuizForm({ title: q.title, description: q.description, time_limit_minutes: q.time_limit_minutes, passing_score: q.passing_score, is_active: q.is_active }); }} className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition"><Edit size={14} /></button>
                 <button onClick={() => handleDeleteQuiz(q.id)} className="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition"><Trash2 size={14} /></button>
@@ -794,6 +799,13 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
           ))}
         </div>
       )}
+      
+      <QuizAnalyticsModal 
+        isOpen={!!analyticsQuiz} 
+        onClose={() => setAnalyticsQuiz(null)} 
+        moduleSlug={moduleSlug} 
+        quiz={analyticsQuiz} 
+      />
     </div>
   );
 
@@ -986,7 +998,8 @@ const LessonContentManager = ({ lesson, moduleSlug, refreshTree }) => {
                 lesson.is_preview = !lesson.is_preview;
                 refreshTree();
               } catch (err) {
-                alert("خطأ أثناء التحديث");
+                console.error(err);
+                alert(`خطأ أثناء التحديث: ${err.message}`);
               }
             }}
             className={`px-4 py-2 rounded-xl font-bold transition flex items-center gap-2 border ${

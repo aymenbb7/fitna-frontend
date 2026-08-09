@@ -64,7 +64,7 @@ const ModuleContent = () => {
       link.click();
       link.remove();
     } catch {
-      alert('Ø­Ø¯Ø« Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø´Ù‡Ø§Ø¯Ø©. ØªØ£ÙƒØ¯ Ù…Ù† Ø¥ÙƒÙ…Ø§Ù„ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¯Ø±ÙˆØ³.');
+      alert('حدث خطأ أثناء تحميل الشهادة. تأكد من إكمال جميع الدروس.');
     }
   };
 
@@ -83,7 +83,7 @@ const ModuleContent = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-accentGold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400 font-bold">Ø¬Ø§Ø±ÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ù…Ø­ØªÙˆÙ‰...</p>
+          <p className="text-gray-400 font-bold">جاري تحميل المحتوى...</p>
         </div>
       </div>
     );
@@ -103,8 +103,8 @@ const ModuleContent = () => {
           <div>
             <h2 className="text-2xl font-black text-white">{moduleData?.name}</h2>
             <p className="text-gray-400 text-sm">
-              {sections.length} Ù‚Ø³Ù… Â· {totalLessons} Ø¯Ø±Ø³
-              {quizzes.length > 0 && ` Â· ${quizzes.length} Ø§Ø®ØªØ¨Ø§Ø±`}
+              {sections.length} قسم Â· {totalLessons} درس
+              {quizzes.length > 0 && ` Â· ${quizzes.length} اختبار`}
             </p>
           </div>
         </div>
@@ -118,7 +118,7 @@ const ModuleContent = () => {
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <Button variant="secondary" onClick={handleDownloadCertificate} className="text-sm whitespace-nowrap">
-            ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø´Ù‡Ø§Ø¯Ø©
+            تحميل الشهادة
           </Button>
         </div>
       </div>
@@ -135,13 +135,13 @@ const ModuleContent = () => {
           <div className="p-4 border-b border-white/5 shrink-0">
             <h3 className="font-black text-white flex items-center gap-2 text-sm">
               <BookOpen size={15} className="text-accentGold" />
-              Ø§Ù„Ù…Ù†Ù‡Ø¬ Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠ
+              المنهج الدراسي
             </h3>
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
             {sections.length === 0 ? (
-              <div className="p-8 text-center text-gray-500 text-sm">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø­ØªÙˆÙ‰ Ø¨Ø¹Ø¯.</div>
+              <div className="p-8 text-center text-gray-500 text-sm">لا يوجد محتوى بعد.</div>
             ) : sections.map(section => (
               <div key={section.id}>
                 {/* Section header */}
@@ -163,7 +163,7 @@ const ModuleContent = () => {
                 {expandedSections[section.id] && (
                   <div className="pr-3 pb-1 space-y-0.5">
                     {!section.lessons?.length ? (
-                      <div className="text-xs text-gray-600 px-3 py-2">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¯Ø±ÙˆØ³</div>
+                      <div className="text-xs text-gray-600 px-3 py-2">لا توجد دروس</div>
                     ) : section.lessons.map(lesson => {
                       const isActive = activeLesson?.id === lesson.id;
                       return (
@@ -189,7 +189,7 @@ const ModuleContent = () => {
             {quizzes.length > 0 && (
               <div className="border-t border-white/5 pt-2 mt-2">
                 <div className="px-3 py-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
-                  Ø§Ù„Ø§Ø®ØªØ¨Ø§Ø±Ø§Øª
+                  Ø§Ù„اختبارØ§Øª
                 </div>
                 {quizzes.map(quiz => (
                   <button
@@ -201,7 +201,7 @@ const ModuleContent = () => {
                     <CheckSquare size={13} className="text-gray-600 shrink-0" />
                     <span className="truncate">{quiz.title}</span>
                     <span className="text-xs text-gray-600 shrink-0 mr-auto ml-1">
-                      {quiz.questions_count ?? 0}Ø³
+                      {quiz.questions_count ?? 0}س
                     </span>
                   </button>
                 ))}
@@ -218,11 +218,11 @@ const ModuleContent = () => {
           {!activeLesson ? (
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-500">
               <BookOpen size={56} className="mb-4 text-white/10" />
-              <p className="text-lg font-bold text-center">Ø§Ø®ØªØ± Ø¯Ø±Ø³Ø§Ù‹ Ù…Ù† Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø¬Ø§Ù†Ø¨ÙŠØ©</p>
+              <p className="text-lg font-bold text-center">Ø§Ø®ØªØ± درسØ§Ù‹ Ù…Ù† Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø¬Ø§Ù†Ø¨ÙŠØ©</p>
               <p className="text-sm mt-2 text-center text-gray-600">
                 {sections.length === 0
                   ? 'Ù„Ù… ÙŠÙØ¶ÙŽÙ Ù…Ø­ØªÙˆÙ‰ Ø¨Ø¹Ø¯. Ø¹Ø¯ Ù„Ø§Ø­Ù‚Ø§Ù‹.'
-                  : 'Ø§Ù†Ù‚Ø± Ø¹Ù„Ù‰ Ø£ÙŠ Ø¯Ø±Ø³ ÙÙŠ Ø§Ù„Ù…Ù†Ù‡Ø¬ Ù„Ø¹Ø±Ø¶ Ù…Ø­ØªÙˆØ§Ù‡'}
+                  : 'Ø§Ù†Ù‚Ø± Ø¹Ù„Ù‰ Ø£ÙŠ درس ÙÙŠ Ø§Ù„Ù…Ù†Ù‡Ø¬ Ù„عرض Ù…Ø­ØªÙˆØ§Ù‡'}
               </p>
             </div>
           ) : (
@@ -251,9 +251,9 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
   const tabs = [
     { key: 'videos',     label: 'ÙÙŠØ¯ÙŠÙˆÙ‡Ø§Øª', Icon: Video,       count: lesson.videos?.length || 0 },
     { key: 'documents',  label: 'Ù…Ù„ÙØ§Øª',     Icon: FileText,    count: lesson.documents?.length || 0 },
-    { key: 'voice',      label: 'ØµÙˆØªÙŠØ§Øª',    Icon: Mic,         count: lesson.voice_messages?.length || 0 },
-    { key: 'photos',     label: 'ØµÙˆØ±',       Icon: ImageIcon,   count: lesson.photos?.length || 0 },
-    { key: 'sessions',   label: 'Ø¬Ù„Ø³Ø§Øª',     Icon: PlayCircle,  count: lesson.sessions?.length || 0 },
+    { key: 'voice',      label: 'صوتيات',    Icon: Mic,         count: lesson.voice_messages?.length || 0 },
+    { key: 'photos',     label: 'صور',       Icon: ImageIcon,   count: lesson.photos?.length || 0 },
+    { key: 'sessions',   label: 'جلسات',     Icon: PlayCircle,  count: lesson.sessions?.length || 0 },
   ].filter(t => t.count > 0);
 
   return (
@@ -268,8 +268,8 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
       {tabs.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-500">
           <Lock size={40} className="mb-4 text-white/10" />
-          <p className="font-bold">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø­ØªÙˆÙ‰ Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¯Ø±Ø³ Ø¨Ø¹Ø¯.</p>
-          <p className="text-sm mt-1">Ø³ÙŠÙØ¶Ø§Ù Ø§Ù„Ù…Ø­ØªÙˆÙ‰ Ù‚Ø±ÙŠØ¨Ø§Ù‹ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ø£Ø³ØªØ§Ø°.</p>
+          <p className="font-bold">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø­ØªÙˆÙ‰ Ù„Ù‡Ø°Ø§ Ø§Ù„درس Ø¨Ø¹Ø¯.</p>
+          <p className="text-sm mt-1">سÙŠÙØ¶Ø§Ù Ø§Ù„Ù…Ø­ØªÙˆÙ‰ Ù‚Ø±ÙŠØ¨Ø§Ù‹ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ø£سØªØ§Ø°.</p>
         </div>
       ) : (
         <>
@@ -350,12 +350,12 @@ const DocumentCard = ({ item }) => {
             <a href={url} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg
                 text-xs font-bold text-gray-300 hover:bg-white/10 hover:text-white transition">
-              <ExternalLink size={13} /> Ø¹Ø±Ø¶
+              <ExternalLink size={13} /> عرض
             </a>
             <a href={url} download={`${item.title}.pdf`}
               className="flex items-center gap-1 px-3 py-2 bg-accentGold/10 border border-accentGold/20 rounded-lg
                 text-xs font-bold text-accentGold hover:bg-accentGold hover:text-bgDark transition">
-              <Download size={13} /> ØªØ­Ù…ÙŠÙ„
+              <Download size={13} /> تحميل
             </a>
           </div>
         )}
@@ -379,7 +379,7 @@ const VoiceCard = ({ item }) => {
             <a href={url} download={`${item.title}.mp3`}
               className="inline-flex items-center gap-2 px-4 py-2 bg-accentGold/10 border border-accentGold/20
                 rounded-xl text-xs font-bold text-accentGold hover:bg-accentGold hover:text-bgDark transition">
-              <Download size={13} /> ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙˆØª
+              <Download size={13} /> تحميل Ø§Ù„ØµÙˆØª
             </a>
           </div>
         ) : (
@@ -404,7 +404,7 @@ const PhotoCard = ({ item }) => {
         ? <div className="bg-black/30 flex items-center justify-center p-4">
             <img src={url} alt={item.title} className="max-h-80 object-contain rounded-xl" />
           </div>
-        : <div className="p-4 text-center text-gray-500 text-sm">Ø§Ù„ØµÙˆØ±Ø© ØºÙŠØ± Ù…ØªØ§Ø­Ø©</div>
+        : <div className="p-4 text-center text-gray-500 text-sm">Ø§Ù„صورØ© ØºÙŠØ± Ù…ØªØ§Ø­Ø©</div>
       }
     </div>
   );
@@ -426,7 +426,7 @@ const SessionCard = ({ item }) => {
           <a href={url} target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full py-3 bg-orange-500/10 text-orange-400
               border border-orange-500/20 rounded-xl font-bold text-sm hover:bg-orange-500 hover:text-white transition">
-            <ExternalLink size={16} /> ÙØªØ­ Ø§Ù„Ø¬Ù„Ø³Ø©
+            <ExternalLink size={16} /> ÙØªØ­ Ø§Ù„Ø¬Ù„سØ©
           </a>
         </div>
       )}

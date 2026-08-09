@@ -30,36 +30,6 @@ const TrialPage = () => {
     .finally(() => setLoading(false));
   }, [slug]);
 
-  const handleDownload = async (url, filename) => {
-    if (!url) {
-      alert('الملف غير متاح حالياً.');
-      return;
-    }
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch');
-      const blob = await response.blob();
-      const objectUrl = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = filename || 'download';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(objectUrl);
-    } catch (err) {
-      alert('حدث خطأ أثناء التحميل.');
-    }
-  };
-
-  const handleViewPDF = (url) => {
-    if (!url) {
-      alert('الملف غير متاح حالياً.');
-      return;
-    }
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
   if (loading) return <div className="p-24 text-center text-white">جاري التحميل...</div>;
   if (!mod) return <div className="p-24 text-center text-white">البرنامج غير موجود</div>;
 
@@ -115,7 +85,6 @@ const TrialPage = () => {
                 ))}
 
                 {lesson.documents?.length > 0 && lesson.documents.map(doc => {
-                  // effective_url is server-computed and only returns valid HTTP(S) URLs
                   const fileUrl = doc.effective_url || getMediaUrl(doc.file_url) || getMediaUrl(doc.document_file);
                   const hasFile = !!fileUrl;
                   return (
@@ -161,7 +130,6 @@ const TrialPage = () => {
                 })}
 
                 {lesson.voice_messages?.length > 0 && lesson.voice_messages.map(voice => {
-                  // effective_url is server-computed and only returns valid HTTP(S) URLs
                   const audioUrl = voice.effective_url || getMediaUrl(voice.audio_url) || getMediaUrl(voice.audio_file);
                   const hasAudio = !!audioUrl;
                   return (
@@ -215,17 +183,23 @@ const TrialPage = () => {
                   </div>
                 ))}
 
-                {lesson.quizzes?.length > 0 && lesson.quizzes.map(quizId => (
-                  <div key={quizId} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                {/* Quizzes — API now returns full quiz objects with id, title, questions_count */}
+                {lesson.quizzes?.length > 0 && lesson.quizzes.map(quiz => (
+                  <div key={quiz.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
                     <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
                       <CheckSquare className="text-accentGold w-8 h-8" />
-                      <h2 className="text-2xl font-black">اختبر معلوماتك</h2>
+                      <div>
+                        <h2 className="text-2xl font-black">{quiz.title || 'اختبر معلوماتك'}</h2>
+                        {quiz.questions_count > 0 && (
+                          <p className="text-gray-400 text-sm mt-0.5">{quiz.questions_count} سؤال · درجة النجاح {quiz.passing_score}%</p>
+                        )}
+                      </div>
                     </div>
                     <div className="p-12 text-center bg-bgDark">
                       <h3 className="text-2xl font-black mb-4 text-white">اختبار حول الجلسة المجانية</h3>
                       <p className="text-gray-300 font-bold mb-8 text-lg">يتكون من أسئلة سريعة لتقييم مدى استيعابك للمفاهيم الأساسية.</p>
                       <Link 
-                        to={`/modules/${slug}/trial/quiz/${quizId}`}
+                        to={`/modules/${slug}/trial/quiz/${quiz.id}`}
                         className="inline-block px-10 py-4 bg-accentGold text-bgDark shadow-[0_0_15px_rgba(245,197,24,0.4)] hover:shadow-[0_0_25px_rgba(245,197,24,0.6)] rounded-2xl font-black text-xl transition hover:scale-105"
                       >
                         ابدأ الاختبار 🚀
