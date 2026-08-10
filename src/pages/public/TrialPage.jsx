@@ -23,8 +23,8 @@ const TrialPage = () => {
       console.error(err);
       setMod({
         slug,
-        name: slug === 'quran' ? 'قسم التعليم القرآني' : slug,
-        color_primary: slug === 'quran' ? '#1B5E20' : '#1565C0',
+        name: slug,
+        color_primary: '#1565C0',
       });
     })
     .finally(() => setLoading(false));

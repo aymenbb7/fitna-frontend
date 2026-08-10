@@ -983,6 +983,21 @@ const LessonContentManager = ({ lesson, moduleSlug, refreshTree }) => {
     }
   };
 
+  const handleToggleActive = async (item) => {
+    let endpoint = '';
+    if (activeTab === 'videos') endpoint = `/modules/${moduleSlug}/videos/${item.id}/`;
+    if (activeTab === 'documents') endpoint = `/modules/${moduleSlug}/documents/${item.id}/`;
+    if (activeTab === 'sessions') endpoint = `/modules/${moduleSlug}/sessions/${item.id}/`;
+    if (activeTab === 'voice_messages') endpoint = `/modules/${moduleSlug}/voice/${item.id}/`;
+    if (activeTab === 'photos') endpoint = `/modules/${moduleSlug}/photos/${item.id}/`;
+    try {
+      await api.patch(endpoint, { is_active: !item.is_active });
+      fetchContent();
+    } catch (err) {
+      alert("خطأ أثناء تحديث الحالة");
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-6 shrink-0">
@@ -1048,19 +1063,20 @@ const LessonContentManager = ({ lesson, moduleSlug, refreshTree }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {content.map(item => (
-              <div key={item.id} className="bg-bgDark p-4 rounded-xl border border-white/5 flex items-center justify-between group hover:border-white/10 transition">
+              <div key={item.id} className={`bg-bgDark p-4 rounded-xl border flex items-center justify-between group hover:border-white/10 transition ${item.is_active ? 'border-white/5' : 'border-red-500/20 bg-red-500/5'}`}>
                 <div className="flex items-center gap-3 overflow-hidden">
-                  <div className="w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center shrink-0">
+                  <div className="relative w-10 h-10 bg-white/5 rounded-lg flex items-center justify-center shrink-0">
                     {activeTab === 'videos' && <PlayCircle size={20} className="text-blue-400" />}
                     {activeTab === 'documents' && <FileText size={20} className="text-red-400" />}
                     {activeTab === 'sessions' && <Video size={20} className="text-green-400" />}
                     {activeTab === 'voice_messages' && <Mic size={20} className="text-purple-400" />}
                     {activeTab === 'photos' && <ImageIcon size={20} className="text-yellow-400" />}
+                    <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-bgDark ${item.is_active ? 'bg-green-400' : 'bg-red-400'}`} title={item.is_active ? 'مفعّل' : 'معطّل'} />
                   </div>
                   <div className="truncate">
                     <p className="font-bold text-white text-sm truncate">{item.title}</p>
                     <p className="text-xs text-gray-500 truncate mt-0.5">
-                      {activeTab === 'videos' 
+                      {activeTab === 'videos'
                         ? (item.telegram_link || 'لا يوجد رابط تيليغرام')
                         : (getMediaUrl(item.document_file || item.file_url || item.session_link || item.audio_file || item.audio_url || item.image_file || item.photo_url) || 'رابط غير متوفر')
                       }
@@ -1068,6 +1084,17 @@ const LessonContentManager = ({ lesson, moduleSlug, refreshTree }) => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition">
+                  <button
+                    onClick={() => handleToggleActive(item)}
+                    className={`w-8 h-8 flex items-center justify-center rounded-lg transition text-xs font-bold ${
+                      item.is_active
+                        ? 'bg-green-500/10 text-green-400 hover:bg-red-500/10 hover:text-red-400'
+                        : 'bg-red-500/10 text-red-400 hover:bg-green-500/10 hover:text-green-400'
+                    }`}
+                    title={item.is_active ? 'إلغاء التفعيل' : 'تفعيل'}
+                  >
+                    {item.is_active ? '✓' : '✗'}
+                  </button>
                   <button onClick={() => handleDeleteResource(item.id)} className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition">
                     <Trash2 size={16} />
                   </button>

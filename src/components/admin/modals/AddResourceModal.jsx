@@ -85,6 +85,7 @@ export const AddResourceModal = ({ isOpen, onClose, onSuccess, moduleSlug, lesso
           lesson: lessonId,
           video_type: 'SESSION_RECORDING',
           telegram_link: url,
+          is_active: true,
         };
         const res = await api.post(endpoint, jsonPayload);
         onSuccess();
@@ -95,22 +96,26 @@ export const AddResourceModal = ({ isOpen, onClose, onSuccess, moduleSlug, lesso
       } else if (activeTab === 'documents') {
         endpoint = `/modules/${moduleSlug}/documents/`;
         formData.append('doc_type', 'PDF');
+        formData.append('is_active', 'true');
         if (inputType === 'upload') formData.append('document_file', file);
         else formData.append('file_url', url);
       } else if (activeTab === 'voice_messages') {
         endpoint = `/modules/${moduleSlug}/voice/`;
         formData.append('voice_type', 'LESSON');
+        formData.append('is_active', 'true');
         if (inputType === 'upload' || inputType === 'record') formData.append('audio_file', file);
         else formData.append('audio_url', url);
       } else if (activeTab === 'photos') {
         endpoint = `/modules/${moduleSlug}/photos/`;
         formData.append('photo_type', 'OTHER');
+        formData.append('is_active', 'true');
         if (inputType === 'upload') formData.append('image_file', file);
         else formData.append('photo_url', url);
       } else if (activeTab === 'sessions') {
         endpoint = `/modules/${moduleSlug}/sessions/`;
         formData.append('session_link', url);
         formData.append('session_date', new Date().toISOString());
+        formData.append('is_active', 'true');
       }
 
       await api.post(endpoint, formData);
