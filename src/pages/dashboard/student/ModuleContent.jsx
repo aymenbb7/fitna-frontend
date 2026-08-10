@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api, { getMediaUrl } from '../../../api/axios';
 import {
@@ -103,17 +103,17 @@ const ModuleContent = () => {
           <div>
             <h2 className="text-2xl font-black text-white">{moduleData?.name}</h2>
             <p className="text-gray-400 text-sm">
-              {sections.length} قسم Â· {totalLessons} درس
-              {quizzes.length > 0 && ` Â· ${quizzes.length} اختبار`}
+              {sections.length} قسم · {totalLessons} درس
+              {quizzes.length > 0 && ` · ${quizzes.length} اختبار`}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {/* Mobile sidebar toggle */}
           <button
-            onClick={() => setSidebarOpen(v => !v)}
-            className="lg:hidden p-2 bg-bgPurple border border-white/10 rounded-xl text-white"
-            aria-label="ÙØªØ­/Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ù…Ù†Ù‡Ø¬"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 bg-white/5 rounded-xl text-gray-400 hover:text-white lg:hidden"
+            aria-label="فتح/إغلاق المنهج"
           >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -123,7 +123,7 @@ const ModuleContent = () => {
         </div>
       </div>
 
-      {/* â”€â”€ Main layout â”€â”€ */}
+      {/* — Main layout — */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4" style={{ minHeight: '75vh' }}>
 
         {/* Sidebar */}
@@ -189,7 +189,7 @@ const ModuleContent = () => {
             {quizzes.length > 0 && (
               <div className="border-t border-white/5 pt-2 mt-2">
                 <div className="px-3 py-2 text-xs text-gray-500 font-bold uppercase tracking-wider">
-                  Ø§Ù„اختبارØ§Øª
+                  الاختبارات
                 </div>
                 {quizzes.map(quiz => (
                   <button
@@ -218,11 +218,11 @@ const ModuleContent = () => {
           {!activeLesson ? (
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-500">
               <BookOpen size={56} className="mb-4 text-white/10" />
-              <p className="text-lg font-bold text-center">Ø§Ø®ØªØ± درسØ§Ù‹ Ù…Ù† Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø¬Ø§Ù†Ø¨ÙŠØ©</p>
+              <p className="text-lg font-bold text-center">اختر درساً من القائمة الجانبية</p>
               <p className="text-sm mt-2 text-center text-gray-600">
                 {sections.length === 0
-                  ? 'Ù„Ù… ÙŠÙØ¶ÙŽÙ Ù…Ø­ØªÙˆÙ‰ Ø¨Ø¹Ø¯. Ø¹Ø¯ Ù„Ø§Ø­Ù‚Ø§Ù‹.'
-                  : 'Ø§Ù†Ù‚Ø± Ø¹Ù„Ù‰ Ø£ÙŠ درس ÙÙŠ Ø§Ù„Ù…Ù†Ù‡Ø¬ Ù„عرض Ù…Ø­ØªÙˆØ§Ù‡'}
+                  ? 'لم يُضَف محتوى بعد. عد لاحقاً.'
+                  : 'انقر على أي درس في المنهج لعرض محتواه'}
               </p>
             </div>
           ) : (
@@ -234,7 +234,7 @@ const ModuleContent = () => {
   );
 };
 
-// â”€â”€â”€ Per-lesson content view â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ————————————————————————————————————————————————————————————————————————————————
 const LessonView = ({ lesson, moduleSlug, navigate }) => {
   const [activeTab, setActiveTab] = useState(null);
 
@@ -245,15 +245,17 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
     else if (lesson.voice_messages?.length) setActiveTab('voice');
     else if (lesson.photos?.length)    setActiveTab('photos');
     else if (lesson.sessions?.length)  setActiveTab('sessions');
+    else if (lesson.quizzes?.length)   setActiveTab('quizzes');
     else setActiveTab(null);
   }, [lesson.id]);
 
   const tabs = [
-    { key: 'videos',     label: 'ÙÙŠØ¯ÙŠÙˆÙ‡Ø§Øª', Icon: Video,       count: lesson.videos?.length || 0 },
-    { key: 'documents',  label: 'Ù…Ù„ÙØ§Øª',     Icon: FileText,    count: lesson.documents?.length || 0 },
+    { key: 'videos',     label: 'فيديوهات', Icon: Video,       count: lesson.videos?.length || 0 },
+    { key: 'documents',  label: 'ملفات',     Icon: FileText,    count: lesson.documents?.length || 0 },
     { key: 'voice',      label: 'صوتيات',    Icon: Mic,         count: lesson.voice_messages?.length || 0 },
     { key: 'photos',     label: 'صور',       Icon: ImageIcon,   count: lesson.photos?.length || 0 },
     { key: 'sessions',   label: 'جلسات',     Icon: PlayCircle,  count: lesson.sessions?.length || 0 },
+    { key: 'quizzes',    label: 'اختبارات',  Icon: CheckSquare, count: lesson.quizzes?.length || 0 },
   ].filter(t => t.count > 0);
 
   return (
@@ -268,8 +270,8 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
       {tabs.length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center p-12 text-gray-500">
           <Lock size={40} className="mb-4 text-white/10" />
-          <p className="font-bold">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø­ØªÙˆÙ‰ Ù„Ù‡Ø°Ø§ Ø§Ù„درس Ø¨Ø¹Ø¯.</p>
-          <p className="text-sm mt-1">سÙŠÙØ¶Ø§Ù Ø§Ù„Ù…Ø­ØªÙˆÙ‰ Ù‚Ø±ÙŠØ¨Ø§Ù‹ Ù…Ù† Ù‚Ø¨Ù„ Ø§Ù„Ø£سØªØ§Ø°.</p>
+          <p className="font-bold">لا يوجد محتوى لهذا الدرس بعد.</p>
+          <p className="text-sm mt-1">سيضاف المحتوى قريباً من قبل الأستاذ.</p>
         </div>
       ) : (
         <>
@@ -301,6 +303,7 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
             {activeTab === 'voice'     && lesson.voice_messages?.map(v => <VoiceCard    key={v.id} item={v} />)}
             {activeTab === 'photos'    && lesson.photos?.map(p => <PhotoCard    key={p.id} item={p} />)}
             {activeTab === 'sessions'  && lesson.sessions?.map(s => <SessionCard  key={s.id} item={s} />)}
+            {activeTab === 'quizzes'   && lesson.quizzes?.map(q => <QuizCard key={q.id} item={q} navigate={navigate} moduleSlug={moduleSlug} />)}
           </div>
         </>
       )}
@@ -308,27 +311,35 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
   );
 };
 
-// â”€â”€â”€ Media cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const VideoCard = ({ item }) => (
-  <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
-    <div className="p-4 flex items-start gap-3">
-      <div className="p-2 bg-blue-500/10 rounded-lg shrink-0"><Video size={18} className="text-blue-400" /></div>
-      <div className="flex-1 min-w-0">
-        <p className="font-bold text-white">{item.title}</p>
-        {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+// ————————————————————————————————————————————————————————————————————————————————
+const VideoCard = ({ item }) => {
+  const url = item.effective_url;
+  return (
+    <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
+      <div className="p-4 flex items-start gap-3">
+        <div className="p-2 bg-blue-500/10 rounded-lg shrink-0"><Video size={18} className="text-blue-400" /></div>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-white">{item.title}</p>
+          {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+        </div>
       </div>
+      {url && (
+        <div className="w-full bg-black">
+          <video src={url} controls className="w-full max-h-96" preload="metadata" />
+        </div>
+      )}
+      {item.telegram_link && (
+        <div className="px-4 pb-4 pt-2">
+          <a href={item.telegram_link} target="_blank" rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-blue-500/10 text-blue-400
+              border border-blue-500/20 rounded-xl font-bold text-sm hover:bg-blue-500 hover:text-white transition">
+            <ExternalLink size={16} /> فتح الرابط الخارجي / تليجرام
+          </a>
+        </div>
+      )}
     </div>
-    {item.telegram_link && (
-      <div className="px-4 pb-4">
-        <a href={item.telegram_link} target="_blank" rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-3 bg-blue-500/10 text-blue-400
-            border border-blue-500/20 rounded-xl font-bold text-sm hover:bg-blue-500 hover:text-white transition">
-          <PlayCircle size={16} /> Ù…Ø´Ø§Ù‡Ø¯Ø© Ø§Ù„ÙÙŠØ¯ÙŠÙˆ
-        </a>
-      </div>
-    )}
-  </div>
-);
+  );
+};
 
 const DocumentCard = ({ item }) => {
   const url = item.effective_url || getMediaUrl(item.file_url) || getMediaUrl(item.document_file);
@@ -338,10 +349,10 @@ const DocumentCard = ({ item }) => {
         <div className="p-2 bg-red-500/10 rounded-lg shrink-0"><FileText size={18} className="text-red-400" /></div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-white">{item.title}</p>
-          <p className="text-gray-500 text-xs mt-0.5">Ù…Ù„Ù PDF</p>
+          <p className="text-gray-500 text-xs mt-0.5">ملف PDF</p>
           {!url && (
             <span className="inline-flex items-center gap-1 text-yellow-400 text-xs mt-1">
-              <AlertCircle size={12} /> Ø§Ù„Ù…Ù„Ù ØºÙŠØ± Ù…ØªØ§Ø­ Ø­Ø§Ù„ÙŠØ§Ù‹
+              <AlertCircle size={12} /> الملف غير متاح حالياً
             </span>
           )}
         </div>
@@ -379,12 +390,12 @@ const VoiceCard = ({ item }) => {
             <a href={url} download={`${item.title}.mp3`}
               className="inline-flex items-center gap-2 px-4 py-2 bg-accentGold/10 border border-accentGold/20
                 rounded-xl text-xs font-bold text-accentGold hover:bg-accentGold hover:text-bgDark transition">
-              <Download size={13} /> تحميل Ø§Ù„ØµÙˆØª
+              <Download size={13} /> تحميل الصوت
             </a>
           </div>
         ) : (
           <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400 text-sm">
-            <AlertCircle size={14} /> Ø§Ù„Ù…Ù„Ù Ø§Ù„ØµÙˆØªÙŠ ØºÙŠØ± Ù…ØªØ§Ø­ Ø­Ø§Ù„ÙŠØ§Ù‹
+            <AlertCircle size={14} /> الملف الصوتي غير متاح حالياً
           </div>
         )}
       </div>
@@ -396,28 +407,40 @@ const PhotoCard = ({ item }) => {
   const url = item.effective_url || getMediaUrl(item.photo_url) || getMediaUrl(item.image_file);
   return (
     <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
-      <div className="p-4 flex items-center gap-3 border-b border-white/5">
-        <div className="p-2 bg-green-500/10 rounded-lg shrink-0"><ImageIcon size={18} className="text-green-400" /></div>
-        <p className="font-bold text-white">{item.title}</p>
+      <div className="p-4 flex items-center justify-between gap-3 border-b border-white/5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-green-500/10 rounded-lg shrink-0"><ImageIcon size={18} className="text-green-400" /></div>
+          <p className="font-bold text-white">{item.title}</p>
+        </div>
+        {url && (
+          <div className="flex gap-2">
+            <a href={url} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/5 rounded-lg hover:bg-white/10 text-gray-400 hover:text-white transition" title="فتح الصورة">
+              <ExternalLink size={16} />
+            </a>
+            <a href={url} download={`${item.title}.jpg`} className="p-2 bg-accentGold/10 rounded-lg hover:bg-accentGold hover:text-bgDark text-accentGold transition" title="تحميل الصورة">
+              <Download size={16} />
+            </a>
+          </div>
+        )}
       </div>
       {url
         ? <div className="bg-black/30 flex items-center justify-center p-4">
             <img src={url} alt={item.title} className="max-h-80 object-contain rounded-xl" />
           </div>
-        : <div className="p-4 text-center text-gray-500 text-sm">Ø§Ù„صورØ© ØºÙŠØ± Ù…ØªØ§Ø­Ø©</div>
+        : <div className="p-4 text-center text-gray-500 text-sm">الصورة غير متاحة</div>
       }
     </div>
   );
 };
 
 const SessionCard = ({ item }) => {
-  const url = item.telegram_link || item.session_url || item.link;
+  const url = item.session_link || item.telegram_link || item.link;
   return (
     <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
       <div className="p-4 flex items-start gap-3">
-        <div className="p-2 bg-orange-500/10 rounded-lg shrink-0"><PlayCircle size={18} className="text-orange-400" /></div>
+        <div className="p-2 bg-orange-500/10 rounded-lg shrink-0"><Video size={18} className="text-orange-400" /></div>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-white">{item.title}</p>
+          <p className="font-bold text-white">جلسة: {item.title}</p>
           {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
         </div>
       </div>
@@ -426,10 +449,31 @@ const SessionCard = ({ item }) => {
           <a href={url} target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full py-3 bg-orange-500/10 text-orange-400
               border border-orange-500/20 rounded-xl font-bold text-sm hover:bg-orange-500 hover:text-white transition">
-            <ExternalLink size={16} /> ÙØªØ­ Ø§Ù„Ø¬Ù„سØ©
+            <ExternalLink size={16} /> فتح الجلسة
           </a>
         </div>
       )}
+    </div>
+  );
+};
+
+const QuizCard = ({ item, navigate, moduleSlug }) => {
+  return (
+    <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
+      <div className="p-4 flex items-start gap-3">
+        <div className="p-2 bg-yellow-500/10 rounded-lg shrink-0"><CheckSquare size={18} className="text-yellow-400" /></div>
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-white">{item.title}</p>
+          <p className="text-gray-500 text-sm mt-0.5">{item.questions_count ?? 0} سؤال</p>
+        </div>
+      </div>
+      <div className="px-4 pb-4">
+        <button onClick={() => navigate(`/dashboard/student/modules/${moduleSlug}/quiz/${item.id}`)}
+          className="flex items-center justify-center gap-2 w-full py-3 bg-yellow-500/10 text-yellow-400
+            border border-yellow-500/20 rounded-xl font-bold text-sm hover:bg-yellow-500 hover:text-white transition">
+          <PlayCircle size={16} /> بدء الاختبار
+        </button>
+      </div>
     </div>
   );
 };

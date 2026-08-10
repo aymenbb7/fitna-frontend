@@ -64,25 +64,35 @@ const TrialPage = () => {
                   {lesson.description && <p className="text-gray-400 mt-4 text-lg">{lesson.description}</p>}
                 </div>
 
-                {lesson.videos?.length > 0 && lesson.videos.map(video => (
-                  <div key={video.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
-                    <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
-                      <PlayCircle className="text-accentGold w-8 h-8" />
-                      <h2 className="text-2xl font-black">{video.title}</h2>
+                {lesson.videos?.length > 0 && lesson.videos.map(video => {
+                  const url = video.effective_url || getMediaUrl(video.video_file);
+                  return (
+                    <div key={video.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
+                        <PlayCircle className="text-accentGold w-8 h-8" />
+                        <h2 className="text-2xl font-black">{video.title}</h2>
+                      </div>
+                      <div className="bg-black">
+                        {url && (
+                          <video src={url} controls className="w-full max-h-[500px]" preload="metadata" />
+                        )}
+                      </div>
+                      {video.telegram_link && (
+                        <div className="p-6 bg-bgDark">
+                          <a
+                            href={video.telegram_link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-3 w-full py-4 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl font-bold text-base hover:bg-blue-500 hover:text-white transition"
+                          >
+                            <ExternalLink size={20} />
+                            فتح الرابط الخارجي / تليجرام
+                          </a>
+                        </div>
+                      )}
                     </div>
-                    <div className="p-8 bg-bgDark">
-                      <a
-                        href={video.telegram_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-3 w-full py-4 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl font-bold text-base hover:bg-blue-500 hover:text-white transition"
-                      >
-                        <PlayCircle size={20} />
-                        مشاهدة الفيديو على تيليغرام
-                      </a>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {lesson.documents?.length > 0 && lesson.documents.map(doc => {
                   const fileUrl = doc.effective_url || getMediaUrl(doc.file_url) || getMediaUrl(doc.document_file);
@@ -167,21 +177,65 @@ const TrialPage = () => {
                   );
                 })}
 
-                {lesson.photos?.length > 0 && lesson.photos.map(photo => (
-                  <div key={photo.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
-                    <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
-                      <ImageIcon className="text-accentGold w-8 h-8" />
-                      <h2 className="text-2xl font-black">{photo.title}</h2>
+                {lesson.photos?.length > 0 && lesson.photos.map(photo => {
+                  const url = photo.effective_url || getMediaUrl(photo.photo_url) || getMediaUrl(photo.image_file);
+                  return (
+                    <div key={photo.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10 flex items-center justify-between gap-3 bg-white/5">
+                        <div className="flex items-center gap-3">
+                          <ImageIcon className="text-accentGold w-8 h-8" />
+                          <h2 className="text-2xl font-black">{photo.title}</h2>
+                        </div>
+                        {url && (
+                          <div className="flex gap-2">
+                            <a href={url} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-xl hover:bg-white/10 text-gray-400 hover:text-white transition" title="فتح الصورة">
+                              <ExternalLink size={20} />
+                            </a>
+                            <a href={url} download={`${photo.title}.jpg`} className="p-3 bg-accentGold/10 rounded-xl hover:bg-accentGold hover:text-bgDark text-accentGold transition" title="تحميل الصورة">
+                              <Download size={20} />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                      {url ? (
+                        <div className="bg-black flex items-center justify-center p-4">
+                          <img src={url} alt={photo.title} className="max-h-96 object-contain rounded-xl" />
+                        </div>
+                      ) : (
+                        <div className="p-12 text-center text-gray-500 font-bold">الصورة غير متاحة</div>
+                      )}
                     </div>
-                    <div className="bg-black flex items-center justify-center p-4">
-                      <img 
-                        src={photo.effective_url || getMediaUrl(photo.photo_url) || getMediaUrl(photo.image_file)} 
-                        alt={photo.title}
-                        className="max-h-96 object-contain rounded-xl"
-                      />
+                  );
+                })}
+
+                {/* Sessions */}
+                {lesson.sessions?.length > 0 && lesson.sessions.map(session => {
+                  const url = session.session_link || session.telegram_link || session.link;
+                  return (
+                    <div key={session.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                      <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
+                        <PlayCircle className="text-orange-400 w-8 h-8" />
+                        <div>
+                          <h2 className="text-2xl font-black text-white">جلسة: {session.title}</h2>
+                          {session.description && <p className="text-gray-400 text-sm mt-1">{session.description}</p>}
+                        </div>
+                      </div>
+                      {url && (
+                        <div className="p-8 bg-bgDark">
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-3 w-full py-4 bg-orange-500/10 text-orange-400 border border-orange-500/20 rounded-2xl font-bold text-base hover:bg-orange-500 hover:text-white transition"
+                          >
+                            <ExternalLink size={20} />
+                            فتح الجلسة
+                          </a>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {/* Quizzes — API now returns full quiz objects with id, title, questions_count */}
                 {lesson.quizzes?.length > 0 && lesson.quizzes.map(quiz => (
