@@ -64,35 +64,35 @@ const TrialPage = () => {
                   {lesson.description && <p className="text-gray-400 mt-4 text-lg">{lesson.description}</p>}
                 </div>
 
-                {lesson.videos?.length > 0 && lesson.videos.map(video => {
-                  const url = video.effective_url || getMediaUrl(video.video_file);
-                  return (
-                    <div key={video.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
-                      <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
-                        <PlayCircle className="text-accentGold w-8 h-8" />
+                {lesson.videos?.length > 0 && lesson.videos.map(video => (
+                  <div key={video.id} className="bg-bgPurple rounded-3xl shadow-2xl border border-white/10 overflow-hidden">
+                    <div className="p-6 border-b border-white/10 flex items-center gap-3 bg-white/5">
+                      <PlayCircle className="text-accentGold w-8 h-8" />
+                      <div>
                         <h2 className="text-2xl font-black">{video.title}</h2>
+                        {video.description && <p className="text-gray-400 text-sm mt-1">{video.description}</p>}
                       </div>
-                      <div className="bg-black">
-                        {url && (
-                          <video src={url} controls className="w-full max-h-[500px]" preload="metadata" />
-                        )}
-                      </div>
-                      {video.telegram_link && (
-                        <div className="p-6 bg-bgDark">
-                          <a
-                            href={video.telegram_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-3 w-full py-4 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl font-bold text-base hover:bg-blue-500 hover:text-white transition"
-                          >
-                            <ExternalLink size={20} />
-                            فتح الرابط الخارجي / تليجرام
-                          </a>
+                    </div>
+                    <div className="p-8 bg-bgDark">
+                      {video.telegram_link ? (
+                        <a
+                          href={video.telegram_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-3 w-full py-4 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-2xl font-bold text-base hover:bg-blue-500 hover:text-white transition"
+                        >
+                          <ExternalLink size={20} />
+                          مشاهدة الفيديو
+                        </a>
+                      ) : (
+                        <div className="flex items-center gap-2 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400">
+                          <AlertCircle size={16} />
+                          الفيديو غير متاح حالياً
                         </div>
                       )}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
 
                 {lesson.documents?.length > 0 && lesson.documents.map(doc => {
                   const fileUrl = doc.effective_url || getMediaUrl(doc.file_url) || getMediaUrl(doc.document_file);

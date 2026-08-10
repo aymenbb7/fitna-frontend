@@ -312,34 +312,32 @@ const LessonView = ({ lesson, moduleSlug, navigate }) => {
 };
 
 // ————————————————————————————————————————————————————————————————————————————————
-const VideoCard = ({ item }) => {
-  const url = item.effective_url;
-  return (
-    <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
-      <div className="p-4 flex items-start gap-3">
-        <div className="p-2 bg-blue-500/10 rounded-lg shrink-0"><Video size={18} className="text-blue-400" /></div>
-        <div className="flex-1 min-w-0">
-          <p className="font-bold text-white">{item.title}</p>
-          {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+const VideoCard = ({ item }) => (
+  <div className="bg-bgDark rounded-xl border border-white/5 overflow-hidden hover:border-white/10 transition">
+    <div className="p-4 flex items-start gap-3">
+      <div className="p-2 bg-blue-500/10 rounded-lg shrink-0"><Video size={18} className="text-blue-400" /></div>
+      <div className="flex-1 min-w-0">
+        <p className="font-bold text-white">{item.title}</p>
+        {item.description && <p className="text-gray-500 text-sm mt-0.5">{item.description}</p>}
+      </div>
+    </div>
+    {item.telegram_link ? (
+      <div className="px-4 pb-4">
+        <a href={item.telegram_link} target="_blank" rel="noopener noreferrer"
+          className="flex items-center justify-center gap-2 w-full py-3 bg-blue-500/10 text-blue-400
+            border border-blue-500/20 rounded-xl font-bold text-sm hover:bg-blue-500 hover:text-white transition">
+          <ExternalLink size={16} /> مشاهدة الفيديو
+        </a>
+      </div>
+    ) : (
+      <div className="px-4 pb-4">
+        <div className="flex items-center gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-400 text-sm">
+          <AlertCircle size={14} /> الفيديو غير متاح حالياً
         </div>
       </div>
-      {url && (
-        <div className="w-full bg-black">
-          <video src={url} controls className="w-full max-h-96" preload="metadata" />
-        </div>
-      )}
-      {item.telegram_link && (
-        <div className="px-4 pb-4 pt-2">
-          <a href={item.telegram_link} target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-blue-500/10 text-blue-400
-              border border-blue-500/20 rounded-xl font-bold text-sm hover:bg-blue-500 hover:text-white transition">
-            <ExternalLink size={16} /> فتح الرابط الخارجي / تليجرام
-          </a>
-        </div>
-      )}
-    </div>
-  );
-};
+    )}
+  </div>
+);
 
 const DocumentCard = ({ item }) => {
   const url = item.effective_url || getMediaUrl(item.file_url) || getMediaUrl(item.document_file);
