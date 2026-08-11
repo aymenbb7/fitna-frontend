@@ -427,8 +427,10 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
     if (isSaving) return;
     const { text, choices, question_type, points, explanation } = questionForm;
     if (!text.trim()) return alert('أدخل نص السؤال');
-    if (choices.some(c => !c.text.trim())) return alert('أدخل نص جميع الخيارات');
-    if (!choices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة');
+    
+    const validChoices = choices.filter(c => c.text.trim() !== '');
+    if (validChoices.length < 2) return alert('أدخل نص خيارين على الأقل');
+    if (!validChoices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة من بين الخيارات المدخلة');
     
     setIsSaving(true);
     try {
@@ -438,7 +440,7 @@ const QuizBuilder = ({ lesson, moduleSlug }) => {
         points, 
         explanation, 
         display_order: questions.length,
-        choices: choices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
+        choices: validChoices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
       });
       
       setQuestions(prev => [...prev, res.data]);
@@ -727,8 +729,10 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
     if (isSaving) return;
     const { text, choices, question_type, points, explanation } = questionForm;
     if (!text.trim()) return alert('أدخل نص السؤال');
-    if (choices.some(c => !c.text.trim())) return alert('أدخل نص جميع الخيارات');
-    if (!choices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة');
+    
+    const validChoices = choices.filter(c => c.text.trim() !== '');
+    if (validChoices.length < 2) return alert('أدخل نص خيارين على الأقل');
+    if (!validChoices.some(c => c.is_correct)) return alert('اختر الإجابة الصحيحة من بين الخيارات المدخلة');
     
     setIsSaving(true);
     try {
@@ -738,7 +742,7 @@ const ModuleLevelQuizPanel = ({ moduleSlug, quizzes: initialQuizzes, onRefresh }
         points, 
         explanation, 
         display_order: questions.length,
-        choices: choices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
+        choices: validChoices.map((c, i) => ({ text: c.text, is_correct: c.is_correct, display_order: i }))
       });
       
       setQuestions(prev => [...prev, res.data]);
