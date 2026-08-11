@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, useInView, animate } from 'framer-motion';
 import { SettingsContext } from '../../context/SettingsContext';
-import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import { BookOpen, Users, Star, ArrowLeft, Trophy, CheckCircle2, ChevronLeft, Target, Medal, FileText, Smartphone } from 'lucide-react';
 
@@ -52,7 +53,20 @@ const Counter = ({ from, to, duration = 2, delay = 0 }) => {
 const Home = () => {
   const { t } = useTranslation();
   const { settings, siteSettings } = useContext(SettingsContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [modules, setModules] = useState([]);
+
+  // Redirect already-authenticated users to their dashboard immediately
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (user.role === 'STUDENT') {
+        navigate('/dashboard/student', { replace: true });
+      } else if (user.role === 'SUPER_ADMIN' || user.role === 'MODULE_ADMIN') {
+        navigate('/dashboard/admin', { replace: true });
+      }
+    }
+  }, [user, authLoading, navigate]);
 
   useEffect(() => {
     // Always fetch the live modules from the API to ensure all 9 modules appear.
@@ -178,7 +192,8 @@ const Home = () => {
             <a href="#programs" className="px-10 py-5 bg-accentGold text-bgDark font-black rounded-2xl text-xl hover:bg-yellow-400 transition shadow-[0_0_20px_rgba(245,197,24,0.5)] hover:shadow-[0_0_30px_rgba(245,197,24,0.8)] transform hover:scale-105 duration-200">
               {siteSettings?.landing_hero_button_text || "ابدأ رحلتك الآن 🚀"}
             </a>
-            <Link to={siteSettings?.landing_hero_button_url || "/login"} className="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition transform hover:scale-105 duration-200">
+            {/* Always link to /login — never use the CTA button url for this */}
+            <Link to="/login" className="px-10 py-5 bg-transparent border-2 border-white text-white font-bold rounded-2xl text-xl hover:bg-white/10 transition transform hover:scale-105 duration-200">
               تسجيل الدخول
             </Link>
           </motion.div>

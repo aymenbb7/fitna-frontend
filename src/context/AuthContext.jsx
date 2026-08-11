@@ -28,6 +28,19 @@ export const AuthProvider = ({ children }) => {
     } else {
       setLoading(false);
     }
+
+    // Cross-tab session sync: if token changes in another tab, reload to sync or logout
+    const syncLogout = (event) => {
+      if (event.key === 'accessToken') {
+        if (event.newValue === null) {
+          window.location.href = '/login';
+        } else if (event.newValue !== localStorage.getItem('accessToken')) {
+          window.location.reload();
+        }
+      }
+    };
+    window.addEventListener('storage', syncLogout);
+    return () => window.removeEventListener('storage', syncLogout);
   }, []);
 
   const login = (userData, accessToken, refreshToken) => {

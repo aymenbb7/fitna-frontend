@@ -1,4 +1,4 @@
-﻿import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import { Camera, Save } from 'lucide-react';
 import api from '../../../api/axios';
@@ -7,11 +7,12 @@ const Profile = () => {
   const { user } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
-    username: user?.username || '',
-    email: user?.email || '',
+    phone_number: user?.phone_number || '',
+    age: user?.age || '',
     currentPassword: '',
     newPassword: '',
   });
@@ -20,15 +21,31 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setSuccess('');
-    // Mock API call
-    setTimeout(() => {
-      setLoading(false);
+    setError('');
+
+    try {
+      const payload = {
+        full_name: formData.full_name,
+      };
+      if (formData.phone_number) payload.phone_number = formData.phone_number;
+      if (formData.age) payload.age = formData.age;
+      if (formData.currentPassword && formData.newPassword) {
+        payload.current_password = formData.currentPassword;
+        payload.new_password = formData.newPassword;
+      }
+
+      await api.patch('/auth/me/', payload);
       setSuccess('تم تحديث البيانات بنجاح!');
-    }, 1000);
+      setTimeout(() => window.location.reload(), 1500);
+    } catch (err) {
+      setError(err.response?.data?.error || 'حدث خطأ أثناء حفظ التغييرات');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,9 +77,14 @@ const Profile = () => {
               {success}
             </div>
           )}
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl font-bold text-sm text-center">
+              {error}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            <div className="md:col-span-2">
               <label className="block text-gray-400 font-bold mb-2">الاسم الكامل</label>
               <input 
                 name="full_name"
@@ -72,10 +94,21 @@ const Profile = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-400 font-bold mb-2">اسم المستخدم</label>
+              <label className="block text-gray-400 font-bold mb-2">رقم الهاتف (اختياري)</label>
               <input 
-                name="username"
-                value={formData.username}
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                dir="ltr"
+                className="w-full bg-bgDark border border-white/5 rounded-xl p-3 text-white text-left focus:border-accentGold focus:outline-none transition" 
+              />
+            </div>
+            <div>
+              <label className="block text-gray-400 font-bold mb-2">العمر (اختياري)</label>
+              <input 
+                type="number"
+                name="age"
+                value={formData.age}
                 onChange={handleChange}
                 dir="ltr"
                 className="w-full bg-bgDark border border-white/5 rounded-xl p-3 text-white text-left focus:border-accentGold focus:outline-none transition" 
@@ -86,12 +119,14 @@ const Profile = () => {
           <div>
             <label className="block text-gray-400 font-bold mb-2">البريد الإلكتروني</label>
             <input 
-              name="email"
-              value={formData.email}
-              disabled
+              value={user?.email || ''}
+              readOnly
               dir="ltr"
-              className="w-full bg-bgDark border border-white/5 rounded-xl p-3 text-gray-500 text-left cursor-not-allowed" 
+              className="w-full bg-bgDark border border-white/5 rounded-xl p-3 text-gray-500 text-left cursor-not-allowed select-none" 
             />
+            <p className="text-sm text-gray-500 mt-2 font-bold">
+              لتغيير البريد الإلكتروني، يرجى <a href="https://wa.me/213773650836" target="_blank" rel="noreferrer" className="text-accentGold hover:underline">التواصل مع الإدارة عبر WhatsApp</a>.
+            </p>
           </div>
 
           <div className="pt-6 border-t border-white/5">

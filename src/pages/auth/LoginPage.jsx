@@ -5,12 +5,24 @@ import { ArrowRight, Lock, User } from 'lucide-react';
 import api from '../../api/axios';
 
 const LoginPage = () => {
-  const { login } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
   const navigate = useNavigate();
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    if (user) {
+      if (user?.role === 'STUDENT' || user?.role === 'student') {
+        navigate('/dashboard/student');
+      } else if (user?.role === 'MODULE_ADMIN' || user?.role === 'SUPER_ADMIN' || user?.role === 'superadmin') {
+        navigate('/dashboard/admin');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
