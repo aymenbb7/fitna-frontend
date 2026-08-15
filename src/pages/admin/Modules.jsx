@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { BookOpen, AlertCircle, Users } from 'lucide-react';
 import api from '../../api/axios';
+import { toast } from '../../utils/toast';
 
 import { AddModuleModal } from '../../components/admin/modals/AddModuleModal';
 import { ViewModuleStudentsModal } from '../../components/admin/modals/ViewModuleStudentsModal';
@@ -16,6 +17,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 export const Modules = () => {
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -48,10 +50,14 @@ export const Modules = () => {
   const handleToggleActive = async (module) => {
     if (!window.confirm(`هل أنت متأكد من ${module.is_active ? 'تعطيل' : 'تفعيل'} هذه الوحدة؟`)) return;
     try {
+      setActionLoading(true);
       await api.post(`/admin/modules/${module.slug}/update/`, { is_active: !module.is_active });
       fetchModules();
+      toast.success("تم تغيير حالة الوحدة بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء تغيير حالة الوحدة.");
+      toast.error(err.userMessage || "حدث خطأ أثناء تغيير حالة الوحدة.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -105,10 +111,14 @@ export const Modules = () => {
   const handleDelete = async (module) => {
     if (!window.confirm(`هل أنت متأكد من حذف الوحدة الدراسية "${module.name}" بشكل نهائي؟`)) return;
     try {
+      setActionLoading(true);
       await api.delete(`/admin/modules/${module.slug}/`);
       fetchModules();
+      toast.success("تم حذف الوحدة بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء حذف الوحدة.");
+      toast.error(err.userMessage || "حدث خطأ أثناء حذف الوحدة.");
+    } finally {
+      setActionLoading(false);
     }
   };
 

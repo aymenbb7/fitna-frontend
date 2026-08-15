@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ShieldCheck, AlertCircle, UserPlus } from 'lucide-react';
 import api from '../../api/axios';
+import { toast } from '../../utils/toast';
 
 import { AddModuleAdminModal } from '../../components/admin/modals/AddModuleAdminModal';
 import { UpdateModuleAdminModal } from '../../components/admin/modals/UpdateModuleAdminModal';
@@ -15,6 +16,7 @@ import { useSearchParams } from 'react-router-dom';
 export const ModuleAdmins = () => {
   const [admins, setAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -45,20 +47,28 @@ export const ModuleAdmins = () => {
   const handleStatusChange = async (user, isActive) => {
     if (!window.confirm(`هل أنت متأكد من ${isActive ? 'تفعيل' : 'إيقاف'} حساب ${user.full_name}؟`)) return;
     try {
+      setActionLoading(true);
       await api.post(`/admin/users/${user.id}/update/`, { is_active: isActive });
       fetchAdmins();
+      toast.success("تم تغيير حالة الحساب بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء تغيير حالة الحساب.");
+      toast.error(err.userMessage || "حدث خطأ أثناء تغيير حالة الحساب.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleDelete = async (user) => {
     if (!window.confirm(`هل أنت متأكد من حذف حساب المشرف "${user.full_name}" نهائياً؟`)) return;
     try {
+      setActionLoading(true);
       await api.delete(`/admin/users/${user.id}/`);
       fetchAdmins();
+      toast.success("تم حذف الحساب بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء الحذف.");
+      toast.error(err.userMessage || "حدث خطأ أثناء الحذف.");
+    } finally {
+      setActionLoading(false);
     }
   };
 

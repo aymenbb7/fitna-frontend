@@ -5,6 +5,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { UserPlus, AlertCircle, Eye } from 'lucide-react';
 import api from '../../api/axios';
+import { toast } from '../../utils/toast';
 
 import { AddStudentModal } from '../../components/admin/modals/AddStudentModal';
 import { ViewStudentModulesModal } from '../../components/admin/modals/ViewStudentModulesModal';
@@ -17,6 +18,7 @@ import { useSearchParams } from 'react-router-dom';
 export const Students = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchParams] = useSearchParams();
 
@@ -49,20 +51,28 @@ export const Students = () => {
   const handleStatusChange = async (student, newStatus) => {
     if (!window.confirm(`هل أنت متأكد من ${newStatus ? 'تفعيل' : 'إيقاف'} حساب ${student.full_name}؟`)) return;
     try {
+      setActionLoading(true);
       await api.post(`/admin/users/${student.id}/status/`, { is_active: newStatus });
       fetchStudents();
+      toast.success("تم تغيير حالة الحساب بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء تغيير حالة الحساب.");
+      toast.error(err.userMessage || "حدث خطأ أثناء تغيير حالة الحساب.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleDelete = async (student) => {
     if (!window.confirm(`هل أنت متأكد من حذف حساب ${student.full_name} بشكل نهائي؟ هذا الإجراء لا يمكن التراجع عنه.`)) return;
     try {
+      setActionLoading(true);
       await api.delete(`/admin/users/${student.id}/`);
       fetchStudents();
+      toast.success("تم حذف الحساب بنجاح.");
     } catch (err) {
-      alert("حدث خطأ أثناء حذف الحساب.");
+      toast.error(err.userMessage || "حدث خطأ أثناء حذف الحساب.");
+    } finally {
+      setActionLoading(false);
     }
   };
 

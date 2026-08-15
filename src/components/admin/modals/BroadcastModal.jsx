@@ -65,7 +65,7 @@ export const BroadcastModal = ({ isOpen, onClose, onSuccess }) => {
       });
       if (onSuccess) onSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || "حدث خطأ أثناء الإرسال.");
+      setError(err.userMessage || err.response?.data?.error || "حدث خطأ أثناء الإرسال.");
     } finally {
       setLoading(false);
     }
