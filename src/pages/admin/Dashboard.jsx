@@ -108,7 +108,7 @@ const Dashboard = () => {
             <CardSkeleton />
             <CardSkeleton />
           </>
-        ) : (
+        ) : stats ? (
           <>
             <StatCard 
               title="إجمالي الطلاب" 
@@ -137,7 +137,7 @@ const Dashboard = () => {
               colorClass="text-accentGold"
             />
           </>
-        )}
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

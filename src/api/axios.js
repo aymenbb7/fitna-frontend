@@ -24,14 +24,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle global 401
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      if (!window.location.pathname.includes('/login')) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
-      }
-    }
+    // NOTE: Do NOT do a global hard redirect on 401 here.
+    // The global interceptor must only normalize the error and reject.
+    // Reason: a transient 401 from a stats/data endpoint (e.g. /admin/stats/)
+    // must NOT redirect the user away — they may be fully authenticated.
+    // AuthContext already handles 401 from /auth/me/ itself (clears token + redirects).
+    // Each component's own catch block handles its own errors gracefully.
 
     // Normalize error message
     let userMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
