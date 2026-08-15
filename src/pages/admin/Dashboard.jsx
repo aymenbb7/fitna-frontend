@@ -47,17 +47,6 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12 text-center">
-        <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
-        <h3 className="text-xl font-bold text-white mb-2">خطأ في التحميل</h3>
-        <p className="text-gray-400 mb-6">{error}</p>
-        <Button onClick={fetchData} variant="primary">إعادة المحاولة</Button>
-      </div>
-    );
-  }
-
   const moduleColumns = React.useMemo(() => [
     { key: 'name', label: 'اسم الوحدة' },
     { key: 'total_students', label: 'إجمالي الطلاب' },
@@ -75,6 +64,17 @@ const Dashboard = () => {
       render: (val) => `${val}%`
     }
   ], []);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center">
+        <AlertCircle className="w-16 h-16 text-red-500 mb-4" />
+        <h3 className="text-xl font-bold text-white mb-2">خطأ في التحميل</h3>
+        <p className="text-gray-400 mb-6">{error}</p>
+        <Button onClick={fetchData} variant="primary">إعادة المحاولة</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
