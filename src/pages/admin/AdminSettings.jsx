@@ -3,19 +3,15 @@ import { PageHeader } from '../../components/ui/PageHeader';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Settings, Save, Shield, Palette, Mail, LayoutTemplate, Send, Key, Check, X, AlertCircle, Phone, Clock } from 'lucide-react';
+import { Settings, Save, Shield, Mail, LayoutTemplate, Send, Key, Check, X, AlertCircle, Phone, Clock } from 'lucide-react';
 import api from '../../api/axios';
 import { toast } from '../../utils/toast';
 
 export const AdminSettings = () => {
-  const [activeTab, setActiveTab] = useState('branding');
+  const [activeTab, setActiveTab] = useState('landing');
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('fitna_theme') || 'luxury');
 
   const [settings, setSettings] = useState({
-    site_name: '',
-    logo_url: '',
-    site_primary_color: '#F5C518',
-    site_secondary_color: '#7C3AED',
     smtp_host: '',
     smtp_port: 587,
     smtp_username: '',
@@ -159,6 +155,8 @@ export const AdminSettings = () => {
       if (res.data && res.data.settings) {
         setSettings(prev => ({ ...prev, ...res.data.settings }));
       }
+      // Clear the public settings cache so the homepage picks up fresh values on next visit
+      try { localStorage.removeItem('apiSiteSettings'); } catch {}
     } catch (err) {
       console.error("Save settings error:", err.response?.data);
       const errorMsg = err.response?.data?.error || err.response?.data?.detail || "حدث خطأ أثناء حفظ الإعدادات";
@@ -167,6 +165,7 @@ export const AdminSettings = () => {
       setLoading(false);
     }
   };
+
 
   const handleTestEmail = async () => {
     if (!testEmail) return toast.error("أدخل بريد إلكتروني لاختبار الإرسال");
@@ -182,8 +181,8 @@ export const AdminSettings = () => {
   };
 
   const tabs = [
-    { id: 'branding', label: 'المظهر والهوية', icon: Palette },
     { id: 'landing', label: 'الصفحة الرئيسية', icon: LayoutTemplate },
+    { id: 'appearance', label: 'المظهر', icon: Settings },
     { id: 'email', label: 'إعدادات البريد (SMTP)', icon: Mail },
     { id: 'registrations', label: 'طلبات التسجيل الجديدة', icon: Shield },
   ];
@@ -193,9 +192,9 @@ export const AdminSettings = () => {
       <PageHeader 
         title="إعدادات المنصة" 
         description="إدارة المظهر، الصفحة الرئيسية، طلبات التسجيل، وإعدادات البريد الإلكتروني"
-        actionLabel={activeTab !== 'registrations' ? "حفظ الإعدادات" : undefined}
-        actionIcon={activeTab !== 'registrations' ? Save : undefined}
-        onAction={activeTab !== 'registrations' ? handleSaveSettings : undefined}
+        actionLabel={activeTab !== 'registrations' && activeTab !== 'appearance' ? "حفظ الإعدادات" : undefined}
+        actionIcon={activeTab !== 'registrations' && activeTab !== 'appearance' ? Save : undefined}
+        onAction={activeTab !== 'registrations' && activeTab !== 'appearance' ? handleSaveSettings : undefined}
         loading={loading}
       />
 
@@ -233,32 +232,14 @@ export const AdminSettings = () => {
               {tabs.find(t => t.id === activeTab)?.label}
             </h3>
 
-            {activeTab === 'branding' && (
+            {activeTab === 'appearance' && (
               <div className="space-y-8 max-w-3xl">
-                <div className="bg-bgDark p-6 rounded-2xl border border-white/10 space-y-6">
-                  <h3 className="text-xl font-black text-accentGold border-b border-white/10 pb-4">إعدادات الهوية البصرية (Branding)</h3>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-400 mb-2">اسم المنصة (Site Name)</label>
-                    <input type="text" name="site_name" value={settings.site_name || ''} onChange={handleChange} className="w-full bg-bgPurple border border-white/10 rounded-xl py-3 px-4 text-white font-bold focus:outline-none focus:border-accentGold transition-colors" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-400 mb-2">رابط الشعار (Logo URL)</label>
-                    <input type="url" name="logo_url" value={settings.logo_url || ''} onChange={handleChange} placeholder="https://example.com/logo.png" className="w-full bg-bgPurple border border-white/10 rounded-xl py-3 px-4 text-white font-bold focus:outline-none focus:border-accentGold transition-colors text-left dir-ltr" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-gray-400 mb-2">اللون الأساسي (Primary Color)</label>
-                      <input type="color" name="site_primary_color" value={settings.site_primary_color || '#1A0A4B'} onChange={handleChange} className="w-full h-12 rounded-xl cursor-pointer" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-gray-400 mb-2">اللون الثانوي (Secondary Color)</label>
-                      <input type="color" name="site_secondary_color" value={settings.site_secondary_color || '#F5C518'} onChange={handleChange} className="w-full h-12 rounded-xl cursor-pointer" />
-                    </div>
-                  </div>
+                <div className="bg-blue-500/10 border border-blue-500/20 p-4 rounded-xl text-blue-300 text-sm font-bold flex gap-3 mb-2">
+                  <Settings className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                  <p>تغيير القالب يُطبَّق فوراً على واجهة لوحة التحكم ويُحفظ في المتصفح. يمكن اختيار أي قالب من القائمة أدناه.</p>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-bold text-gray-400 mb-4">اختيار القالب (السمة البصرية)</label>
+                  <label className="block text-sm font-bold text-gray-400 mb-4">السمة البصرية للوحة التحكم</label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { id: 'luxury', name: 'فاخر ذهبي (الافتراضي)' },
@@ -324,7 +305,7 @@ export const AdminSettings = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-bold text-gray-400 mb-2">النص التفصيلي</label>
-                    <textarea rows="4" name="landing_about_text" value={settings.landing_about_text || ''} onChange={handleChange} className="w-full bg-bgPurple border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-accentGold transition-colors"></textarea>
+                    <textarea rows="10" name="landing_about_text" value={settings.landing_about_text || ''} onChange={handleChange} className="w-full bg-bgPurple border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-accentGold transition-colors"></textarea>
                   </div>
                 </div>
 
