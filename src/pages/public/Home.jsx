@@ -231,7 +231,7 @@ const Home = () => {
                 <motion.div 
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
+                  viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5 }}
                   key={mod.slug} 
@@ -300,7 +300,7 @@ const Home = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {(siteSettings?.landing_stats_json && siteSettings.landing_stats_json !== '[]' ? JSON.parse(siteSettings.landing_stats_json) : [
               { num: settings?.stats?.students || 1250, label: 'طالب وطالبة', emoji: '😊', glow: 'rgba(59,130,246,0.5)', prefix: '+' },
-              { num: settings?.stats?.modules || 8, label: 'برنامج تدريبي', emoji: '🏆', glow: 'rgba(245,197,24,0.5)', prefix: '+' },
+              { num: settings?.stats?.modules || 9, label: 'برنامج تدريبي', emoji: '🏆', glow: 'rgba(245,197,24,0.5)', prefix: '+' },
               { num: 15, label: 'مدرب مميز', emoji: '🎓', glow: 'rgba(139,92,246,0.5)', prefix: '+' },
               { num: settings?.stats?.satisfaction || 98, label: 'نسبة رضا الطلاب', emoji: '⭐', glow: 'rgba(16,185,129,0.5)', suffix: '%' },
             ]).map((stat, i) => (
