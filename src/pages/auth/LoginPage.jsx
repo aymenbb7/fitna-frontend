@@ -27,8 +27,10 @@ const LoginPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // Send the identifier as 'username'. The backend's UnifiedAuthBackend will handle checking if it's an email or username.
-    const credentials = { username: identifier, password };
+    setError('');
+
+    const cleanIdentifier = identifier ? identifier.trim() : '';
+    const credentials = { username: cleanIdentifier, password };
 
     try {
       const res = await api.post('/auth/login/', credentials);
@@ -45,7 +47,26 @@ const LoginPage = () => {
         navigate('/');
       }
     } catch (err) {
-      setError('بيانات الدخول غير صحيحة. يرجى المحاولة مرة أخرى.');
+      if (err.response) {
+        const detail = err.response.data?.detail || '';
+        const status = err.response.status;
+
+        if (status === 503 || detail.includes('قاعدة البيانات') || detail.includes('database') || detail.includes('connection')) {
+          setError('تعذر الاتصال بقاعدة البيانات أو خادم المنصة. يرجى التأكد من تشغيل الخدمة والمحاولة لاحقاً.');
+        } else if (detail.includes('pending approval') || detail.includes('Account is pending')) {
+          setError('حسابك قيد المراجعة والموافقة من قبل الإدارة.');
+        } else if (err.response.data?.error) {
+          setError(err.response.data.error);
+        } else if (detail && typeof detail === 'string' && !detail.includes('Validation failed')) {
+          setError(detail);
+        } else {
+          setError('بيانات الدخول غير صحيحة. يرجى المحاولة مرة أخرى.');
+        }
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        setError('انتهت مهلة الاتصال بالخادم. يرجى المحاولة مرة أخرى.');
+      } else {
+        setError('تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت.');
+      }
     } finally {
       setLoading(false);
     }
