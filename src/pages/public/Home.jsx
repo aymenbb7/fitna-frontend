@@ -50,12 +50,81 @@ const Counter = ({ from, to, duration = 2, delay = 0 }) => {
   return <span ref={ref}>{from}</span>;
 };
 
+const ALL_DEFAULT_PROGRAMS = [
+  {
+    slug: 'quran',
+    name: 'قسم التعليم القرآني',
+    description: 'حفظ وتجويد بطرق تفاعلية مبتكرة لترسيخ القرآن في النفوس.',
+    icon: '🕌',
+    price: 500,
+  },
+  {
+    slug: 'memory',
+    name: 'الذاكرة الخارقة',
+    description: 'تطوير مهارات الحفظ السريع والاستيعاب الفائق ومضاعفة التركيز.',
+    icon: '🧠',
+    price: 0,
+  },
+  {
+    slug: 'soroban',
+    name: 'الحساب الذهني (السوروبان)',
+    description: 'تطوير سرعة الحساب والدقة في حل المسائل الرياضية والذهنية.',
+    icon: '🧮',
+    price: 0,
+  },
+  {
+    slug: 'problem-solving',
+    name: 'حل المشكلات والمنطق',
+    description: 'تنمية التفكير النقدي والتحليلي وحل المعضلات البرمجية والمنطقية.',
+    icon: '🧩',
+    price: 2500,
+  },
+  {
+    slug: 'health',
+    name: 'قسم العادات الصحية',
+    description: 'بناء نمط حياة صحي ومتوازن للجسم والعقل للأبطال الصغار.',
+    icon: '🌿',
+    price: 500,
+  },
+  {
+    slug: 'history',
+    name: 'قسم التاريخ والبطولات',
+    description: 'استكشاف القصص الملهمة والحضارات العريقة بأسلوب تفاعلي مشوق.',
+    icon: '🏛️',
+    price: 0,
+  },
+  {
+    slug: 'languages',
+    name: 'قسم اللغات والتواصل',
+    description: 'إتقان مهارات التحدث والتعبير باللغات المختلفة بطلاقة وثقة.',
+    icon: '🗣️',
+    price: 1000,
+  },
+  {
+    slug: 'talents',
+    name: 'قسم اكتشاف المواهب',
+    description: 'صقل المهارات الإبداعية وتفجير طاقات الطفل الابتكارية والفنية.',
+    icon: '⭐',
+    price: 2500,
+  },
+  {
+    slug: 'psychology',
+    name: 'قسم المتابعة النفسية',
+    description: 'تعزيز الثقة بالنفس، إدارة المشاعر، وبناء شخصية قيادية إيجابية.',
+    icon: '🧘',
+    price: 2500,
+  },
+];
+
+const DEFAULT_MAP = {};
+ALL_DEFAULT_PROGRAMS.forEach(p => { DEFAULT_MAP[p.slug] = p; });
+
 const Home = () => {
   const { t } = useTranslation();
   const { settings, siteSettings } = useContext(SettingsContext);
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [modules, setModules] = useState([]);
+  const [modules, setModules] = useState(ALL_DEFAULT_PROGRAMS);
 
   // Redirect already-authenticated users to their dashboard immediately
   useEffect(() => {
@@ -69,48 +138,70 @@ const Home = () => {
   }, [user, authLoading, navigate]);
 
   useEffect(() => {
-    // Always fetch the live modules from the API to ensure all 9 modules appear.
-    // landing_programs_json is used for display metadata (icons, descriptions) but
-    // we always merge with the live API to avoid showing a stale/partial list.
     api.get('/modules/')
       .then(res => {
-        const liveModules = res.data;
-        // If the site settings has a custom programs JSON with icons/descriptions,
-        // merge that metadata on top of the live modules (preserving all 9 from the API)
+        const liveModules = res.data || [];
+        const customMap = {};
         if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
           try {
             const customPrograms = JSON.parse(siteSettings.landing_programs_json);
-            const customMap = {};
-            customPrograms.forEach(p => { if (p.slug) customMap[p.slug] = p; });
-            const merged = liveModules.map(mod => ({
-              ...mod,
-              ...(customMap[mod.slug] ? {
-                name: customMap[mod.slug].name || mod.name,
-                description: customMap[mod.slug].description || mod.description,
-                icon: customMap[mod.slug].icon || mod.icon,
-              } : {})
-            }));
-            setModules(merged);
-            return;
+            if (Array.isArray(customPrograms)) {
+              customPrograms.forEach(p => { if (p.slug) customMap[p.slug] = p; });
+            }
           } catch (e) {
             console.error("Failed to parse landing_programs_json", e);
           }
         }
-        setModules(liveModules);
+
+        // Map live modules, using customMap or DEFAULT_MAP for missing names, icons, or descriptions
+        const seenSlugs = new Set();
+        const merged = liveModules.map(mod => {
+          seenSlugs.add(mod.slug);
+          const fallback = DEFAULT_MAP[mod.slug] || {};
+          const custom = customMap[mod.slug] || {};
+          return {
+            ...fallback,
+            ...mod,
+            name: custom.name || mod.name || fallback.name,
+            description: custom.description || (mod.description && mod.description.trim() ? mod.description : fallback.description),
+            icon: custom.icon || mod.icon || fallback.icon,
+            price: typeof mod.price !== 'undefined' ? Number(mod.price) : fallback.price,
+          };
+        });
+
+        // If any of the 9 default modules were not returned by API, append them so all 9 appear
+        ALL_DEFAULT_PROGRAMS.forEach(p => {
+          if (!seenSlugs.has(p.slug)) {
+            const custom = customMap[p.slug] || {};
+            merged.push({
+              ...p,
+              name: custom.name || p.name,
+              description: custom.description || p.description,
+              icon: custom.icon || p.icon,
+            });
+          }
+        });
+
+        setModules(merged);
       })
       .catch(err => {
-        // Final fallback: try landing_programs_json before hardcoded list
+        // Fallback: merge custom landing_programs_json on top of ALL_DEFAULT_PROGRAMS
         if (siteSettings?.landing_programs_json && siteSettings.landing_programs_json !== '[]') {
           try {
             const parsed = JSON.parse(siteSettings.landing_programs_json);
-            if (parsed.length > 0) { setModules(parsed); return; }
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              const customMap = {};
+              parsed.forEach(p => { if (p.slug) customMap[p.slug] = p; });
+              const merged = ALL_DEFAULT_PROGRAMS.map(p => ({
+                ...p,
+                ...(customMap[p.slug] || {})
+              }));
+              setModules(merged);
+              return;
+            }
           } catch (e) { /* ignore */ }
         }
-        setModules([
-          { slug: 'quran', name: 'قسم التعليم القرآني', description: 'حفظ وتجويد بطرق تفاعلية.', icon: '🕌' },
-          { slug: 'memory', name: 'الذاكرة الخارقة', description: 'تطوير مهارات الحفظ السريع.', icon: '🧠' },
-          { slug: 'soroban', name: 'الحساب الذهني', description: 'تطوير السرعة في الحساب.', icon: '🧮' },
-        ]);
+        setModules(ALL_DEFAULT_PROGRAMS);
       });
   }, [siteSettings]);
 
