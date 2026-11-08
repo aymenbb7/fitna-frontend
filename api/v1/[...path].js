@@ -24,10 +24,18 @@ export default function handler(req, res) {
   headers['x-forwarded-proto'] = 'https';
   delete headers['connection'];
 
+  // Ensure targetPath is safe ASCII for Node.js https.request to prevent ERR_UNESCAPED_CHARACTERS
+  let safePath = targetPath;
+  try {
+    safePath = encodeURI(decodeURI(targetPath));
+  } catch {
+    safePath = encodeURI(targetPath);
+  }
+
   const proxyOptions = {
     hostname: backendHost,
     port: 443,
-    path: targetPath,
+    path: safePath,
     method: req.method,
     headers: headers,
     timeout: 45000,

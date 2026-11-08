@@ -19,7 +19,7 @@ export const Modules = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -34,7 +34,7 @@ export const Modules = () => {
       const q = searchParams.get('search');
       const url = q ? `/admin/modules/?search=${encodeURIComponent(q)}` : '/admin/modules/';
       const res = await api.get(url);
-      setModules(res.data);
+      setModules(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
       setError("حدث خطأ أثناء تحميل البيانات.");
@@ -152,7 +152,16 @@ export const Modules = () => {
       <AddModuleModal 
         isOpen={isAddOpen} 
         onClose={() => setIsAddOpen(false)}
-        onSuccess={() => { fetchModules(); setIsAddOpen(false); }}
+        onSuccess={() => {
+          if (searchParams.get('search')) {
+            const nextParams = new URLSearchParams(searchParams);
+            nextParams.delete('search');
+            setSearchParams(nextParams);
+          }
+          fetchModules();
+          setIsAddOpen(false);
+          toast.success("تم إنشاء الوحدة الدراسية بنجاح.");
+        }}
       />
 
       <ViewModuleStudentsModal 
