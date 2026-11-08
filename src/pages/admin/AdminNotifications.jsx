@@ -22,10 +22,11 @@ export const AdminNotifications = () => {
       setLoading(true);
       setError(null);
       const res = await api.get('/admin/notifications/history/');
-      setHistory(res.data);
+      setHistory(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
-      console.error(err);
-      setError("حدث خطأ أثناء تحميل سجل الإشعارات.");
+      console.error('Failed to load notification history:', err);
+      const msg = err.userMessage || err.response?.data?.error || err.response?.data?.detail || "حدث خطأ أثناء تحميل سجل الإشعارات. يرجى المحاولة مرة أخرى.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -81,16 +82,6 @@ export const AdminNotifications = () => {
     }
   ];
 
-  if (error) {
-    return (
-      <div className="p-8 text-center">
-        <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-        <h2 className="text-xl font-bold text-white mb-4">{error}</h2>
-        <Button onClick={fetchHistory} variant="primary">إعادة المحاولة</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8">
       <PageHeader 
@@ -101,15 +92,25 @@ export const AdminNotifications = () => {
         onAction={() => setShowBroadcastModal(true)}
       />
 
-      <DataTable 
-        columns={columns}
-        data={history}
-        isLoading={loading}
-        rowActions={rowActions}
-        searchPlaceholder="ابحث بعنوان الإشعار أو المستلم..."
-        emptyStateTitle="لا توجد إشعارات"
-        emptyStateDesc="لم تقم بإرسال أي إشعارات بعد."
-      />
+      {error ? (
+        <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-8 text-center">
+          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-3" />
+          <h3 className="text-lg font-bold text-white mb-2">{error}</h3>
+          <Button onClick={fetchHistory} variant="primary" className="mt-2">
+            إعادة المحاولة
+          </Button>
+        </div>
+      ) : (
+        <DataTable 
+          columns={columns}
+          data={history}
+          isLoading={loading}
+          rowActions={rowActions}
+          searchPlaceholder="ابحث بعنوان الإشعار أو المستلم..."
+          emptyStateTitle="لا توجد إشعارات"
+          emptyStateDesc="لم تقم بإرسال أي إشعارات بعد."
+        />
+      )}
 
       <BroadcastModal 
         isOpen={showBroadcastModal} 
