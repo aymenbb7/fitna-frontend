@@ -1,3 +1,4 @@
+import { formatDate } from '../../../utils/date';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
 import { DataTable } from '../../ui/DataTable';
@@ -57,7 +58,7 @@ export const ViewStudentModulesModal = ({ isOpen, onClose, student, onRemove }) 
     { 
       key: 'enrolled_at', 
       label: 'تاريخ التسجيل',
-      render: (val) => new Date(val).toLocaleDateString('ar-DZ')
+      render: (val) => formatDate(val)
     },
     { 
       key: 'progress', 
@@ -100,7 +101,7 @@ export const ViewStudentModulesModal = ({ isOpen, onClose, student, onRemove }) 
     { 
       key: 'created_at', 
       label: 'التاريخ',
-      render: (val) => new Date(val).toLocaleDateString('ar-DZ')
+      render: (val) => formatDate(val)
     },
     { key: 'receipt_number', label: 'رقم الإيصال', render: val => val || '-' },
     { key: 'admin', label: 'المسؤول', render: val => val || 'تلقائي' }

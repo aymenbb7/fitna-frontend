@@ -1,9 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 export const SettingsContext = createContext();
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'https://fitna-backend-production.up.railway.app/api/v1';
 
 // Default local settings (used before API loads)
 const DEFAULT_SETTINGS = {
@@ -15,8 +13,8 @@ const DEFAULT_SETTINGS = {
 
 export const SettingsProvider = ({ children }) => {
   const [settings, setSettings] = useState(() => {
-    const saved = localStorage.getItem('siteSettings');
     try {
+      const saved = localStorage.getItem('siteSettings');
       return saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
     } catch {
       return DEFAULT_SETTINGS;
@@ -25,8 +23,8 @@ export const SettingsProvider = ({ children }) => {
 
   // siteSettings holds the full API response (social links, landing page fields, etc.)
   const [siteSettings, setSiteSettings] = useState(() => {
-    const cached = localStorage.getItem('apiSiteSettings');
     try {
+      const cached = localStorage.getItem('apiSiteSettings');
       return cached ? JSON.parse(cached) : null;
     } catch {
       return null;
@@ -35,7 +33,7 @@ export const SettingsProvider = ({ children }) => {
 
   useEffect(() => {
     // Fetch the public site settings from the API once on app mount
-    axios.get(`${API_BASE}/public-site-settings/`)
+    api.get('/public-site-settings/')
       .then(res => {
         setSiteSettings(res.data);
         // Cache for next load
@@ -51,13 +49,15 @@ export const SettingsProvider = ({ children }) => {
   const updateSettings = (newSettings) => {
     setSettings(prev => {
       const updated = { ...prev, ...newSettings };
-      localStorage.setItem('siteSettings', JSON.stringify(updated));
+      try {
+        localStorage.setItem('siteSettings', JSON.stringify(updated));
+      } catch {}
       return updated;
     });
   };
 
   return (
-    <SettingsContext.Provider value={{ settings, updateSettings, siteSettings, setSiteSettings }}>
+    <SettingsContext.Provider value={{ settings, siteSettings, updateSettings }}>
       {children}
     </SettingsContext.Provider>
   );

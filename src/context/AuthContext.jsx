@@ -4,23 +4,44 @@ import api from '../api/axios';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('authUser');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = (() => {
+      try {
+        return localStorage.getItem('accessToken');
+      } catch {
+        return null;
+      }
+    })();
 
     if (token) {
       api.get('/auth/me/')
         .then(res => {
           setUser(res.data);
+          try {
+            localStorage.setItem('authUser', JSON.stringify(res.data));
+          } catch {}
         })
         .catch((err) => {
+          // Only clear session if explicitly rejected with 401 or 403
           if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            try {
+              localStorage.removeItem('accessToken');
+              localStorage.removeItem('refreshToken');
+              localStorage.removeItem('authUser');
+            } catch {}
             setUser(null);
           }
+          // On transient network error, preserve cached authUser so user is not kicked out
         })
         .finally(() => {
           setLoading(false);
@@ -29,13 +50,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
 
-    // Cross-tab session sync: if token changes in another tab, reload to sync or logout
+    // Cross-tab session sync: logout if cleared in another tab
     const syncLogout = (event) => {
-      if (event.key === 'accessToken') {
-        if (event.newValue === null) {
+      if (event.key === 'accessToken' && event.newValue === null) {
+        setUser(null);
+        try {
+          localStorage.removeItem('authUser');
+        } catch {}
+        if (window.location.pathname.startsWith('/dashboard')) {
           window.location.href = '/login';
-        } else if (event.newValue !== localStorage.getItem('accessToken')) {
-          window.location.reload();
         }
       }
     };
@@ -44,14 +67,20 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = (userData, accessToken, refreshToken) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    try {
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('authUser', JSON.stringify(userData));
+    } catch {}
     setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    try {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('authUser');
+    } catch {}
     setUser(null);
     window.location.href = '/login';
   };

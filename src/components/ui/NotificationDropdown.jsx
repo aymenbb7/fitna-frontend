@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/date';
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, Check } from 'lucide-react';
 import api from '../../api/axios';
@@ -83,7 +84,7 @@ export const NotificationDropdown = () => {
                   <div className="flex justify-between items-start mb-1">
                     <h4 className="text-sm font-bold text-white">{n.title}</h4>
                     <span className="text-[10px] text-gray-500 whitespace-nowrap mr-2">
-                      {new Date(n.created_at).toLocaleDateString('ar-DZ')}
+                      {formatDate(n.created_at)}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mb-2">{n.message}</p>

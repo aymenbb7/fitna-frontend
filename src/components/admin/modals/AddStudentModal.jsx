@@ -3,6 +3,7 @@ import { Button } from '../../ui/Button';
 import { RefreshCw, Copy, CheckCircle } from 'lucide-react';
 import api from '../../../api/axios';
 import { toast } from '../../../utils/toast';
+import { copyToClipboard } from '../../../utils/clipboard';
 import { AuthContext } from '../../../context/AuthContext';
 
 export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
@@ -50,10 +51,12 @@ export const AddStudentModal = ({ isOpen, onClose, onSuccess }) => {
     setPassword(pass);
   };
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(password);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    const success = await copyToClipboard(password);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handlePaymentChange = (slug, field, value) => {

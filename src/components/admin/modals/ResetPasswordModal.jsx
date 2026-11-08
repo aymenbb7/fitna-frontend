@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
+import { copyToClipboard } from '../../../utils/clipboard';
 import { RefreshCw, Copy, CheckCircle } from 'lucide-react';
 import api from '../../../api/axios';
 
@@ -28,9 +29,9 @@ export const ResetPasswordModal = ({ isOpen, onClose, user, onSuccess }) => {
     setPassword(pass);
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const text = `تم إعادة تعيين كلمة مرور الحساب (منصة فطنة):\n\nالبريد الإلكتروني: ${user?.email}\nكلمة المرور الجديدة: ${password}\n\nيرجى تغيير كلمة المرور بعد تسجيل الدخول.`;
-    navigator.clipboard.writeText(text);
+    await copyToClipboard(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };

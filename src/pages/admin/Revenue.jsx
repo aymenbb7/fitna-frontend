@@ -1,3 +1,4 @@
+import { formatDate } from '../../utils/date';
 import React, { useState, useEffect } from 'react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { StatCard } from '../../components/admin/StatCard';
@@ -91,7 +92,7 @@ export const Revenue = () => {
     { 
       key: 'date', 
       label: 'التاريخ',
-      render: (val) => new Date(val).toLocaleDateString('ar-DZ')
+      render: (val) => formatDate(val)
     },
     {
       key: 'status',

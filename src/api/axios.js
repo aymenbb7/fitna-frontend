@@ -1,18 +1,35 @@
 import axios from 'axios';
 
+// Determine base URL:
+// In browser on production (e.g. minasat-fitna.vercel.app):
+// Use relative '/api/v1' so Vercel's Edge reverse proxy routes it to Railway seamlessly,
+// eliminating client-side ISP DNS blocks, mobile timeouts, and CORS preflights!
+const getBaseUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return '/api/v1';
+  }
+  return 'https://fitna-backend-production.up.railway.app/api/v1';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://fitna-backend-production.up.railway.app/api/v1',
+  baseURL: getBaseUrl(),
   timeout: 30000,
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      // LocalStorage access may be restricted in private browsing / sandboxes
     }
     // Only set JSON content-type if not sending FormData
-    // (FormData must let the browser set multipart/form-data with boundary)
     if (!(config.data instanceof FormData)) {
       config.headers['Content-Type'] = 'application/json';
     }
@@ -21,17 +38,86 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    // NOTE: Do NOT do a global hard redirect on 401 here.
-    // The global interceptor must only normalize the error and reject.
-    // Reason: a transient 401 from a stats/data endpoint (e.g. /admin/stats/)
-    // must NOT redirect the user away — they may be fully authenticated.
-    // AuthContext already handles 401 from /auth/me/ itself (clears token + redirects).
-    // Each component's own catch block handles its own errors gracefully.
+  async (error) => {
+    const originalRequest = error.config;
 
-    // Normalize error message
+    // Check for 401 Unauthorized and attempt silent JWT refresh
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes('/auth/login/') &&
+      !originalRequest.url?.includes('/auth/refresh/')
+    ) {
+      const refreshToken = (() => {
+        try {
+          return localStorage.getItem('refreshToken');
+        } catch {
+          return null;
+        }
+      })();
+
+      if (refreshToken) {
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            failedQueue.push({ resolve, reject });
+          })
+            .then((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              return api(originalRequest);
+            })
+            .catch((err) => Promise.reject(err));
+        }
+
+        originalRequest._retry = true;
+        isRefreshing = true;
+
+        try {
+          const refreshUrl = `${getBaseUrl()}/auth/refresh/`;
+          const res = await axios.post(refreshUrl, { refresh: refreshToken }, { timeout: 15000 });
+          const newAccess = res.data?.access;
+
+          if (newAccess) {
+            try {
+              localStorage.setItem('accessToken', newAccess);
+            } catch {}
+
+            api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
+            originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+            processQueue(null, newAccess);
+            return api(originalRequest);
+          }
+        } catch (refreshErr) {
+          processQueue(refreshErr, null);
+          try {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          } catch {}
+          return Promise.reject(refreshErr);
+        } finally {
+          isRefreshing = false;
+        }
+      }
+    }
+
+    // Normalize error message for user-facing displays
     let userMessage = 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
     if (error.response && error.response.data) {
       const data = error.response.data;
@@ -44,15 +130,15 @@ api.interceptors.response.use(
       } else if (typeof data === 'string') {
         userMessage = data;
       }
-    } else if (error.code === 'ECONNABORTED' || error.message.includes('timeout')) {
+    } else if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
       userMessage = 'انتهى وقت الطلب. الخادم يستغرق وقتاً طويلاً للاستجابة. يرجى المحاولة مرة أخرى.';
+    } else if (error.message?.includes('Network Error') || error.code === 'ERR_NETWORK') {
+      userMessage = 'تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.';
     } else if (error.message) {
       userMessage = error.message;
     }
-    
-    // Attach to error object so components can use err.userMessage
+
     error.userMessage = userMessage;
-    
     return Promise.reject(error);
   }
 );
@@ -61,14 +147,8 @@ export const getMediaUrl = (path) => {
   if (!path) return '';
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'https://fitna-backend-production.up.railway.app/api/v1';
-  try {
-    const urlObj = new URL(baseUrl);
-    const host = `${urlObj.protocol}//${urlObj.host}`;
-    return path.startsWith('/') ? `${host}${path}` : `${host}/${path}`;
-  } catch (e) {
-    return path;
-  }
+  const backendHost = 'https://fitna-backend-production.up.railway.app';
+  return path.startsWith('/') ? `${backendHost}${path}` : `${backendHost}/${path}`;
 };
 
 export default api;

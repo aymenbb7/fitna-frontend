@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, PlayCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import api from '../../api/axios';
+import api, { getMediaUrl } from '../../api/axios';
 
 const SYMBOLS = {
   'quran': ['آيات', 'بسم الله', '🌙', '⭐'],
@@ -55,7 +55,7 @@ const ModulePage = () => {
   
   const outcomes = getArray(mod.learning_outcomes);
   const benefits = getArray(mod.benefits);
-  const heroImage = mod.hero_image ? api.defaults.baseURL.replace('/api/v1', '') + mod.hero_image : null;
+  const heroImage = mod.hero_image ? getMediaUrl(mod.hero_image) : null;
 
   return (
     <div className="w-full">

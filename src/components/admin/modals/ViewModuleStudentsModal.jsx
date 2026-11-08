@@ -1,3 +1,4 @@
+import { formatDate } from '../../../utils/date';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
 import { DataTable } from '../../ui/DataTable';
@@ -42,7 +43,7 @@ export const ViewModuleStudentsModal = ({ isOpen, onClose, module }) => {
     { 
       key: 'enrolled_at', 
       label: 'تاريخ التسجيل',
-      render: (val) => new Date(val).toLocaleDateString('ar-DZ')
+      render: (val) => formatDate(val)
     },
     { 
       key: 'is_active', 

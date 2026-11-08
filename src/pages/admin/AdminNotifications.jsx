@@ -1,3 +1,4 @@
+import { formatDate, formatDateTime } from '../../utils/date';
 import React, { useState, useEffect } from 'react';
 import { PageHeader } from '../../components/ui/PageHeader';
 import { DataTable } from '../../components/ui/DataTable';
@@ -61,7 +62,7 @@ export const AdminNotifications = () => {
     { 
       key: 'created_at', 
       label: 'تاريخ الإرسال',
-      render: (val) => new Date(val).toLocaleString('ar-DZ')
+      render: (val) => formatDateTime(val)
     }
   ];
 
@@ -174,7 +175,7 @@ const ViewNotificationModal = ({ isOpen, onClose, notification }) => {
             <div>
               <span className="text-xs text-gray-400 block mb-1">تاريخ الإرسال</span>
               <div className="bg-bgDark/50 p-3 rounded-xl border border-white/5 text-sm font-semibold">
-                {new Date(notification.created_at).toLocaleString('ar-DZ')}
+                {formatDateTime(notification.created_at)}
               </div>
             </div>
           </div>

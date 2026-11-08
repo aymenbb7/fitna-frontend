@@ -1,3 +1,4 @@
+import { formatDate } from '../../../utils/date';
 import React, { useState, useEffect } from 'react';
 import { Button } from '../../ui/Button';
 import { DataTable } from '../../ui/DataTable';
@@ -32,7 +33,7 @@ export const ViewModuleStatsModal = ({ isOpen, onClose, module }) => {
     { 
       key: 'paid_at', 
       label: 'تاريخ الدفع',
-      render: (val) => new Date(val).toLocaleDateString('ar-DZ')
+      render: (val) => formatDate(val)
     }
   ];
 

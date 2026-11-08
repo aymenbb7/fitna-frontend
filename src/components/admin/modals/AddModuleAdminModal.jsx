@@ -70,10 +70,10 @@ export const AddModuleAdminModal = ({ isOpen, onClose, onSuccess }) => {
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!createdAdmin) return;
     const text = `معلومات حساب مشرف الوحدة الجديد (منصة فطنة):\n\nالاسم: ${createdAdmin.full_name}\nالبريد الإلكتروني: ${createdAdmin.email}\nكلمة المرور المؤقتة: ${createdAdmin.password}\n\nيرجى تغيير كلمة المرور عند تسجيل الدخول لأول مرة.`;
-    navigator.clipboard.writeText(text);
+    await copyToClipboard(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
