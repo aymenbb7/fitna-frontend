@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/v1/:match*",
-      "destination": "/api/proxy?path=:match*"
+      "source": "/api/v1/(.*)",
+      "destination": "/api/proxy?path=$1"
     },
     {
-      "source": "/media/:match*",
-      "destination": "/api/proxy?path=media/:match*"
+      "source": "/media/(.*)",
+      "destination": "/api/proxy?path=media/$1"
     },
     {
       "source": "/(.*)",
