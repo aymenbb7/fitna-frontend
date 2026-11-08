@@ -2,16 +2,15 @@ import axios from 'axios';
 
 // Determine base URL:
 // In browser on production (e.g. minasat-fitna.vercel.app):
-// Use relative '/api/v1' so Vercel's Edge reverse proxy routes it to Railway seamlessly,
-// eliminating client-side ISP DNS blocks, mobile timeouts, and CORS preflights!
+// Use relative '/api/v1' so Vercel's API proxy routes it to Railway from Vercel's edge,
+// eliminating client-side ISP DNS blocks, mobile carrier timeouts, and CORS preflights!
 const getBaseUrl = () => {
-  if (import.meta.env.VITE_API_BASE_URL) {
-    return import.meta.env.VITE_API_BASE_URL;
-  }
+  // In production browser, always use same-origin relative '/api/v1' proxy:
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
     return '/api/v1';
   }
-  return 'https://fitna-backend-production.up.railway.app/api/v1';
+  // For local development on localhost:
+  return import.meta.env.VITE_API_BASE_URL || 'https://fitna-backend-production.up.railway.app/api/v1';
 };
 
 const api = axios.create({
@@ -145,10 +144,14 @@ api.interceptors.response.use(
 
 export const getMediaUrl = (path) => {
   if (!path) return '';
+  // If it's already an absolute URL (e.g. Cloudflare R2 / S3), return as is:
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
 
-  const backendHost = 'https://fitna-backend-production.up.railway.app';
-  return path.startsWith('/') ? `${backendHost}${path}` : `${backendHost}/${path}`;
+  // In production browser, serve relative /media so it routes through Vercel proxy:
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return path.startsWith('/') ? path : `/${path}`;
+  }
+  return `https://fitna-backend-production.up.railway.app${path.startsWith('/') ? path : '/' + path}`;
 };
 
 export default api;
