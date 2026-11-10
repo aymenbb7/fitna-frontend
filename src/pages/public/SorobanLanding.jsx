@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, PlayCircle } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import api from '../../api/axios';
+import { updatePageSeo } from '../../utils/seo';
 
 const SYMBOLS = {
   'quran': ['آيات', 'بسم الله', '🌙', '⭐'],
@@ -30,6 +31,21 @@ const SorobanLanding = () => {
   };
 
   const symbols = SYMBOLS[slug] || ['✨', '⭐', '🌟', '💫'];
+
+  useEffect(() => {
+    updatePageSeo({
+      canonicalPath: '/modules/soroban',
+      title: 'الحساب الذهني (السوروبان) | منصة فطنة (Minasat Fitna)',
+      description: mod.description
+    });
+    return () => {
+      updatePageSeo({
+        canonicalPath: '/',
+        title: 'منصة فطنة | Minasat Fitna – منصة تعليمية للأطفال في الجزائر',
+        description: 'منصة فطنة (Minasat Fitna) هي منصة تعليمية جزائرية للأطفال، تهدف إلى تطوير مهاراتهم وقدراتهم من خلال برامج التعليم القرآني، الذاكرة الخارقة، الحساب الذهني، اللغات، البرمجة والروبوتيك واكتشاف المواهب. نُعِدُّهم للحياة، لا للامتحانات.'
+      });
+    };
+  }, []);
 
   return (
     <div className="w-full">

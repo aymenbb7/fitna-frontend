@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import api, { getMediaUrl } from '../../api/axios';
+import { updatePageSeo } from '../../utils/seo';
 
 const SYMBOLS = {
   'quran': ['آيات', 'بسم الله', '🌙', '⭐', '🕌', '📖'],
@@ -587,6 +588,24 @@ const ModulePage = () => {
       })
       .finally(() => setLoading(false));
   }, [slug]);
+
+  // Set individual canonical URL, title and meta description for this specific module
+  useEffect(() => {
+    if (mod) {
+      updatePageSeo({
+        canonicalPath: `/modules/${encodeURIComponent(slug)}`,
+        title: `${mod.name} | منصة فطنة (Minasat Fitna)`,
+        description: mod.description || `${mod.name} - أحد البرامج التعليمية المتميزة في منصة فطنة للأطفال في الجزائر.`
+      });
+    }
+    return () => {
+      updatePageSeo({
+        canonicalPath: '/',
+        title: 'منصة فطنة | Minasat Fitna – منصة تعليمية للأطفال في الجزائر',
+        description: 'منصة فطنة (Minasat Fitna) هي منصة تعليمية جزائرية للأطفال، تهدف إلى تطوير مهاراتهم وقدراتهم من خلال برامج التعليم القرآني، الذاكرة الخارقة، الحساب الذهني، اللغات، البرمجة والروبوتيك واكتشاف المواهب. نُعِدُّهم للحياة، لا للامتحانات.'
+      });
+    };
+  }, [mod, slug]);
 
   if (loading) return (
     <div className="min-h-[60vh] flex items-center justify-center text-white bg-bgDark">
