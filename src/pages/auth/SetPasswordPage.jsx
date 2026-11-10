@@ -55,7 +55,7 @@ const SetPasswordPage = () => {
     <div className="min-h-screen bg-bgDarker flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md bg-bgPurple p-8 rounded-3xl shadow-2xl border border-white/5">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 mb-2">إعداد كلمة المرور</h2>
+          <h2 className="inline-block text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-2 mb-2">إعداد كلمة المرور</h2>
           <p className="text-gray-400 font-bold">أدخل كلمة مرور قوية لحسابك الجديد</p>
         </div>
 

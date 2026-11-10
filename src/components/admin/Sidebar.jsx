@@ -54,7 +54,7 @@ export const Sidebar = ({ isMobileOpen, setMobileOpen }) => {
         ${isMobileOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
       `}>
         <div className="p-6 border-b border-white/5 flex items-center justify-center">
-          <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">
+          <h2 className="inline-block text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-1.5">
             فطنة
           </h2>
         </div>

@@ -667,7 +667,7 @@ const ModulePage = () => {
                 <span>أكاديمية الخط العربي التراثي — ورشة مجانية بالكامل</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 leading-tight drop-shadow-[0_4px_20px_rgba(245,158,11,0.3)]">
+              <h1 className="inline-block text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 leading-snug sm:leading-normal pb-4 drop-shadow-[0_4px_20px_rgba(245,158,11,0.3)]">
                 ورشة الخط العربي الأصيل
               </h1>
 
@@ -734,7 +734,7 @@ const ModulePage = () => {
                 <span>أكاديمية الذكاء الاصطناعي وصنّاع المستقبل</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-cyan-400 to-blue-400 leading-tight drop-shadow-[0_4px_20px_rgba(6,182,212,0.3)]">
+              <h1 className="inline-block text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-200 via-cyan-400 to-blue-400 leading-snug sm:leading-normal pb-4 drop-shadow-[0_4px_20px_rgba(6,182,212,0.3)]">
                 أساسيات البرمجة والروبوتيك
               </h1>
 
@@ -797,7 +797,7 @@ const ModulePage = () => {
                 <span>أكاديمية مكعب روبيك وتحديات السرعة الاحترافية</span>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-sky-300 to-blue-400 leading-tight drop-shadow-[0_4px_20px_rgba(37,99,235,0.4)]">
+              <h1 className="inline-block text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-100 via-sky-300 to-blue-400 leading-snug sm:leading-normal pb-4 drop-shadow-[0_4px_20px_rgba(37,99,235,0.4)]">
                 التدرب على حل المجسمات السحرية
               </h1>
 
@@ -877,7 +877,7 @@ const ModulePage = () => {
               {mod.icon}
             </motion.div>
 
-            <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl md:text-6xl font-black mb-4 drop-shadow-md">
+            <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-4xl md:text-6xl font-black mb-4 drop-shadow-md leading-snug md:leading-normal pb-3">
               {mod.name}
             </motion.h1>
 
@@ -925,7 +925,7 @@ const ModulePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <span className="text-amber-400 font-bold text-base mb-2 inline-block">رحلة عبر روائع التراث الإسلامي</span>
-              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4">
+              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4 leading-snug pb-2">
                 أنواع الخطوط العربية المدرجة في الورشة
               </h2>
               <p className="text-gray-300 font-medium text-lg max-w-2xl mx-auto">
@@ -988,7 +988,7 @@ const ModulePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <span className="text-cyan-400 font-bold text-base mb-2 inline-block">منهجية علمية تطبيقية</span>
-              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4">
+              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4 leading-snug pb-2">
                 الركائز الأربعة لمسار البرمجة والروبوتيك
               </h2>
               <p className="text-gray-300 font-medium text-lg max-w-2xl mx-auto">
@@ -1064,7 +1064,7 @@ const ModulePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <span className="text-blue-400 font-bold text-base mb-2 inline-block">خوارزميات عالمية مبسطة للأطفال</span>
-              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4">
+              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4 leading-snug pb-2">
                 المراحل الأربعة لاحتراف حل المكعب السحري
               </h2>
               <p className="text-gray-300 font-medium text-lg max-w-2xl mx-auto">
@@ -1123,7 +1123,7 @@ const ModulePage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <span className="text-accentGold font-bold text-lg mb-2 inline-block">رحلة متعددة اللغات 🌍</span>
-              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4">
+              <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-md mb-4 leading-snug pb-2">
                 المسارات التعليمية للغات الستة
               </h2>
               <p className="text-gray-300 font-bold text-lg max-w-2xl mx-auto">

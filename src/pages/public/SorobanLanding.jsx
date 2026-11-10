@@ -71,7 +71,7 @@ const SorobanLanding = () => {
 
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-8xl mb-6 drop-shadow-[0_0_20px_rgba(255,255,255,0.4)]">{mod.icon}</motion.div>
-          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-7xl font-black mb-6 drop-shadow-md">
+          <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="text-5xl md:text-7xl font-black mb-6 drop-shadow-md leading-snug md:leading-normal pb-3">
             {mod.name}
           </motion.h1>
           <motion.p initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="text-2xl font-bold mb-10 text-white max-w-3xl mx-auto leading-relaxed">

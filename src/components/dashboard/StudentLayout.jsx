@@ -18,7 +18,7 @@ const StudentLayout = () => {
     <div className="min-h-screen bg-bgDarker flex flex-col md:flex-row text-white font-sans">
       {/* Mobile Topbar */}
       <div className="md:hidden flex items-center justify-between bg-bgDark p-4 border-b border-white/5 relative z-30">
-        <h1 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">فطنة</h1>
+        <h1 className="inline-block text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-1">فطنة</h1>
         <div className="flex items-center gap-4">
           <NotificationDropdown />
           <button onClick={() => setSidebarOpen(!isSidebarOpen)} className="text-gray-300 hover:text-white transition">
@@ -34,7 +34,7 @@ const StudentLayout = () => {
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         <div className="p-6 hidden md:block">
-          <Link to="/" className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-md">
+          <Link to="/" className="inline-block text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-md leading-snug pb-1.5">
             منصة فطنة
           </Link>
         </div>

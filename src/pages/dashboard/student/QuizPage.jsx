@@ -165,7 +165,7 @@ const QuizPage = () => {
             <XCircle className="w-24 h-24 text-red-400 mx-auto mb-6 drop-shadow-[0_0_15px_rgba(248,113,113,0.4)]" />
           )}
           <h2 className="text-3xl font-black text-white mb-2">النتيجة النهائية</h2>
-          <div className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 mb-2">
+          <div className="inline-block text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-2 mb-2">
             {typeof score === 'number' ? score.toFixed(1) : '0.0'}%
           </div>
           <p className="text-gray-400 font-bold mb-2">

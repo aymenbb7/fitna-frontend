@@ -71,7 +71,7 @@ const Layout = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <a href="/" onClick={handleHomeClick} title="منصة فطنة | Minasat Fitna" className="flex items-center gap-2 text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.5)]">
+              <a href="/" onClick={handleHomeClick} title="منصة فطنة | Minasat Fitna" className="flex items-center gap-2 text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.5)] leading-snug pb-1">
                 <span>فطنة</span>
                 <span className="sr-only">منصة فطنة - Minasat Fitna</span>
               </a>
@@ -141,7 +141,7 @@ const Layout = () => {
             
             {/* Column 1: Brand */}
             <div>
-              <h3 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)]">منصة فطنة</h3>
+              <h3 className="inline-block text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)] leading-snug pb-2">منصة فطنة</h3>
               <p className="text-xs uppercase tracking-widest text-cyan-400 font-extrabold mb-3" dir="ltr">Minasat Fitna — Algeria</p>
               <p className="text-gray-300 font-bold mb-6 text-sm leading-relaxed">
                 منصة تعليمية جزائرية متكاملة للأطفال. نُعِدُّهم للحياة، لا للامتحانات!

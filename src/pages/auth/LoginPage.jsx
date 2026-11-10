@@ -95,7 +95,7 @@ const LoginPage = () => {
 
       <div className="w-full max-w-md bg-bgPurple p-8 rounded-3xl shadow-2xl border border-white/5">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-md mb-2">تسجيل الدخول</h2>
+          <h2 className="inline-block text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-md leading-snug pb-2 mb-2">تسجيل الدخول</h2>
           <p className="text-gray-400 font-bold">أهلاً بك مجدداً في منصة فطنة</p>
         </div>
 

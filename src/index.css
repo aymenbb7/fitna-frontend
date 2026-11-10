@@ -104,3 +104,19 @@
   }
 }
 
+/* ============================================================
+   ARABIC TYPOGRAPHY & DESCENDER CLIPPING PREVENTION
+   ============================================================ */
+/* Ensure background-clip text preserves Arabic descenders and diacritics */
+.bg-clip-text,
+[class*="bg-clip-text"] {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Ensure headings have comfortable line-height for Arabic letterforms */
+h1, h2, h3, h4 {
+  text-rendering: optimizeLegibility;
+}
+
+

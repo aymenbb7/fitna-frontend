@@ -140,7 +140,7 @@ const ViewNotificationModal = ({ isOpen, onClose, notification }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
       <div className="bg-bgDarker border border-white/10 rounded-2xl w-full max-w-lg p-6 max-h-[85vh] overflow-y-auto flex flex-col">
         <div className="flex items-center justify-between mb-6 shrink-0 border-b border-white/5 pb-4">
-          <h3 className="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">تفاصيل الإشعار</h3>
+          <h3 className="inline-block text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-1">تفاصيل الإشعار</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded-full w-8 h-8 flex items-center justify-center transition">✕</button>
         </div>
         

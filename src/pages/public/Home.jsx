@@ -335,7 +335,7 @@ const Home = () => {
           <motion.h1 
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] py-2"
+            className="inline-block text-6xl md:text-8xl font-black mb-6 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_20px_rgba(245,197,24,0.6)] leading-snug md:leading-normal pb-4"
           >
             {siteSettings?.landing_hero_title || 'منصة فطنة'}
           </motion.h1>
@@ -382,7 +382,7 @@ const Home = () => {
       <section id="programs" className="py-32 relative z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 relative">
-            <h2 className="text-5xl font-black text-white inline-block drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+            <h2 className="text-5xl font-black text-white inline-block drop-shadow-[0_0_15px_rgba(255,255,255,0.3)] leading-snug pb-3">
               {siteSettings?.landing_programs_title || 'برامجنا الممتعة ✨'}
             </h2>
           </div>
@@ -430,7 +430,7 @@ const Home = () => {
                       </motion.div>
                     )}
                     
-                    <h3 className="text-3xl font-black mb-3 text-white drop-shadow-md">{mod.name}</h3>
+                    <h3 className="text-3xl font-black mb-3 text-white drop-shadow-md leading-snug pb-1.5">{mod.name}</h3>
                     {/* Price display placeholder */}
                     {mod.price === 0 && (
                       <div className="mb-4">
@@ -515,7 +515,7 @@ const Home = () => {
         
         <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_15px_rgba(245,197,24,0.4)] mb-6">{siteSettings?.landing_about_title || 'من نحن؟'}</h2>
+            <h2 className="inline-block text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_15px_rgba(245,197,24,0.4)] leading-snug pb-4 mb-6">{siteSettings?.landing_about_title || 'من نحن؟'}</h2>
           </div>
           
           <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -584,7 +584,7 @@ const Home = () => {
           <div className="text-center mb-16 relative">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: 'linear' }} className="inline-block text-5xl mb-4">👑</motion.div>
             <h2 className="text-5xl font-black text-white mb-6 drop-shadow-lg">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300">
+              <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 leading-snug pb-3">
                 {siteSettings?.landing_features_title || 'التعلم أصبح أكثر متعة!'}
               </span>
             </h2>
@@ -698,7 +698,7 @@ const Home = () => {
       {/* How It Works */}
       <section className="py-24 bg-bgPurple border-y border-white/5 relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]">{siteSettings?.landing_how_it_works_title || 'كيف يعمل الموقع؟'}</h2>
+          <h2 className="text-4xl font-black text-center mb-16 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)] leading-snug pb-3">{siteSettings?.landing_how_it_works_title || 'كيف يعمل الموقع؟'}</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[
               { num: 1, text: t('how_it_works.step1') || 'سجّل في البرنامج المناسب لك', color: '#3B82F6' },
@@ -723,7 +723,7 @@ const Home = () => {
       {/* Testimonials */}
       <section className="py-24 bg-bgDark relative z-10">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16">{siteSettings?.landing_testimonials_title || 'ماذا يقولون عنا؟'}</h2>
+          <h2 className="text-4xl font-black text-center mb-16 leading-snug pb-3">{siteSettings?.landing_testimonials_title || 'ماذا يقولون عنا؟'}</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {(siteSettings?.landing_testimonials_json && siteSettings.landing_testimonials_json !== '[]' ? JSON.parse(siteSettings.landing_testimonials_json) : [
               { name: "أم أحمد", role: "ولية أمر", text: "لاحظت تغييراً كبيراً في شخصية ابني بعد انضمامه لبرنامج حل المشكلات." },
@@ -756,7 +756,7 @@ const Home = () => {
       {/* FAQ */}
       <section className="py-24 bg-bgPurple border-t border-white/5 relative z-10">
         <div className="max-w-3xl mx-auto px-4">
-          <h2 className="text-4xl font-black text-center mb-16">{siteSettings?.landing_faq_title || 'الأسئلة الشائعة'}</h2>
+          <h2 className="text-4xl font-black text-center mb-16 leading-snug pb-3">{siteSettings?.landing_faq_title || 'الأسئلة الشائعة'}</h2>
           <div className="space-y-4">
             {(siteSettings?.landing_faq_json && siteSettings.landing_faq_json !== '[]' ? JSON.parse(siteSettings.landing_faq_json) : [
               { q: "هل هناك شهادات معتمدة؟", a: "نعم، يحصل الطالب على شهادة إتمام بعد اجتياز متطلبات كل برنامج بنجاح." },
