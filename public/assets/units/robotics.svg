@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- Background Tech Glow -->
+    <radialGradient id="cyberGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#3B82F6" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="robotWhite" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#94A3B8"/>
+    </linearGradient>
+
+    <linearGradient id="robotMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#64748B"/>
+      <stop offset="50%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <linearGradient id="cyberCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67E8F9"/>
+      <stop offset="100%" stop-color="#0891B2"/>
+    </linearGradient>
+
+    <linearGradient id="neonTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DD4BF"/>
+      <stop offset="100%" stop-color="#0F766E"/>
+    </linearGradient>
+
+    <linearGradient id="screenGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090D16" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#040711" stop-opacity="0.98"/>
+    </linearGradient>
+
+    <linearGradient id="hudGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1A2E" stop-opacity="0.88"/>
+      <stop offset="100%" stop-color="#050B14" stop-opacity="0.95"/>
+    </linearGradient>
+
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="robotShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="20" stdDeviation="25" flood-color="#020617" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Backdrop Glow -->
+  <circle cx="400" cy="400" r="380" fill="url(#cyberGlow)"/>
+
+  <!-- Futuristic Circuit Traces (Background Tech Pattern) -->
+  <g opacity="0.45" stroke="#06B6D4" stroke-width="2" fill="none">
+    <!-- Top Left circuits -->
+    <path d="M 120 200 L 220 200 L 280 260 L 320 260" stroke-dasharray="6 6"/>
+    <circle cx="120" cy="200" r="4" fill="#06B6D4"/>
+    <circle cx="320" cy="260" r="4" fill="#06B6D4"/>
+
+    <!-- Bottom Left circuits -->
+    <path d="M 80 520 L 180 520 L 240 460 L 300 460"/>
+    <circle cx="80" cy="520" r="4" fill="#22D3EE"/>
+    <circle cx="300" cy="460" r="4" fill="#22D3EE"/>
+
+    <!-- Right circuits -->
+    <path d="M 680 240 L 600 240 L 540 300 L 500 300"/>
+    <circle cx="680" cy="240" r="4" fill="#38BDF8"/>
+    <circle cx="500" cy="300" r="4" fill="#38BDF8"/>
+
+    <path d="M 720 540 L 620 540 L 560 480 L 520 480" stroke-dasharray="8 8"/>
+    <circle cx="720" cy="540" r="4" fill="#818CF8"/>
+    <circle cx="520" cy="480" r="4" fill="#818CF8"/>
+  </g>
+
+  <!-- Floating Holographic Gears -->
+  <!-- Gear 1 Top Right -->
+  <g transform="translate(620, 160) scale(0.65)" opacity="0.55" filter="url(#neonGlow)">
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#06B6D4" stroke-width="8" stroke-dasharray="24 15"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#06B6D4" stroke-width="4"/>
+    <circle cx="0" cy="0" r="10" fill="#06B6D4"/>
+  </g>
+
+  <!-- Gear 2 Left Mid -->
+  <g transform="translate(130, 360) scale(0.5)" opacity="0.45" filter="url(#neonGlow)">
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#818CF8" stroke-width="8" stroke-dasharray="20 12"/>
+    <circle cx="0" cy="0" r="28" fill="none" stroke="#818CF8" stroke-width="4"/>
+    <circle cx="0" cy="0" r="8" fill="#818CF8"/>
+  </g>
+
+  <!-- Contact Shadow -->
+  <ellipse cx="400" cy="680" rx="240" ry="40" fill="#020617" opacity="0.85" filter="blur(20px)"/>
+
+  <!-- 3D HIGH-TECH ROBOT (Centerpiece) -->
+  <g filter="url(#robotShadow)">
+    
+    <!-- Robot Antenna -->
+    <line x1="380" y1="180" x2="380" y2="120" stroke="url(#robotMetal)" stroke-width="10" stroke-linecap="round"/>
+    <line x1="380" y1="180" x2="380" y2="120" stroke="#06B6D4" stroke-width="2" opacity="0.8"/>
+    <circle cx="380" cy="115" r="18" fill="url(#cyberCyan)" filter="url(#neonGlow)"/>
+    <circle cx="380" cy="115" r="7" fill="#FFFFFF"/>
+
+    <!-- Robot Ears / Audio Sensors -->
+    <!-- Left ear -->
+    <rect x="250" y="240" width="30" height="70" rx="15" fill="url(#robotMetal)" stroke="#06B6D4" stroke-width="2"/>
+    <circle cx="265" cy="275" r="8" fill="#06B6D4" filter="url(#neonGlow)"/>
+    <!-- Right ear -->
+    <rect x="480" y="240" width="30" height="70" rx="15" fill="url(#robotMetal)" stroke="#06B6D4" stroke-width="2"/>
+    <circle cx="495" cy="275" r="8" fill="#06B6D4" filter="url(#neonGlow)"/>
+
+    <!-- Robot Head Outer Shell -->
+    <rect x="265" y="170" width="230" height="200" rx="65" fill="url(#robotWhite)" stroke="#E2E8F0" stroke-width="3"/>
+
+    <!-- Robot Visor Screen (Dark Curved Glass) -->
+    <rect x="285" y="195" width="190" height="135" rx="45" fill="url(#screenGlass)" stroke="#1E293B" stroke-width="4"/>
+    <rect x="288" y="198" width="184" height="129" rx="42" fill="none" stroke="#06B6D4" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Expressive Glowing Robot Eyes (Friendly Digital Cyan) -->
+    <!-- Left Eye -->
+    <g filter="url(#neonGlow)">
+      <ellipse cx="340" cy="255" rx="26" ry="34" fill="#00E5FF"/>
+      <ellipse cx="340" cy="255" rx="16" ry="24" fill="#E0F7FA"/>
+      <!-- Eye shine glint -->
+      <circle cx="348" cy="245" r="6" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Right Eye -->
+    <g filter="url(#neonGlow)">
+      <ellipse cx="420" cy="255" rx="26" ry="34" fill="#00E5FF"/>
+      <ellipse cx="420" cy="255" rx="16" ry="24" fill="#E0F7FA"/>
+      <!-- Eye shine glint -->
+      <circle cx="428" cy="245" r="6" fill="#FFFFFF"/>
+    </g>
+
+    <!-- Friendly Digital Smile Accent -->
+    <path d="M 365 295 Q 380 305 395 295" stroke="#00E5FF" stroke-width="4" stroke-linecap="round" fill="none" filter="url(#neonGlow)"/>
+
+    <!-- Neck Connector -->
+    <rect x="345" y="365" width="70" height="30" rx="10" fill="url(#robotMetal)" stroke="#475569" stroke-width="2"/>
+    <line x1="360" y1="375" x2="400" y2="375" stroke="#06B6D4" stroke-width="3" filter="url(#neonGlow)"/>
+
+    <!-- Robot Torso / Chassis -->
+    <path d="M 280 395 L 480 395 C 505 395 520 425 510 460 L 480 580 C 475 595 460 605 440 605 L 320 605 C 300 605 285 595 280 580 L 250 460 C 240 425 255 395 280 395 Z" fill="url(#robotWhite)" stroke="#E2E8F0" stroke-width="4"/>
+
+    <!-- Chest Armor Plate with Arc Reactor -->
+    <path d="M 310 420 L 450 420 L 435 520 L 325 520 Z" rx="15" fill="url(#robotMetal)" stroke="#1E293B" stroke-width="3"/>
+    <!-- Glowing Arc Core -->
+    <circle cx="380" cy="470" r="32" fill="#083344" stroke="#06B6D4" stroke-width="4" filter="url(#neonGlow)"/>
+    <circle cx="380" cy="470" r="20" fill="#00E5FF" opacity="0.8" filter="url(#neonGlow)"/>
+    <circle cx="380" cy="470" r="10" fill="#FFFFFF"/>
+    <!-- Power level bars -->
+    <rect x="345" y="535" width="14" height="6" rx="3" fill="#22D3EE" filter="url(#neonGlow)"/>
+    <rect x="365" y="535" width="14" height="6" rx="3" fill="#22D3EE" filter="url(#neonGlow)"/>
+    <rect x="385" y="535" width="14" height="6" rx="3" fill="#22D3EE" filter="url(#neonGlow)"/>
+    <rect x="405" y="535" width="14" height="6" rx="3" fill="#22D3EE" filter="url(#neonGlow)"/>
+
+    <!-- Robotic Shoulders & Arms -->
+    <!-- Left Shoulder Ball Joint -->
+    <circle cx="240" cy="425" r="28" fill="url(#robotMetal)" stroke="#475569" stroke-width="3"/>
+    <circle cx="240" cy="425" r="14" fill="#06B6D4" filter="url(#neonGlow)"/>
+    <!-- Left Arm -->
+    <path d="M 230 445 L 200 520 L 230 540" fill="none" stroke="url(#robotWhite)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Right Shoulder Ball Joint -->
+    <circle cx="520" cy="425" r="28" fill="url(#robotMetal)" stroke="#475569" stroke-width="3"/>
+    <circle cx="520" cy="425" r="14" fill="#06B6D4" filter="url(#neonGlow)"/>
+    <!-- Right Arm (Gesturing towards holographic code HUD) -->
+    <path d="M 530 445 L 565 500 L 535 540" fill="none" stroke="url(#robotWhite)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Right Hand with glowing fingertips -->
+    <circle cx="530" cy="545" r="14" fill="url(#robotMetal)"/>
+    <circle cx="520" cy="550" r="6" fill="#00E5FF" filter="url(#neonGlow)"/>
+    <circle cx="532" cy="556" r="6" fill="#00E5FF" filter="url(#neonGlow)"/>
+  </g>
+
+  <!-- FLOATING HOLOGRAPHIC CODE TERMINAL (Foreground) -->
+  <g transform="translate(180, 480)" filter="url(#robotShadow)">
+    <!-- Terminal Glass Backing -->
+    <rect x="0" y="0" width="440" height="230" rx="24" fill="url(#hudGlass)" stroke="#06B6D4" stroke-width="2.5"/>
+    <!-- Inner cyan glow border -->
+    <rect x="4" y="4" width="432" height="222" rx="20" fill="none" stroke="#22D3EE" stroke-width="1" opacity="0.4"/>
+
+    <!-- Window Top Header Bar -->
+    <rect x="0" y="0" width="440" height="42" rx="24" fill="#0F172A" opacity="0.9"/>
+    <!-- Control dots -->
+    <circle cx="25" cy="21" r="6" fill="#EF4444"/>
+    <circle cx="45" cy="21" r="6" fill="#F59E0B"/>
+    <circle cx="65" cy="21" r="6" fill="#10B981"/>
+    <!-- Window Title -->
+    <text x="220" y="26" fill="#94A3B8" font-family="monospace" font-size="13" font-weight="bold" text-anchor="middle">robot_intelligence.py</text>
+    <rect x="365" y="14" width="55" height="15" rx="6" fill="#06B6D4" opacity="0.2"/>
+    <text x="392" y="25" fill="#38BDF8" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">v2.4 AI</text>
+
+    <!-- Syntax Highlighted Code Lines -->
+    <g font-family="monospace" font-size="15" font-weight="bold" text-anchor="start">
+      <!-- Line 1 -->
+      <text x="25" y="72">
+        <tspan fill="#EC4899">def</tspan> <tspan fill="#38BDF8">solve_robot_mission</tspan><tspan fill="#F8FAFC">():</tspan>
+      </text>
+      <!-- Line 2 -->
+      <text x="45" y="102">
+        <tspan fill="#F8FAFC">sensors = robot.</tspan><tspan fill="#FACC15">scan_3d_environment</tspan><tspan fill="#F8FAFC">()</tspan>
+      </text>
+      <!-- Line 3 -->
+      <text x="45" y="132">
+        <tspan fill="#EC4899">while</tspan> <tspan fill="#F8FAFC">not sensors.</tspan><tspan fill="#4ADE80">obstacle_detected</tspan><tspan fill="#F8FAFC">:</tspan>
+      </text>
+      <!-- Line 4 -->
+      <text x="65" y="162">
+        <tspan fill="#F8FAFC">robot.</tspan><tspan fill="#22D3EE">advance_forward</tspan><tspan fill="#F8FAFC">(</tspan><tspan fill="#F97316">speed=100</tspan><tspan fill="#F8FAFC">)</tspan>
+      </text>
+      <!-- Line 5 -->
+      <text x="45" y="195">
+        <tspan fill="#818CF8">return</tspan> <tspan fill="#A78BFA">"✨ Target Reached Successfully!"</tspan>
+      </text>
+    </g>
+
+    <!-- Blinking Cursor -->
+    <rect x="375" y="180" width="10" height="18" fill="#00E5FF" filter="url(#neonGlow)"/>
+  </g>
+
+  <!-- Glowing Corner Sparks -->
+  <circle cx="170" cy="470" r="4" fill="#00E5FF" filter="url(#neonGlow)"/>
+  <circle cx="630" cy="470" r="4" fill="#00E5FF" filter="url(#neonGlow)"/>
+  <circle cx="630" cy="720" r="4" fill="#00E5FF" filter="url(#neonGlow)"/>
+</svg>

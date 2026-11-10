@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- Luxury Gold Radial Glow -->
+    <radialGradient id="goldAmbient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D97706" stop-opacity="0.32"/>
+      <stop offset="45%" stop-color="#B45309" stop-opacity="0.16"/>
+      <stop offset="100%" stop-color="#0B0F19" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Imperial Gold Leaf Gradients -->
+    <linearGradient id="goldLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF08A"/>
+      <stop offset="35%" stop-color="#FACC15"/>
+      <stop offset="70%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#92400E"/>
+    </linearGradient>
+
+    <linearGradient id="goldShine" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="30%" stop-color="#FDE047"/>
+      <stop offset="65%" stop-color="#EAB308"/>
+      <stop offset="100%" stop-color="#B45309"/>
+    </linearGradient>
+
+    <linearGradient id="qalamWood" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D97706"/>
+      <stop offset="30%" stop-color="#92400E"/>
+      <stop offset="70%" stop-color="#78350F"/>
+      <stop offset="100%" stop-color="#451A03"/>
+    </linearGradient>
+
+    <linearGradient id="inkwellPorcelain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="50%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+
+    <filter id="goldGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+
+    <filter id="luxuryDropShadow" x="-20%" y="-20%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="25" stdDeviation="25" flood-color="#020617" flood-opacity="0.85"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Backdrop Glow -->
+  <circle cx="400" cy="400" r="380" fill="url(#goldAmbient)"/>
+
+  <!-- ILLUMINATED ISLAMIC ROSETTE / SHAMSA (Background Manuscript Rosette) -->
+  <g transform="translate(400, 380)" opacity="0.35" filter="url(#goldGlow)">
+    <!-- Outer Decorative Filigree Rings -->
+    <circle cx="0" cy="0" r="290" fill="none" stroke="url(#goldLeaf)" stroke-width="2" stroke-dasharray="6 12"/>
+    <circle cx="0" cy="0" r="275" fill="none" stroke="url(#goldLeaf)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="260" fill="none" stroke="url(#goldLeaf)" stroke-width="1.5" stroke-dasharray="14 8"/>
+
+    <!-- 16-Fold Islamic Geometric Star Pattern -->
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(0)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(45)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(90)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(135)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(180)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(225)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(270)"/>
+    <rect x="-180" y="-180" width="360" height="360" rx="40" fill="none" stroke="url(#goldLeaf)" stroke-width="2" transform="rotate(315)"/>
+    <!-- Inner Rosette Core -->
+    <circle cx="0" cy="0" r="140" fill="#0B0F19" stroke="url(#goldLeaf)" stroke-width="4"/>
+    <circle cx="0" cy="0" r="125" fill="none" stroke="url(#goldLeaf)" stroke-width="2" stroke-dasharray="8 8"/>
+    <circle cx="0" cy="0" r="90" fill="none" stroke="url(#goldLeaf)" stroke-width="3"/>
+  </g>
+
+  <!-- Flowing Gold Manuscript Arabesque Ribbon (Thuluth Sweep) -->
+  <g filter="url(#goldGlow)" opacity="0.85">
+    <path d="M 100 580 C 220 540, 260 420, 380 440 C 500 460, 560 320, 680 260 C 720 240, 750 250, 770 280 C 740 280, 680 320, 630 360 C 540 430, 460 520, 330 540 C 220 560, 160 620, 100 580 Z" fill="url(#goldLeaf)"/>
+    <!-- Flowing stroke accent 2 -->
+    <path d="M 180 300 C 280 260, 360 280, 420 240 C 480 200, 540 180, 620 190 C 580 220, 480 250, 410 290 C 340 330, 260 340, 180 300 Z" fill="url(#goldShine)" opacity="0.65"/>
+  </g>
+
+  <!-- Traditional Rhombic Dots (نقاط الخط العربي المعينة) -->
+  <!-- 3 Classic Thuluth Dots -->
+  <g transform="translate(600, 210) rotate(45)" filter="url(#goldGlow)">
+    <rect x="-14" y="-14" width="28" height="28" rx="4" fill="url(#goldLeaf)"/>
+    <rect x="-8" y="-8" width="16" height="16" fill="url(#goldShine)"/>
+  </g>
+  <g transform="translate(635, 245) rotate(45)" filter="url(#goldGlow)">
+    <rect x="-14" y="-14" width="28" height="28" rx="4" fill="url(#goldLeaf)"/>
+  </g>
+  <g transform="translate(240, 420) rotate(45)" filter="url(#goldGlow)">
+    <rect x="-12" y="-12" width="24" height="24" rx="3" fill="url(#goldLeaf)"/>
+  </g>
+
+  <!-- Contact Shadows on Ground -->
+  <ellipse cx="440" cy="670" rx="220" ry="38" fill="#020617" opacity="0.9" filter="blur(22px)"/>
+  <ellipse cx="430" cy="660" rx="150" ry="22" fill="#020617" opacity="0.95" filter="blur(10px)"/>
+
+  <!-- ROYAL PORCELAIN & GILDED INKWELL (المحبرة الملكية) -->
+  <g transform="translate(480, 500)" filter="url(#luxuryDropShadow)">
+    <!-- Ornate Golden Pedestal Base -->
+    <ellipse cx="60" cy="140" rx="90" ry="25" fill="url(#goldLeaf)" stroke="#78350F" stroke-width="2"/>
+    <ellipse cx="60" cy="134" rx="82" ry="20" fill="url(#goldShine)"/>
+
+    <!-- Porcelain Body -->
+    <path d="M -15 60 C -15 130, 135 130, 135 60 C 135 30, 110 15, 60 15 C 10 15, -15 30, -15 60 Z" fill="url(#inkwellPorcelain)" stroke="url(#goldLeaf)" stroke-width="4"/>
+    <!-- Arabesque Inlay on Inkwell Body -->
+    <path d="M 10 65 Q 60 90 110 65 Q 60 45 10 65 Z" fill="none" stroke="url(#goldLeaf)" stroke-width="2.5" opacity="0.8"/>
+    <circle cx="60" cy="65" r="8" fill="url(#goldLeaf)"/>
+
+    <!-- Gilded Rim of Inkwell -->
+    <ellipse cx="60" cy="20" rx="65" ry="22" fill="url(#goldLeaf)" stroke="#B45309" stroke-width="3"/>
+    <ellipse cx="60" cy="20" rx="55" ry="17" fill="url(#goldShine)"/>
+
+    <!-- Deep Swirling Liquid Golden Black Ink -->
+    <ellipse cx="60" cy="20" rx="46" ry="13" fill="#020617"/>
+    <!-- Swirling gold dust in ink -->
+    <ellipse cx="64" cy="22" rx="34" ry="9" fill="none" stroke="url(#goldLeaf)" stroke-width="2.5" opacity="0.75" filter="url(#goldGlow)"/>
+    <circle cx="55" cy="21" r="3" fill="#FFFBEB" filter="url(#goldGlow)"/>
+  </g>
+
+  <!-- 3D LUXURIOUS CALLIGRAPHY REED PEN (القلم المذهب الرئيسي) -->
+  <!-- Angled gracefully at 45 degrees, dipping toward inkwell -->
+  <g transform="translate(220, 170) rotate(-42)" filter="url(#luxuryDropShadow)">
+    
+    <!-- Pen Reed Stem (Natural Lacquered Bamboo / Reed) -->
+    <!-- Length = 440px, width = 34px -->
+    <path d="M 0 0 L 32 0 L 32 380 L 0 380 Z" rx="10" fill="url(#qalamWood)" stroke="#451A03" stroke-width="3"/>
+    <!-- Bamboo Node Rings (Authentic reed detail) -->
+    <rect x="-2" y="100" width="36" height="12" rx="5" fill="url(#goldLeaf)" stroke="#78350F" stroke-width="1.5"/>
+    <rect x="-2" y="220" width="36" height="12" rx="5" fill="url(#goldLeaf)" stroke="#78350F" stroke-width="1.5"/>
+    <rect x="-2" y="340" width="36" height="12" rx="5" fill="url(#goldLeaf)" stroke="#78350F" stroke-width="1.5"/>
+
+    <!-- Specular Highlight Line along Pen Body -->
+    <line x1="8" y1="10" x2="8" y2="370" stroke="#FEF3C7" stroke-width="3" opacity="0.45" stroke-linecap="round"/>
+
+    <!-- Gilded Islamic Filigree Ferrule -->
+    <path d="M -4 380 L 36 380 L 34 430 L -2 430 Z" fill="url(#goldLeaf)" stroke="#92400E" stroke-width="2"/>
+    <circle cx="16" cy="405" r="5" fill="#FFFBEB" filter="url(#goldGlow)"/>
+
+    <!-- Solid Gold Calligraphy Nib with Traditional Slanted Cut (قطة القلم) -->
+    <!-- The nib tapers sharply from width 34 down to slanted chisel tip -->
+    <path d="M -2 430 L 34 430 L 26 505 L 8 495 Z" fill="url(#goldShine)" stroke="#78350F" stroke-width="2.5"/>
+    <!-- Center Nib Ink Canal (شق القلم) -->
+    <line x1="16" y1="435" x2="16" y2="495" stroke="#451A03" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Breathing Hole (ثقب القلم) -->
+    <circle cx="16" cy="455" r="3.5" fill="#451A03"/>
+
+    <!-- Luminous Suspended Golden Ink Drop at Nib Tip -->
+    <g transform="translate(14, 506)" filter="url(#goldGlow)">
+      <!-- Teardrop shape -->
+      <path d="M 0 0 C -6 6, -8 14, 0 20 C 8 14, 6 6, 0 0 Z" fill="url(#goldLeaf)"/>
+      <circle cx="-1" cy="14" r="2.5" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Luminous Golden Dust Motes & Sparkles -->
+  <g opacity="0.85">
+    <circle cx="480" cy="330" r="4" fill="#FEF08A" filter="url(#goldGlow)"/>
+    <circle cx="560" cy="410" r="3" fill="#FDE047" filter="url(#goldGlow)"/>
+    <circle cx="340" cy="310" r="3.5" fill="#FEF3C7" filter="url(#goldGlow)"/>
+    <circle cx="410" cy="240" r="2.5" fill="#FACC15" filter="url(#goldGlow)"/>
+    <circle cx="280" cy="500" r="3" fill="#FACC15" filter="url(#goldGlow)"/>
+    <circle cx="680" cy="470" r="4.5" fill="#FEF08A" filter="url(#goldGlow)"/>
+  </g>
+</svg>

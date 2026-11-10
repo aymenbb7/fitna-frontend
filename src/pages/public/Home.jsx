@@ -22,6 +22,30 @@ const MODULE_COLORS = {
   'problem-solving': '#3B82F6',
 };
 
+const UNIT_HERO_ASSETS = {
+  'قسم-التدرب-على-حل-المكعبات-السحرية': {
+    image: '/assets/units/rubiks-cube.png',
+    alt: 'مكعب روبيك السحري ثلاثي الأبعاد',
+    badgeText: 'تحدي وسرعة',
+    gradient: 'linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 55%, #0f172a 100%)',
+    accentColor: 'rgba(59, 130, 246, 0.45)',
+  },
+  'قسم-اساسيات-البرمجة-والروبوتيك': {
+    image: '/assets/units/robotics.png',
+    alt: 'روبوت تعليمي وبرمجة ذكية',
+    badgeText: 'ذكاء وتكنولوجيا',
+    gradient: 'linear-gradient(145deg, #0d9488 0%, #115e59 55%, #042f2e 100%)',
+    accentColor: 'rgba(6, 182, 212, 0.45)',
+  },
+  'ورشة-الخط-العربي': {
+    image: '/assets/units/calligraphy.png',
+    alt: 'قلم الخط العربي والمحبرة الملكية',
+    badgeText: 'أصالة وإبداع',
+    gradient: 'linear-gradient(145deg, #b45309 0%, #78350f 55%, #1e1b4b 100%)',
+    accentColor: 'rgba(245, 158, 11, 0.45)',
+  },
+};
+
 const ORDERED_SLUGS = [
   'quran',
   'memory',
@@ -368,19 +392,36 @@ const Home = () => {
                   whileHover={{ scale: 1.05, rotateX: 5, rotateY: -5 }}
                   key={mod.slug} 
                   className="min-w-[85vw] sm:min-w-[300px] snap-center rounded-3xl overflow-hidden relative group transform-gpu will-change-transform shadow-2xl flex flex-col"
-                  style={{ backgroundColor: bgColor, transformStyle: "preserve-3d" }}
+                  style={{ background: UNIT_HERO_ASSETS[mod.slug]?.gradient || bgColor, transformStyle: "preserve-3d" }}
                 >
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay bg-white/20" />
                   <div className="absolute inset-0 shadow-[inset_0_0_50px_rgba(255,255,255,0.2)] pointer-events-none" />
 
                   <div className="p-8 relative z-10 flex flex-col h-full">
-                    <motion.div 
-                      animate={{ scale: [1, 1.1, 1] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                      className="text-8xl mb-8 text-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
-                    >
-                      {mod.icon}
-                    </motion.div>
+                    {UNIT_HERO_ASSETS[mod.slug] ? (
+                      <div className="relative mb-6 flex justify-center items-center h-44">
+                        <div 
+                          className="absolute w-36 h-36 rounded-full blur-2xl opacity-75 -z-10 animate-pulse" 
+                          style={{ backgroundColor: UNIT_HERO_ASSETS[mod.slug].accentColor }}
+                        />
+                        <motion.img
+                          src={UNIT_HERO_ASSETS[mod.slug].image}
+                          alt={UNIT_HERO_ASSETS[mod.slug].alt}
+                          animate={{ y: [0, -8, 0], scale: [1, 1.03, 1] }}
+                          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                          className="max-h-44 w-auto object-contain drop-shadow-[0_15px_25px_rgba(0,0,0,0.6)] select-none pointer-events-none"
+                          loading="lazy"
+                        />
+                      </div>
+                    ) : (
+                      <motion.div 
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                        className="text-8xl mb-8 text-center drop-shadow-[0_10px_20px_rgba(0,0,0,0.3)]"
+                      >
+                        {mod.icon}
+                      </motion.div>
+                    )}
                     
                     <h3 className="text-3xl font-black mb-3 text-white drop-shadow-md">{mod.name}</h3>
                     {/* Price display placeholder */}
