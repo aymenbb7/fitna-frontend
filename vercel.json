@@ -55,15 +55,7 @@
       "destination": "/api/proxy?path=media/$1"
     },
     {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
-    },
-    {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
-    },
-    {
-      "source": "/((?!assets/|robots\\.txt|sitemap\\.xml|favicon|logo|og-image|google).*)$",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
