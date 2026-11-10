@@ -11,7 +11,8 @@ import { Button } from '../../../components/ui/Button';
 
 // â”€â”€â”€ Main student module content page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const ModuleContent = () => {
-  const { slug } = useParams();
+  const { slug: rawSlug } = useParams();
+  const slug = decodeURIComponent(rawSlug || '');
   const navigate = useNavigate();
 
   const [moduleData, setModuleData]   = useState(null);

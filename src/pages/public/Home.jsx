@@ -11,13 +11,30 @@ const MODULE_COLORS = {
   'quran': '#10B981',
   'memory': '#8B5CF6',
   'soroban': '#F59E0B',
-  'problem-solving': '#3B82F6',
-  'health': '#EF4444',
-  'history': '#D97706',
+  'قسم-التدرب-على-حل-المكعبات-السحرية': '#2563EB',
+  'قسم-اساسيات-البرمجة-والروبوتيك': '#0D9488',
   'languages': '#EC4899',
-  'talents': '#06B6D4',
   'psychology': '#6366F1',
+  'history': '#D97706',
+  'ورشة-الخط-العربي': '#B45309',
+  'health': '#EF4444',
+  'talents': '#06B6D4',
+  'problem-solving': '#3B82F6',
 };
+
+const ORDERED_SLUGS = [
+  'quran',
+  'memory',
+  'soroban',
+  'قسم-التدرب-على-حل-المكعبات-السحرية',
+  'قسم-اساسيات-البرمجة-والروبوتيك',
+  'languages',
+  'psychology',
+  'history',
+  'ورشة-الخط-العربي',
+  'health',
+  'talents',
+];
 
 const SYMBOLS = [
   { text: '🚀', top: '15%', left: '10%', duration: 12, size: 'text-6xl', rotate: 20 },
@@ -53,68 +70,93 @@ const Counter = ({ from, to, duration = 2, delay = 0 }) => {
 const ALL_DEFAULT_PROGRAMS = [
   {
     slug: 'quran',
-    name: 'قسم التعليم القرآني',
-    description: 'حفظ وتجويد بطرق تفاعلية مبتكرة لترسيخ القرآن في النفوس.',
+    name: 'التعليم القرآني',
+    description: 'حفظ وتجويد بطرق تفاعلية مبتكرة لترسيخ القرآن الكريم في النفوس.',
     icon: '🕌',
-    price: 500,
+    price: 0,
   },
   {
     slug: 'memory',
     name: 'الذاكرة الخارقة',
-    description: 'تطوير مهارات الحفظ السريع والاستيعاب الفائق ومضاعفة التركيز.',
+    description: 'تطوير مهارات الحفظ السريع والاستيعاب الفائق ومضاعفة التركيز والذكاء.',
     icon: '🧠',
-    price: 0,
+    price: 3000,
   },
   {
     slug: 'soroban',
     name: 'الحساب الذهني (السوروبان)',
-    description: 'تطوير سرعة الحساب والدقة في حل المسائل الرياضية والذهنية.',
+    description: 'تطوير سرعة الحساب والبديهة والدقة في حل العمليات الرياضية ذهنياً.',
     icon: '🧮',
-    price: 0,
+    price: 2000,
   },
   {
-    slug: 'problem-solving',
-    name: 'حل المشكلات والمنطق',
-    description: 'تنمية التفكير النقدي والتحليلي وحل المعضلات البرمجية والمنطقية.',
-    icon: '🧩',
-    price: 2500,
-  },
-  {
-    slug: 'health',
-    name: 'قسم العادات الصحية',
-    description: 'بناء نمط حياة صحي ومتوازن للجسم والعقل للأبطال الصغار.',
-    icon: '🌿',
+    slug: 'قسم-التدرب-على-حل-المكعبات-السحرية',
+    name: 'المجسمات السحرية',
+    description: 'إتقان خوارزميات واستراتيجيات حل مكعب روبيك والمجسمات الهندسية بذكاء وسرعة.',
+    icon: '🧊',
     price: 500,
   },
   {
+    slug: 'قسم-اساسيات-البرمجة-والروبوتيك',
+    name: 'أساسيات البرمجة والروبوتيك',
+    description: 'بناء التفكير المنطقي والبرمجي والتحكم بالروبوتات وتصميم أولى المشاريع التقنية.',
+    icon: '🤖',
+    price: 1500,
+  },
+  {
+    slug: 'languages',
+    name: 'اللغات',
+    description: 'إتقان مهارات التحدث والتواصل بـ 6 لغات عالمية عبر مسارات تعليمية متدرجة.',
+    icon: '🗣️',
+    price: 2000,
+  },
+  {
+    slug: 'psychology',
+    name: 'المتابعة النفسية',
+    description: 'تعزيز الثقة بالنفس، إدارة المشاعر، وبناء شخصية قيادية إيجابية متوازنة.',
+    icon: '🧘',
+    price: 1000,
+  },
+  {
     slug: 'history',
-    name: 'قسم التاريخ والبطولات',
-    description: 'استكشاف القصص الملهمة والحضارات العريقة بأسلوب تفاعلي مشوق.',
+    name: 'التاريخ',
+    description: 'استكشاف البطولات والقصص الملهمة والحضارات العريقة بأسلوب تفاعلي مشوق.',
     icon: '🏛️',
     price: 0,
   },
   {
-    slug: 'languages',
-    name: 'قسم اللغات والتواصل',
-    description: 'إتقان مهارات التحدث والتعبير باللغات المختلفة بطلاقة وثقة.',
-    icon: '🗣️',
-    price: 1000,
+    slug: 'ورشة-الخط-العربي',
+    name: 'ورشة الخط العربي',
+    description: 'إتقان قواعد وجماليات الخطوط العربية الأصيلة وتحسين الخط بالقلم العادي والمعدني.',
+    icon: '✒️',
+    price: 0,
+  },
+  {
+    slug: 'health',
+    name: 'الآداب العامة والعادات الصحية',
+    description: 'غرس الأخلاق الرفيعة وبناء نمط حياة صحي ومتوازن للجسم والعقل للأبطال الصغار.',
+    icon: '🌿',
+    price: 0,
   },
   {
     slug: 'talents',
-    name: 'قسم اكتشاف المواهب',
-    description: 'صقل المهارات الإبداعية وتفجير طاقات الطفل الابتكارية والفنية.',
+    name: 'اكتشاف المواهب',
+    description: 'صقل المهارات الإبداعية وتفجير الطاقات الابتكارية والفنية في شتى المجالات.',
     icon: '⭐',
-    price: 2500,
-  },
-  {
-    slug: 'psychology',
-    name: 'قسم المتابعة النفسية',
-    description: 'تعزيز الثقة بالنفس، إدارة المشاعر، وبناء شخصية قيادية إيجابية.',
-    icon: '🧘',
-    price: 2500,
+    price: 0,
   },
 ];
+
+const sortModules = (list) => {
+  return [...list].sort((a, b) => {
+    const idxA = ORDERED_SLUGS.indexOf(a.slug);
+    const idxB = ORDERED_SLUGS.indexOf(b.slug);
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return (a.display_order ?? 999) - (b.display_order ?? 999);
+  });
+};
 
 const DEFAULT_MAP = {};
 ALL_DEFAULT_PROGRAMS.forEach(p => { DEFAULT_MAP[p.slug] = p; });
@@ -124,7 +166,7 @@ const Home = () => {
   const { settings, siteSettings } = useContext(SettingsContext);
   const { user, loading: authLoading } = useContext(AuthContext);
   const navigate = useNavigate();
-  const [modules, setModules] = useState(ALL_DEFAULT_PROGRAMS);
+  const [modules, setModules] = useState(() => sortModules(ALL_DEFAULT_PROGRAMS));
 
   // Redirect already-authenticated users to their dashboard immediately
   useEffect(() => {
@@ -149,7 +191,7 @@ const Home = () => {
               customPrograms.forEach(p => { if (p.slug) customMap[p.slug] = p; });
             }
           } catch (e) {
-            console.error("Failed to parse landing_programs_json", e);
+            console.error('Failed to parse landing_programs_json', e);
           }
         }
 
@@ -169,7 +211,6 @@ const Home = () => {
           };
         });
 
-        // If any of the 9 default modules were not returned by API, append them so all 9 appear
         ALL_DEFAULT_PROGRAMS.forEach(p => {
           if (!seenSlugs.has(p.slug)) {
             const custom = customMap[p.slug] || {};
@@ -182,7 +223,7 @@ const Home = () => {
           }
         });
 
-        setModules(merged);
+        setModules(sortModules(merged));
       })
       .catch(err => {
         // Fallback: merge custom landing_programs_json on top of ALL_DEFAULT_PROGRAMS
@@ -196,12 +237,12 @@ const Home = () => {
                 ...p,
                 ...(customMap[p.slug] || {})
               }));
-              setModules(merged);
+              setModules(sortModules(merged));
               return;
             }
           } catch (e) { /* ignore */ }
         }
-        setModules(ALL_DEFAULT_PROGRAMS);
+        setModules(sortModules(ALL_DEFAULT_PROGRAMS));
       });
   }, [siteSettings]);
 

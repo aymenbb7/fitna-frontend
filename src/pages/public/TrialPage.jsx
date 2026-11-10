@@ -3,8 +3,30 @@ import { useParams, Link } from 'react-router-dom';
 import { PlayCircle, FileText, CheckSquare, ArrowRight, Mic, Image as ImageIcon, ExternalLink, Download, AlertCircle } from 'lucide-react';
 import api, { getMediaUrl } from '../../api/axios';
 
+const MODULE_COLORS = {
+  'quran': '#10B981',
+  'memory': '#8B5CF6',
+  'soroban': '#F59E0B',
+  'قسم-التدرب-على-حل-المكعبات-السحرية': '#2563EB',
+  'قسم-اساسيات-البرمجة-والروبوتيك': '#0D9488',
+  'languages': '#EC4899',
+  'psychology': '#6366F1',
+  'history': '#D97706',
+  'ورشة-الخط-العربي': '#B45309',
+  'health': '#EF4444',
+  'talents': '#06B6D4',
+};
+
+const MODULE_NAMES = {
+  'قسم-اساسيات-البرمجة-والروبوتيك': 'قسم أساسيات البرمجة والروبوتيك',
+  'قسم-التدرب-على-حل-المكعبات-السحرية': 'قسم التدرب على حل المجسمات السحرية',
+  'ورشة-الخط-العربي': 'ورشة الخط العربي',
+  'languages': 'قسم اللغات والتواصل',
+};
+
 const TrialPage = () => {
-  const { slug } = useParams();
+  const { slug: rawSlug } = useParams();
+  const slug = decodeURIComponent(rawSlug || '');
   const [mod, setMod] = useState(null);
   const [trialContent, setTrialContent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,24 +34,28 @@ const TrialPage = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     Promise.all([
-      api.get(`/modules/${slug}/`),
-      api.get(`/modules/${slug}/trial/`).catch(() => ({ data: null }))
+      api.get(`/modules/${encodeURIComponent(slug)}/`),
+      api.get(`/modules/${encodeURIComponent(slug)}/trial/`).catch(() => ({ data: null }))
     ])
     .then(([modRes, trialRes]) => {
-      setMod(modRes.data);
+      const data = modRes.data || {};
+      setMod({
+        ...data,
+        name: data.name || MODULE_NAMES[slug] || slug,
+        color_primary: data.color_primary || MODULE_COLORS[slug] || '#1565C0',
+      });
       setTrialContent(trialRes.data);
     })
     .catch(err => {
       console.error(err);
       setMod({
         slug,
-        name: slug,
-        color_primary: '#1565C0',
+        name: MODULE_NAMES[slug] || slug,
+        color_primary: MODULE_COLORS[slug] || '#1565C0',
       });
     })
     .finally(() => setLoading(false));
   }, [slug]);
-
   if (loading) return <div className="p-24 text-center text-white">جاري التحميل...</div>;
   if (!mod) return <div className="p-24 text-center text-white">البرنامج غير موجود</div>;
 

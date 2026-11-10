@@ -9,7 +9,9 @@ import { UpdateModuleModal } from '../../components/admin/modals/UpdateModuleMod
 import { QuizAnalyticsModal } from '../../components/admin/modals/QuizAnalyticsModal';
 
 const AdminModuleContent = () => {
-  const { slug } = useParams();
+  const { slug: rawSlug } = useParams();
+  const slug = decodeURIComponent(rawSlug || '');
+  const encodedSlug = encodeURIComponent(slug);
   const [module, setModule] = useState(null);
   const [sections, setSections] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
