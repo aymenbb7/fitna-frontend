@@ -1,0 +1,29 @@
+# https://www.robotstxt.org/robotstxt.html
+# Robots exclusion file for منصة فطنة (Minasat Fitna)
+
+User-agent: *
+Allow: /
+Allow: /modules/
+Allow: /assets/
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /set-password
+Disallow: /forgot-password
+
+# Googlebot specific rules
+User-agent: Googlebot
+Allow: /
+Allow: /modules/
+Allow: /assets/
+Disallow: /dashboard/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /login
+Disallow: /set-password
+Disallow: /forgot-password
+
+# Host and Sitemap
+Host: https://minasat-fitna.vercel.app
+Sitemap: https://minasat-fitna.vercel.app/sitemap.xml

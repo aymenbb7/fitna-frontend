@@ -71,7 +71,10 @@ const Layout = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <a href="/" onClick={handleHomeClick} className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.5)]">فطنة</a>
+              <a href="/" onClick={handleHomeClick} title="منصة فطنة | Minasat Fitna" className="flex items-center gap-2 text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.5)]">
+                <span>فطنة</span>
+                <span className="sr-only">منصة فطنة - Minasat Fitna</span>
+              </a>
             </div>
             
             {/* Desktop Menu */}
@@ -138,8 +141,11 @@ const Layout = () => {
             
             {/* Column 1: Brand */}
             <div>
-              <h3 className="text-4xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)]">منصة فطنة</h3>
-              <p className="text-gray-400 font-bold mb-6">نُعدّهم للحياة، لا للامتحانات</p>
+              <h3 className="text-4xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-r from-accentGold to-yellow-300 drop-shadow-[0_0_10px_rgba(245,197,24,0.3)]">منصة فطنة</h3>
+              <p className="text-xs uppercase tracking-widest text-cyan-400 font-extrabold mb-3" dir="ltr">Minasat Fitna — Algeria</p>
+              <p className="text-gray-300 font-bold mb-6 text-sm leading-relaxed">
+                منصة تعليمية جزائرية متكاملة للأطفال. نُعِدُّهم للحياة، لا للامتحانات!
+              </p>
               <div className="flex gap-4">
                 <a href={socialInstagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white hover:text-[#E1306C] hover:bg-white/20 transition-colors">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -177,17 +183,19 @@ const Layout = () => {
 
             {/* Column 3: Programs */}
             <div>
-              <h4 className="text-xl font-black mb-6 text-white border-b border-white/10 pb-2 inline-block">البرامج</h4>
-              <ul className="space-y-3 font-bold text-gray-400">
-                <li><Link to="/modules/quran" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">التعليم القرآني</Link></li>
-                <li><Link to="/modules/memory" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">الذاكرة الخارقة</Link></li>
-                <li><Link to="/modules/soroban" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">الحساب الذهني (السوروبان)</Link></li>
-                <li><Link to="/modules/problem-solving" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">حل المشكلات</Link></li>
-                <li><Link to="/modules/health" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">الصحة واللياقة</Link></li>
-                <li><Link to="/modules/history" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">التاريخ والحضارة</Link></li>
-                <li><Link to="/modules/languages" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">اللغات</Link></li>
-                <li><Link to="/modules/talents" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">المواهب والإبداع</Link></li>
-                <li><Link to="/modules/psychology" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">علم النفس</Link></li>
+              <h4 className="text-xl font-black mb-6 text-white border-b border-white/10 pb-2 inline-block">البرامج التعليمية</h4>
+              <ul className="space-y-2.5 font-bold text-gray-300 text-sm">
+                <li><Link to="/modules/quran" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">1. التعليم القرآني</Link></li>
+                <li><Link to="/modules/memory" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">2. الذاكرة الخارقة</Link></li>
+                <li><Link to="/modules/soroban" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">3. الحساب الذهني (السوروبان)</Link></li>
+                <li><Link to="/modules/قسم-التدرب-على-حل-المكعبات-السحرية" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">4. المجسمات السحرية</Link></li>
+                <li><Link to="/modules/قسم-اساسيات-البرمجة-والروبوتيك" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">5. أساسيات البرمجة والروبوتيك</Link></li>
+                <li><Link to="/modules/languages" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">6. اللغات</Link></li>
+                <li><Link to="/modules/psychology" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">7. المتابعة النفسية</Link></li>
+                <li><Link to="/modules/history" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">8. التاريخ</Link></li>
+                <li><Link to="/modules/ورشة-الخط-العربي" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">9. ورشة الخط العربي</Link></li>
+                <li><Link to="/modules/health" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">10. الآداب العامة والعادات الصحية</Link></li>
+                <li><Link to="/modules/talents" onClick={() => window.scrollTo(0, 0)} className="hover:text-accentGold transition-colors">11. اكتشاف المواهب</Link></li>
               </ul>
             </div>
 
@@ -216,8 +224,8 @@ const Layout = () => {
 
           </div>
           
-          <div className="pt-8 border-t border-white/10 text-center text-gray-500 font-bold bg-bgDarker">
-            جميع الحقوق محفوظة © 2026 منصة فطنة
+          <div className="pt-8 border-t border-white/10 text-center text-gray-400 font-bold bg-bgDarker text-sm">
+            جميع الحقوق محفوظة © 2026 منصة فطنة (Minasat Fitna) — الجمهورية الجزائرية
           </div>
         </div>
       </footer>

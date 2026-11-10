@@ -6,6 +6,21 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
+  // Prevent private dashboards from search engine indexing
+  React.useEffect(() => {
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.name = 'robots';
+      document.head.appendChild(metaRobots);
+    }
+    const previous = metaRobots.getAttribute('content');
+    metaRobots.setAttribute('content', 'noindex, nofollow');
+    return () => {
+      metaRobots.setAttribute('content', previous || 'index, follow');
+    };
+  }, []);
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center bg-bgDarker text-white">جاري التحميل...</div>;
   }

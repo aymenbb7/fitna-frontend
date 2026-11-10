@@ -12,6 +12,21 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Prevent login page from being indexed by search engines
+  React.useEffect(() => {
+    let metaRobots = document.querySelector('meta[name="robots"]');
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta');
+      metaRobots.name = 'robots';
+      document.head.appendChild(metaRobots);
+    }
+    const previous = metaRobots.getAttribute('content');
+    metaRobots.setAttribute('content', 'noindex, nofollow');
+    return () => {
+      metaRobots.setAttribute('content', previous || 'index, follow');
+    };
+  }, []);
+
   React.useEffect(() => {
     if (user) {
       if (user?.role === 'STUDENT' || user?.role === 'student') {

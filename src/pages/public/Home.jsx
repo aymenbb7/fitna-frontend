@@ -325,6 +325,13 @@ const Home = () => {
         </motion.div>
 
         <div className="z-10 text-center px-4 max-w-5xl mx-auto flex flex-col items-center relative">
+          <motion.div 
+            initial={{ opacity: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accentGold/10 border border-accentGold/30 text-accentGold font-black text-sm mb-4 shadow-[0_0_15px_rgba(245,197,24,0.2)]"
+          >
+            <span>🇩🇿</span>
+            <span>منصة فطنة التعليمية | Minasat Fitna Algeria</span>
+          </motion.div>
           <motion.h1 
             initial={{ opacity: 1, scale: 1 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -537,7 +544,7 @@ const Home = () => {
                       من هذا الألم، وُلدت فكرة <span className="text-white">«منصة فطنة»</span>. لم نرد أن نكتفي بالشكوى، بل صممنا حلاً عملياً يمثل بديلاً آمناً، ذكياً، وجذاباً.
                     </p>
                     <p>
-                      فطنة ليست مجرد منصة تعليمية، بل هي بيئة متكاملة تهدف إلى احتضان شغف الأطفال وإشغالهم بما ينفعهم، لبناء مهاراتهم وتأسيس مستقبل مشرق لهم، بعيداً عن مخاطر الفراغ الرقمي.
+                      فطنة (Minasat Fitna) ليست مجرد منصة تعليمية، بل هي بيئة متكاملة تهدف إلى احتضان شغف الأطفال وإشغالهم بما ينفعهم، لبناء مهاراتهم وتأسيس مستقبل مشرق لهم، بعيداً عن مخاطر الفراغ الرقمي.
                     </p>
                   </>
                 )}
